@@ -6,7 +6,7 @@ import javax.persistence.*;
 import java.util.Collection;
 
 @Entity
-public class Gender {
+public class Customertype {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id")
@@ -14,12 +14,8 @@ public class Gender {
     @Basic
     @Column(name = "name")
     private String name;
-
     @JsonIgnore
-    @OneToMany(mappedBy = "gender")
-    private Collection<Employee> employees;
-    @JsonIgnore
-    @OneToMany(mappedBy = "gender")
+    @OneToMany(mappedBy = "customertype")
     private Collection<Customer> customers;
 
     public Integer getId() {
@@ -43,10 +39,10 @@ public class Gender {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Gender gender = (Gender) o;
+        Customertype that = (Customertype) o;
 
-        if (id != null ? !id.equals(gender.id) : gender.id != null) return false;
-        if (name != null ? !name.equals(gender.name) : gender.name != null) return false;
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
 
         return true;
     }
@@ -56,14 +52,6 @@ public class Gender {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (name != null ? name.hashCode() : 0);
         return result;
-    }
-
-    public Collection<Employee> getEmployees() {
-        return employees;
-    }
-
-    public void setEmployees(Collection<Employee> employees) {
-        this.employees = employees;
     }
 
     public Collection<Customer> getCustomers() {
