@@ -44,6 +44,15 @@ public class Customer {
     @JoinColumn(name = "customerstatus_id", referencedColumnName = "id", nullable = false)
     private Customerstatus customerstatus;
 
+    public Customer(Integer id, String fullname){
+        this.id = id;
+        this.callingname = callingname;
+    }
+
+    public Customer() {
+
+    }
+
     public Integer getId() {
         return id;
     }
