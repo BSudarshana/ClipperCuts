@@ -8,6 +8,7 @@ import {HomeComponent} from './view/home/home.component';
 import {LoginComponent} from './view/login/login.component';
 import {MainwindowComponent} from './view/mainwindow/mainwindow.component';
 import {EmployeeComponent} from './view/modules/employee/employee.component';
+import {CustomerComponent} from './view/modules/customer/customer.component';
 import {UserComponent} from './view/modules/user/user.component';
 import {MatGridListModule} from "@angular/material/grid-list";
 import {MatCardModule} from "@angular/material/card";
@@ -50,6 +51,7 @@ import { SupplierComponent } from './view/modules/supplier/supplier.component';
     LoginComponent,
     MainwindowComponent,
     EmployeeComponent,
+    CustomerComponent,
     UserComponent,
     ConfirmComponent,
     CountByDesignationComponent,

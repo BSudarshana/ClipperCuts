@@ -19,9 +19,7 @@ export class MainwindowComponent {
   // Set Mat icons you need to add to Menus
   matIcons : any = {
     'Admin': 'person',
-    'Academic': 'event_note',
-    'Registration': 'assignment',
-    'Class': 'schedule',
+    'Sales': 'AttachMoney'
   };
 
   userImage: string = 'assets/default.png'

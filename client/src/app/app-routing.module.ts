@@ -8,6 +8,7 @@ import {UserComponent} from "./view/modules/user/user.component";
 import {PrivilageComponent} from "./view/modules/privilage/privilage.component";
 import {OperationComponent} from "./view/modules/operation/operation.component";
 import {CountByDesignationComponent} from "./report/view/countbydesignation/countbydesignation.component";
+import {CustomerComponent} from "./view/modules/customer/customer.component";
 
 const routes: Routes = [
   {path: "login", component: LoginComponent},
@@ -21,6 +22,7 @@ const routes: Routes = [
       {path: "operation", component: OperationComponent},
       {path: "user", component: UserComponent},
       {path: "privilege", component: PrivilageComponent},
+      {path: "customer", component: CustomerComponent},
       {path:"reports/countbydesignation", component: CountByDesignationComponent},
     ]
   }];

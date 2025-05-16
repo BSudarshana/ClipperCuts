@@ -49,6 +49,7 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
         if (username.equals("AdminEUC")) {
+
             Set<SimpleGrantedAuthority> authorities = new HashSet<>();
             authorities.add(new SimpleGrantedAuthority("user-select"));
             authorities.add(new SimpleGrantedAuthority("user-delete"));
@@ -74,6 +75,11 @@ public class UserService implements UserDetailsService {
             authorities.add(new SimpleGrantedAuthority("item-delete"));
             authorities.add(new SimpleGrantedAuthority("item-update"));
             authorities.add(new SimpleGrantedAuthority("item-insert"));
+
+            authorities.add(new SimpleGrantedAuthority("customer-select"));
+            authorities.add(new SimpleGrantedAuthority("customer-delete"));
+            authorities.add(new SimpleGrantedAuthority("customer-update"));
+            authorities.add(new SimpleGrantedAuthority("customer-insert"));
 
 
             return org.springframework.security.core.userdetails.User

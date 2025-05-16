@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 
 @CrossOrigin
 @RestController
-@RequestMapping(value = "/customer")
+@RequestMapping(value = "/customers")
 public class CustomerController {
 
     @Autowired

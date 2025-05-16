@@ -1,6 +1,7 @@
 package lk.earth.earthuniversity.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.Pattern;
 import java.sql.Date;
 import java.util.Arrays;
 
@@ -12,21 +13,27 @@ public class Customer {
     private Integer id;
     @Basic
     @Column(name = "fullname")
+    @Pattern(regexp = "^([A-Z][a-z]*[.]?[\\s]?)*([A-Z][a-z]*)$", message = "Invalid Full Name")
     private String fullname;
     @Basic
     @Column(name = "callingname")
+    @Pattern(regexp = "^([A-Z][a-z]+)$", message = "Invalid Calligname")
     private String callingname;
     @Basic
     @Column(name = "code")
+    @Pattern(regexp = "^C\\d{7}$", message = "Invalid Address")
     private String code;
     @Basic
     @Column(name = "address")
+    @Pattern(regexp = "^([\\w\\/\\-,\\s]{2,})$", message = "Invalid Address")
     private String address;
     @Basic
     @Column(name = "mobile")
+    @Pattern(regexp = "^0\\d{9}$", message = "Invalid Mobile Number")
     private String mobile;
     @Basic
     @Column(name = "email")
+    @Pattern(regexp = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$", message = "Invalid Email Address")
     private String email;
     @Basic
     @Column(name = "photo")
@@ -44,7 +51,7 @@ public class Customer {
     @JoinColumn(name = "customerstatus_id", referencedColumnName = "id", nullable = false)
     private Customerstatus customerstatus;
 
-    public Customer(Integer id, String fullname){
+    public Customer(Integer id, String callingname){
         this.id = id;
         this.callingname = callingname;
     }

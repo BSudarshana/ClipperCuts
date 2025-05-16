@@ -1,5 +1,6 @@
 package lk.earth.earthuniversity.controller;
 
+import lk.earth.earthuniversity.entity.Customer;
 import lk.earth.earthuniversity.entity.Employee;
 import lk.earth.earthuniversity.entity.User;
 import lk.earth.earthuniversity.util.RegexProvider;
@@ -25,6 +26,9 @@ public class RegexController {
     public HashMap<String, HashMap<String, String>> user() {
         return RegexProvider.get(new User());
     }
+
+    @GetMapping(path ="/customers", produces = "application/json")
+    public HashMap<String, HashMap<String, String>> Customer() { return RegexProvider.get(new Customer());}
 
 
 }

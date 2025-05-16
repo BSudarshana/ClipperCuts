@@ -18,6 +18,7 @@ export class AuthorizationManager {
   private readonly localStorageAcademicMenus = 'acdMenuState';
   private readonly localStorageRegistrationMenus = 'regMenuState';
   private readonly localStorageClassMenus = 'clsMenuState';
+  private readonly localStorageSalesMenus = 'salesMenuState';
 
   // Define Main Menu with there MenuItems
   Admin = [
@@ -27,12 +28,18 @@ export class AuthorizationManager {
     { name: 'Operations', isVisible: false, routerLink: 'operation' }
   ];
 
+  Sales = [
+    { name: 'Customer', isVisible: false, routerLink: 'customer' }
+  ];
+
+
 
 
   // Return all the Main Menus
   getNavListItem(){
     return [
-      { Menu : 'Admin' , MenuItems : this.Admin }
+      { Menu : 'Admin' , MenuItems : this.Admin },
+      { Menu : 'Sales' , MenuItems : this.Sales }
     ]
   }
 
