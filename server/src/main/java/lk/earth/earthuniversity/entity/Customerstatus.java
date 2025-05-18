@@ -14,6 +14,9 @@ public class Customerstatus {
     @JsonIgnore
     @OneToMany(mappedBy = "customerstatus")
     private Collection<Customer> customers;
+    @Basic
+    @Column(name = "name")
+    private String name;
 
     public Integer getId() {
         return id;
@@ -46,5 +49,13 @@ public class Customerstatus {
 
     public void setCustomers(Collection<Customer> customers) {
         this.customers = customers;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

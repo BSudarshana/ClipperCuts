@@ -12,7 +12,7 @@ export class Cusstatusservice {
 
   async getAllList(): Promise<Array<Cusstatus>> {
 
-    const customerstatuses = await this.http.get<Array<Cusstatus>>('http://localhost:8080/customerstatuses/list').toPromise();
+    const customerstatuses = await this.http.get<Array<Cusstatus>>('http://localhost:8080/customersstatuses/list').toPromise();
     if(customerstatuses == undefined){
       return [];
     }

@@ -8,7 +8,6 @@ import {UiAssist} from "../../../util/ui/ui.assist";
 import {Gender} from "../../../entity/gender";
 import {Designation} from "../../../entity/designation";
 import {GenderService} from "../../../service/genderservice";
-import {DesignationService} from "../../../service/designationservice";
 import {MatDialog} from "@angular/material/dialog";
 import {MessageComponent} from "../../../util/dialog/message/message.component";
 import {ConfirmComponent} from "../../../util/dialog/confirm/confirm.component";
@@ -19,6 +18,8 @@ import {AuthorizationManager} from "../../../service/authorizationmanager";
 import {Custype} from "../../../entity/custype";
 import {Cusstatusservice} from "../../../service/cusstatusservice";
 import {Custypeservice} from "../../../service/custypeservice";
+import {Empstatus} from "../../../entity/empstatus";
+import {Emptype} from "../../../entity/emptype";
 
 
 @Component({
@@ -29,13 +30,13 @@ import {Custypeservice} from "../../../service/custypeservice";
 
 export class CustomerComponent {
 
-  columns: string[] = ['code', 'callingname', 'gender', 'mobile', 'email', 'address'];
-  headers: string[] = ['Code', 'Calling Name', 'Gender', 'Mobile', 'Email', 'Address'];
-  binders: string[] = ['code', 'callingname', 'gender.name', 'mobile', 'email', 'address'];
+  columns: string[] = ['code', 'fullname', 'gender', 'mobile', 'email', 'address'];
+  headers: string[] = ['Code', 'Full Name', 'Gender', 'Mobile', 'Email', 'Address'];
+  binders: string[] = ['code', 'fullname', 'gender.name', 'mobile', 'email', 'address'];
 
-  cscolumns: string[] = ['csnumber', 'cscallingname', 'csgender', 'csdesignation', 'csname', 'csmodi'];
-  csprompts: string[] = ['Search by Number', 'Search by Name', 'Search by Gender',
-    'Search by Designation', 'Search by Full Name', 'Search by Modi'];
+  // cscolumns: string[] = ['cscode', 'cscallingname', 'csgender', 'csdesignation', 'csname', 'csmodi'];
+  cscolumns: string[] = ['cscode', 'csfullname', 'csgender', 'csmobile', 'csemail','csaddress'];
+  csprompts: string[] = ['Search by Code', 'Search by Full Name', 'Search by Gender', 'Search by Mobile', 'Search by Email', 'Search by Address'];
 
   public csearch!: FormGroup;
   public ssearch!: FormGroup;
@@ -62,7 +63,6 @@ export class CustomerComponent {
   hasDeleteAuthority: boolean = false;
 
   genders: Array<Gender> = [];
-  designations: Array<Designation> = [];
   customerstatuses: Array<Cusstatus> = [];
   customertypes: Array<Custype> = [];
 
@@ -75,9 +75,8 @@ export class CustomerComponent {
   constructor(
     private es: CustomerService,
     private gs: GenderService,
-    private ds: DesignationService,
-    private ss: Cusstatusservice,
-    private et: Custypeservice,
+    private cs: Cusstatusservice,
+    private ct: Custypeservice,
     private rs: RegexService,
     private fb: FormBuilder,
     private dg: MatDialog,
@@ -87,20 +86,18 @@ export class CustomerComponent {
     this.uiassist = new UiAssist(this);
 
     this.csearch = this.fb.group({
-      "csnumber": new FormControl(),
-      "cscallingname": new FormControl(),
+      "cscode": new FormControl(),
+      "csfullname": new FormControl(),
       "csgender": new FormControl(),
-      "csdesignation": new FormControl(),
-      "csname": new FormControl(),
-      "csmodi": new FormControl(),
+      "csmobile": new FormControl(),
+      "csemail": new FormControl(),
+      "csaddress": new FormControl(),
     });
 
     this.ssearch = this.fb.group({
-      "ssnumber": new FormControl(),
+      "sscode": new FormControl(),
       "ssfullname": new FormControl(),
-      "ssgender": new FormControl(),
-      "ssdesignation": new FormControl(),
-      "ssnic": new FormControl()
+      "ssmobile": new FormControl()
     });
 
 
@@ -110,14 +107,10 @@ export class CustomerComponent {
       "callingname": new FormControl('', [Validators.required]),
       "gender": new FormControl('', [Validators.required]),
       "nic": new FormControl('', [Validators.required]),
-      "dobirth": new FormControl('', [Validators.required]),
       "photo": new FormControl('', [Validators.required]),
       "mobile": new FormControl('', [Validators.required]),
-      "land": new FormControl('', ),
       "email": new FormControl('', [Validators.required]),
-      "designation": new FormControl('', [Validators.required]),
       "doassignment": new FormControl('', [Validators.required]),
-      "description": new FormControl('', [Validators.required]),
       "custype": new FormControl('', [Validators.required]),
       "cusstatus": new FormControl('', [Validators.required]),
     }, {updateOn: 'change'});
@@ -143,8 +136,13 @@ export class CustomerComponent {
       this.genders = gens;
     });
 
-    this.ds.getAllList().then((dess: Designation[]) => {
-      this.designations = dess;
+    this.cs.getAllList().then((stes: Cusstatus[]) => {
+      this.customerstatuses = stes;
+    });
+
+    this.ct.getAllList().then((types: Custype[]) => {
+      console.log(types)
+      this.customertypes = types;
     });
 
     this.rs.get('customers').then((regs: []) => {
@@ -167,65 +165,60 @@ export class CustomerComponent {
   }
 
 
-  // createForm() {
-  //
-  //   this.form.controls['number'].setValidators([Validators.required, Validators.pattern(this.regexes['number']['regex'])]);
-  //   this.form.controls['fullname'].setValidators([Validators.required, Validators.pattern(this.regexes['fullname']['regex'])]);
-  //   this.form.controls['callingname'].setValidators([Validators.required, Validators.pattern(this.regexes['callingname']['regex'])]);
-  //   this.form.controls['gender'].setValidators([Validators.required]);
-  //   this.form.controls['nic'].setValidators([Validators.required, Validators.pattern(this.regexes['nic']['regex'])]);
-  //   this.form.controls['dobirth'].setValidators([Validators.required]);
-  //   this.form.controls['photo'].setValidators([Validators.required]);
-  //   this.form.controls['address'].setValidators([Validators.required, Validators.pattern(this.regexes['address']['regex'])]);
-  //   this.form.controls['mobile'].setValidators([Validators.required, Validators.pattern(this.regexes['mobile']['regex'])]);
-  //   this.form.controls['land'].setValidators([Validators.required,Validators.pattern(this.regexes['land']['regex'])]);
-  //   this.form.controls['email'].setValidators([Validators.required,Validators.pattern(this.regexes['email']['regex'])]);
-  //   this.form.controls['designation'].setValidators([Validators.required]);
-  //   this.form.controls['doassignment'].setValidators([Validators.required]);
-  //   this.form.controls['description'].setValidators([Validators.required, Validators.pattern(this.regexes['description']['regex'])]);
-  //   this.form.controls['custype'].setValidators([Validators.required]);
-  //   this.form.controls['cusstatus'].setValidators([Validators.required]);
-  //
-  //   Object.values(this.form.controls).forEach( control => { control.markAsTouched(); } );
-  //
-  //   for (const controlName in this.form.controls) {
-  //     const control = this.form.controls[controlName];
-  //     control.valueChanges.subscribe(value => {
-  //           // @ts-ignore
-  //           if (controlName == "dobirth" || controlName == "doassignment")
-  //               value = this.dp.transform(new Date(value), 'yyyy-MM-dd');
-  //
-  //           if (this.oldcustomer != undefined && control.valid) {
-  //             // @ts-ignore
-  //             if (value === this.customer[controlName]) {
-  //               control.markAsPristine();
-  //             } else {
-  //               control.markAsDirty();
-  //             }
-  //           } else {
-  //             control.markAsPristine();
-  //           }
-  //         }
-  //     );
-  //
-  //     }
-  //
-  //   this.enableButtons(true,false,false);
-  //
-  // }
+  createForm() {
+
+    this.form.controls['code'].setValidators([Validators.required, Validators.pattern(this.regexes['number']['regex'])]);
+    this.form.controls['fullname'].setValidators([Validators.required, Validators.pattern(this.regexes['fullname']['regex'])]);
+    this.form.controls['callingname'].setValidators([Validators.required, Validators.pattern(this.regexes['callingname']['regex'])]);
+    this.form.controls['gender'].setValidators([Validators.required]);
+    this.form.controls['photo'].setValidators([Validators.required]);
+    this.form.controls['address'].setValidators([Validators.required, Validators.pattern(this.regexes['address']['regex'])]);
+    this.form.controls['mobile'].setValidators([Validators.required, Validators.pattern(this.regexes['mobile']['regex'])]);
+    this.form.controls['email'].setValidators([Validators.required,Validators.pattern(this.regexes['email']['regex'])]);
+    this.form.controls['doassignment'].setValidators([Validators.required]);
+    this.form.controls['custype'].setValidators([Validators.required]);
+    this.form.controls['cusstatus'].setValidators([Validators.required]);
+
+    Object.values(this.form.controls).forEach( control => { control.markAsTouched(); } );
+
+    for (const controlName in this.form.controls) {
+      const control = this.form.controls[controlName];
+      control.valueChanges.subscribe(value => {
+            // @ts-ignore
+            if (controlName == "dobirth" || controlName == "doassignment")
+                value = this.dp.transform(new Date(value), 'yyyy-MM-dd');
+
+            if (this.oldcustomer != undefined && control.valid) {
+              // @ts-ignore
+              if (value === this.customer[controlName]) {
+                control.markAsPristine();
+              } else {
+                control.markAsDirty();
+              }
+            } else {
+              control.markAsPristine();
+            }
+          }
+      );
+
+      }
+
+    this.enableButtons(true,false,false);
+
+  }
 
 
-  // enableButtons(add:boolean, upd:boolean, del:boolean){
-  //   this.enaadd=add;
-  //   this.enaupd=upd;
-  //   this.enadel=del;
-  // }
+  enableButtons(add:boolean, upd:boolean, del:boolean){
+    this.enaadd=add;
+    this.enaupd=upd;
+    this.enadel=del;
+  }
 
   loadTable(query: string) {
 
     this.es.getAll(query)
-      .then((emps: Customer[]) => {
-        this.customers = emps;
+      .then((cuss: Customer[]) => {
+        this.customers = cuss;
         this.imageurl = 'assets/fullfilled.png';
       })
       .catch((error) => {
@@ -249,57 +242,54 @@ export class CustomerComponent {
     const cserchdata = this.csearch.getRawValue();
 
     this.data.filterPredicate = (customer: Customer, filter: string) => {
-      return (cserchdata.csnumber == null || customer.code.toLowerCase().includes(cserchdata.csnumber)) &&
-        (cserchdata.cscallingname == null || customer.callingname.toLowerCase().includes(cserchdata.cscallingname)) &&
+      return (cserchdata.cscode == null || customer.code.includes(cserchdata.cscode)) &&
+        (cserchdata.csfullname == null || customer.fullname.toLowerCase().includes(cserchdata.csfullname)) &&
         (cserchdata.csgender == null || customer.gender.name.toLowerCase().includes(cserchdata.csgender)) &&
-        (cserchdata.csname == null || customer.fullname.toLowerCase().includes(cserchdata.csname)) &&
-        (cserchdata.csmodi == null || this.getModi(customer).toLowerCase().includes(cserchdata.csmodi));
+        (cserchdata.csmobile == null || customer.mobile.toLowerCase().includes(cserchdata.csmobile)) &&
+        (cserchdata.csemail == null || customer.email.includes(cserchdata.csemail)) &&
+        (cserchdata.csaddress == null || customer.address.toLowerCase().includes(cserchdata.csaddress)) ;
     };
 
     this.data.filter = 'xx';
 
   }
 
-  // btnSearchMc(): void {
-  //
-  //   const sserchdata = this.ssearch.getRawValue();
-  //
-  //   let number = sserchdata.ssnumber;
-  //   let fullname = sserchdata.ssfullname;
-  //   let nic = sserchdata.ssnic;
-  //   let genderid = sserchdata.ssgender;
-  //   let designationid = sserchdata.ssdesignation;
-  //
-  //   let query = "";
-  //
-  //   if (number != null && number.trim() != "") query = query + "&number=" + number;
-  //   if (fullname != null && fullname.trim() != "") query = query + "&fullname=" + fullname;
-  //   if (nic != null && nic.trim() != "") query = query + "&nic=" + nic;
-  //   if (genderid != null) query = query + "&genderid=" + genderid;
-  //   if (designationid != null) query = query + "&designationid=" + designationid;
-  //
-  //   if (query != "") query = query.replace(/^./, "?")
-  //
-  //   this.loadTable(query);
-  //
-  // }
+  btnSearchMc(): void {
+
+    const sserchdata = this.ssearch.getRawValue();
+
+    let code = sserchdata.sscode;
+    let fullname = sserchdata.ssfullname;
+    let mobile = sserchdata.ssmobile;
+
+    let query = "";
+
+    if (code != null && code.trim() != "") query = query + "&code=" + code;
+    if (fullname != null && fullname.trim() != "") query = query + "&fullname=" + fullname;
+    if (mobile != null && mobile.trim() != "") query = query + "&mobile=" + mobile;
+
+    if (query != "") query = query.replace(/^./, "?")
+
+    this.loadTable(query);
+
+  }
 
 
-  // btnSearchClearMc(): void {
-  //
-  //   const confirm = this.dg.open(ConfirmComponent, {
-  //     width: '500px',
-  //     data: {heading: "Search Clear", message: "Are you sure to Clear the Search?"}
-  //   });
-  //
-  //   confirm.afterClosed().subscribe(async result => {
-  //     if (result) {
-  //       this.ssearch.reset();
-  //       this.loadTable("");
-  //     }
-  //   });
-  //
-  // }
+  btnSearchClearMc(): void {
+
+    const confirm = this.dg.open(ConfirmComponent, {
+      width: '500px',
+      data: {heading: "Search Clear", message: "Are you sure to Clear the Search?"}
+    });
+
+    confirm.afterClosed().subscribe(async result => {
+      if (result) {
+        this.ssearch.reset();
+        this.loadTable("");
+      }
+    });
+
+  }
 
   // selectImage(e: any): void {
   //   if (e.target.files) {
@@ -312,142 +302,142 @@ export class CustomerComponent {
   //   }
   // }
 
-  // clearImage(): void {
-  //   this.imageempurl = 'assets/default.png';
-  //   this.form.controls['photo'].setErrors({'required': true});
-  // }
+  clearImage(): void {
+    this.imageempurl = 'assets/default.png';
+    this.form.controls['photo'].setErrors({'required': true});
+  }
 
 
-  // add() {
-  //
-  //   let errors = this.getErrors();
-  //
-  //   if (errors != "") {
-  //     const errmsg = this.dg.open(MessageComponent, {
-  //       width: '500px',
-  //       data: {heading: "Errors - Customer Add ", message: "You have following Errors <br> " + errors}
-  //     });
-  //     errmsg.afterClosed().subscribe(async result => {
-  //       if (!result) {
-  //         return;
-  //       }
-  //     });
-  //   } else {
-  //
-  //     this.customer = this.form.getRawValue();
-  //     this.customer.photo = btoa(this.imageempurl);
-  //
-  //     let cusdata: string = "";
-  //
-  //     cusdata = cusdata + "<br>Number is : " + this.customer.code;
-  //     cusdata = cusdata + "<br>Fullname is : " + this.customer.fullname;
-  //     cusdata = cusdata + "<br>Callingname is : " + this.customer.callingname;
-  //
-  //     const confirm = this.dg.open(ConfirmComponent, {
-  //       width: '500px',
-  //       data: {
-  //         heading: "Confirmation - Customer Add",
-  //         message: "Are you sure to Add the following Customer? <br> <br>" + cusdata
-  //       }
-  //     });
-  //
-  //     let addstatus: boolean = false;
-  //     let addmessage: string = "Server Not Found";
-  //
-  //     confirm.afterClosed().subscribe(async result => {
-  //       if (result) {
-  //         this.es.add(this.customer).then((responce: [] | undefined) => {
-  //           if (responce != undefined) { // @ts-ignore
-  //             console.log("Add-" + responce['id'] + "-" + responce['url'] + "-" + (responce['errors'] == ""));
-  //             // @ts-ignore
-  //             addstatus = responce['errors'] == "";
-  //             console.log("Add Sta-" + addstatus);
-  //             if (!addstatus) { // @ts-ignore
-  //               addmessage = responce['errors'];
-  //             }
-  //           } else {
-  //             console.log("undefined");
-  //             addstatus = false;
-  //             addmessage = "Content Not Found"
-  //           }
-  //         }).finally(() => {
-  //
-  //           if (addstatus) {
-  //             addmessage = "Successfully Saved";
-  //             this.form.reset();
-  //             this.clearImage();
-  //             Object.values(this.form.controls).forEach(control => {
-  //               control.markAsTouched();
-  //             });
-  //             this.loadTable("");
-  //           }
-  //
-  //           const stsmsg = this.dg.open(MessageComponent, {
-  //             width: '500px',
-  //             data: {heading: "Status -Customer Add", message: addmessage}
-  //           });
-  //
-  //           stsmsg.afterClosed().subscribe(async result => {
-  //             if (!result) {
-  //               return;
-  //             }
-  //           });
-  //         });
-  //       }
-  //     });
-  //   }
-  // }
+  add() {
+
+    let errors = this.getErrors();
+
+    if (errors != "") {
+      const errmsg = this.dg.open(MessageComponent, {
+        width: '500px',
+        data: {heading: "Errors - Customer Add ", message: "You have following Errors <br> " + errors}
+      });
+      errmsg.afterClosed().subscribe(async result => {
+        if (!result) {
+          return;
+        }
+      });
+    } else {
+
+      this.customer = this.form.getRawValue();
+      this.customer.photo = btoa(this.imageempurl);
+
+      let cusdata: string = "";
+
+      cusdata = cusdata + "<br>Number is : " + this.customer.code;
+      cusdata = cusdata + "<br>Fullname is : " + this.customer.fullname;
+      cusdata = cusdata + "<br>Callingname is : " + this.customer.callingname;
+
+      const confirm = this.dg.open(ConfirmComponent, {
+        width: '500px',
+        data: {
+          heading: "Confirmation - Customer Add",
+          message: "Are you sure to Add the following Customer? <br> <br>" + cusdata
+        }
+      });
+
+      let addstatus: boolean = false;
+      let addmessage: string = "Server Not Found";
+
+      confirm.afterClosed().subscribe(async result => {
+        if (result) {
+          this.es.add(this.customer).then((responce: [] | undefined) => {
+            if (responce != undefined) { // @ts-ignore
+              console.log("Add-" + responce['id'] + "-" + responce['url'] + "-" + (responce['errors'] == ""));
+              // @ts-ignore
+              addstatus = responce['errors'] == "";
+              console.log("Add Sta-" + addstatus);
+              if (!addstatus) { // @ts-ignore
+                addmessage = responce['errors'];
+              }
+            } else {
+              console.log("undefined");
+              addstatus = false;
+              addmessage = "Content Not Found"
+            }
+          }).finally(() => {
+
+            if (addstatus) {
+              addmessage = "Successfully Saved";
+              this.form.reset();
+              this.clearImage();
+              Object.values(this.form.controls).forEach(control => {
+                control.markAsTouched();
+              });
+              this.loadTable("");
+            }
+
+            const stsmsg = this.dg.open(MessageComponent, {
+              width: '500px',
+              data: {heading: "Status -Customer Add", message: addmessage}
+            });
+
+            stsmsg.afterClosed().subscribe(async result => {
+              if (!result) {
+                return;
+              }
+            });
+          });
+        }
+      });
+    }
+  }
 
 
-  // getErrors(): string {
-  //
-  //   let errors: string = "";
-  //
-  //   for (const controlName in this.form.controls) {
-  //     const control = this.form.controls[controlName];
-  //     if (control.errors) {
-  //
-  //       if (this.regexes[controlName] != undefined) {
-  //         errors = errors + "<br>" + this.regexes[controlName]['message'];
-  //       } else {
-  //         errors = errors + "<br>Invalid " + controlName;
-  //       }
-  //     }
-  //   }
-  //
-  //   return errors;
-  // }
+  getErrors(): string {
+
+    let errors: string = "";
+
+    for (const controlName in this.form.controls) {
+      const control = this.form.controls[controlName];
+      if (control.errors) {
+
+        if (this.regexes[controlName] != undefined) {
+          errors = errors + "<br>" + this.regexes[controlName]['message'];
+        } else {
+          errors = errors + "<br>Invalid " + controlName;
+        }
+      }
+    }
+
+    return errors;
+  }
 
 
-  // fillForm(customer: Customer) {
-  //
-  //   this.selectedrow=customer;
-  //
-  //   this.customer = JSON.parse(JSON.stringify(customer));
-  //   this.oldcustomer = JSON.parse(JSON.stringify(customer));
-  //
-  //   if (this.customer.photo != null) {
-  //     this.imageempurl = atob(this.customer.photo);
-  //     this.form.controls['photo'].clearValidators();
-  //   } else {
-  //     this.clearImage();
-  //   }
-  //   this.customer.photo = "";
-  //
-  //   //@ts-ignore
-  //   this.customer.gender = this.genders.find(g => g.id === this.customer.gender.id);
-  //   //@ts-ignore
-  //   this.customer.designation = this.designations.find(d => d.id === this.customer.designation.id);
-  //
-  //   //@ts-ignore
-  //   this.customer.emptype = this.customertypes.find(s => s.id === this.customer.emptype.id);
-  //
-  //   this.form.patchValue(this.customer);
-  //   this.form.markAsPristine();
-  //
-  //   this.enableButtons(false,true,true);
-  //
-  // }
+  fillForm(customer: Customer) {
+
+    this.selectedrow=customer;
+
+    this.customer = JSON.parse(JSON.stringify(customer));
+    this.oldcustomer = JSON.parse(JSON.stringify(customer));
+
+    if (this.customer.photo != null) {
+      this.imageempurl = atob(this.customer.photo);
+      this.form.controls['photo'].clearValidators();
+    } else {
+      this.clearImage();
+    }
+    this.customer.photo = "";
+
+    //@ts-ignore
+    this.customer.gender = this.genders.find(g => g.id === this.customer.gender.id);
+    //@ts-ignore
+    this.customer.cusstatus = this.customerstatuses.find(d => d.id === this.customer.cusstatus.id);
+
+    //@ts-ignore
+    this.customer.custype = this.customertypes.find(s => s.id === this.customer.custype.id);
+
+    this.form.patchValue(this.customer);
+    this.form.markAsPristine();
+
+    this.enableButtons(false,true,true);
+
+  }
   //
   //
   // getUpdates(): string {
@@ -589,23 +579,23 @@ export class CustomerComponent {
   //       });
   //     }
   //
-  // clear():void{
-  //   const confirm = this.dg.open(ConfirmComponent, {
-  //     width: '500px',
-  //     data: {
-  //       heading: "Confirmation - Customer Clear",
-  //       message: "Are you sure to Clear following Details ? <br> <br>"
-  //     }
-  //   });
-  //
-  //   confirm.afterClosed().subscribe(async result => {
-  //     if (result) {
-  //       this.form.reset();
-  //       this.clearImage();
-  //        this.createForm();
-  //     }
-  //   });
-  // }
+  clear():void{
+    const confirm = this.dg.open(ConfirmComponent, {
+      width: '500px',
+      data: {
+        heading: "Confirmation - Customer Clear",
+        message: "Are you sure to Clear following Details ? <br> <br>"
+      }
+    });
+
+    confirm.afterClosed().subscribe(async result => {
+      if (result) {
+        this.form.reset();
+        this.clearImage();
+         this.createForm();
+      }
+    });
+  }
 
 
 }
