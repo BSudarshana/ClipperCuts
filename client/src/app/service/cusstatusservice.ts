@@ -1,4 +1,4 @@
-import {Cusstatus} from "../entity/cusstatus";
+import {Customerstatus} from "../entity/customerstatus";
 import {Injectable} from "@angular/core";
 import {HttpClient} from "@angular/common/http";
 
@@ -10,9 +10,9 @@ export class Cusstatusservice {
 
   constructor(private http: HttpClient) {  }
 
-  async getAllList(): Promise<Array<Cusstatus>> {
+  async getAllList(): Promise<Array<Customerstatus>> {
 
-    const customerstatuses = await this.http.get<Array<Cusstatus>>('http://localhost:8080/customersstatuses/list').toPromise();
+    const customerstatuses = await this.http.get<Array<Customerstatus>>('http://localhost:8080/customersstatuses/list').toPromise();
     if(customerstatuses == undefined){
       return [];
     }

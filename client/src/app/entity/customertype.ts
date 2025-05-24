@@ -1,4 +1,4 @@
-export class Cusstatus {
+export class Customertype {
 
   public id !: number;
   public name !: string;

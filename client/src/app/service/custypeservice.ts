@@ -1,6 +1,6 @@
 import {Injectable} from "@angular/core";
 import {HttpClient} from "@angular/common/http";
-import {Custype} from "../entity/custype";
+import {Customertype} from "../entity/customertype";
 
 @Injectable({
   providedIn: 'root'
@@ -10,9 +10,9 @@ export class Custypeservice {
 
   constructor(private http: HttpClient) {  }
 
-  async getAllList(): Promise<Array<Custype>> {
+  async getAllList(): Promise<Array<Customertype>> {
 
-    const customerstypes = await this.http.get<Array<Custype>>('http://localhost:8080/customerstypes/list').toPromise();
+    const customerstypes = await this.http.get<Array<Customertype>>('http://localhost:8080/customerstypes/list').toPromise();
     if(customerstypes == undefined){
       return [];
     }

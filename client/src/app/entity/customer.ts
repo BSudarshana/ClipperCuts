@@ -1,6 +1,6 @@
 import {Gender} from "./gender";
-import {Cusstatus} from "./cusstatus";
-import {Custype} from "./custype";
+import {Customerstatus} from "./customerstatus";
+import {Customertype} from "./customertype";
 
 export class Customer{
 
@@ -14,8 +14,8 @@ export class Customer{
   public photo !: string;
   public doassignment !: string;
   public gender !: Gender;
-  public cusstatus !: Cusstatus;
-  public custype !: Custype;
+  public cusstatus !: Customerstatus;
+  public custype !: Customertype;
 
 
   constructor(id:number,
@@ -28,8 +28,8 @@ export class Customer{
               email:string, doassignment:string,
               description:string,
               gender:Gender,
-              cusstatus:Cusstatus,
-              custype:Custype ) {
+              cusstatus:Customerstatus,
+              custype:Customertype ) {
 
     this.id=id;
     this.fullname=fullname;

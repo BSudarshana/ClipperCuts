@@ -57,7 +57,7 @@
 
           <mat-form-field appearance="outline">
             <mat-label>Customer Type</mat-label>
-            <mat-select formControlName="emptype">
+            <mat-select formControlName="customertype">
               <mat-option [value]="null" selected>Not Selected</mat-option>
               <mat-option *ngFor="let customertype of customertypes" [value]="customertype">{{customertype.name}}</mat-option>
             </mat-select>
@@ -65,7 +65,7 @@
 
           <mat-form-field appearance="outline">
             <mat-label>Customer Status</mat-label>
-            <mat-select formControlName="empstatus">
+            <mat-select formControlName="customerstatus">
               <mat-option [value]="null" selected>Not Selected</mat-option>
               <mat-option *ngFor="let customerstatus of customerstatuses" [value]="customerstatus">{{customerstatus.name}}</mat-option>
             </mat-select>
@@ -73,8 +73,9 @@
 
           <div id="butpanel">
             <button mat-raised-button (click)="add()" [disabled]="!(enaadd && hasInsertAuthority)">Add</button>
+<!--            <button mat-raised-button (click)="add()" >Add</button>-->
             <button mat-raised-button (click)="clear()">Clear</button>
-<!--            <button mat-raised-button (click)="update()" [disabled]="!(enaupd && hasUpdateAuthority)">Update</button>-->
+            <button mat-raised-button (click)="update()" [disabled]="!(enaupd && hasUpdateAuthority)">Update</button>
 <!--            <button mat-raised-button (click)="delete()" [disabled]="!(enadel && hasDeleteAuthority)">Delete</button>-->
           </div>
 
@@ -167,9 +168,9 @@
 
           <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
           <mat-header-row *matHeaderRowDef="cscolumns"></mat-header-row>
-          <mat-row *matRowDef="let row; columns: columns;"></mat-row>
+<!--          <mat-row *matRowDef="let row; columns: columns;"></mat-row>-->
           <!--update-->
-<!--          <mat-row *matRowDef="let row; columns: columns;" (click)="fillForm(row)" [ngClass]="{'selected-row': row === selectedrow}"></mat-row>-->
+          <mat-row *matRowDef="let row; columns: columns;" (click)="fillForm(row)" [ngClass]="{'selected-row': row === selectedrow}"></mat-row>
         </mat-table>
         <mat-paginator [length]="20" [pageSize]="3" [pageSizeOptions]="[3,5,10,20]"></mat-paginator>
       </mat-card-content>
