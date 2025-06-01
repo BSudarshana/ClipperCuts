@@ -18,6 +18,7 @@ import {AuthorizationManager} from "../../../service/authorizationmanager";
 import {Customertype} from "../../../entity/customertype";
 import {Cusstatusservice} from "../../../service/cusstatusservice";
 import {Custypeservice} from "../../../service/custypeservice";
+import {NumberService} from "../../../service/numberservice";
 import {Empstatus} from "../../../entity/empstatus";
 import {Emptype} from "../../../entity/emptype";
 
@@ -81,6 +82,7 @@ export class CustomerComponent {
     private fb: FormBuilder,
     private dg: MatDialog,
     private dp: DatePipe,
+    private ns: NumberService,
     public authService:AuthorizationManager) {
 
     this.uiassist = new UiAssist(this);
@@ -220,6 +222,8 @@ export class CustomerComponent {
       .then((cuss: Customer[]) => {
         this.customers = cuss;
         this.imageurl = 'assets/fullfilled.png';
+        this.ns.setLastSequenceNumber(this.es[this.es.length-1].code);
+        this.generateNumber();
       })
       .catch((error) => {
         console.log(error);
@@ -252,6 +256,11 @@ export class CustomerComponent {
 
     this.data.filter = 'xx';
 
+  }
+
+  generateNumber(): void{
+    const newNumber : string = this.ns.generateNumber('C');
+    this.form.controls['code'].setValue(newNumber);
   }
 
   btnSearchMc(): void {
