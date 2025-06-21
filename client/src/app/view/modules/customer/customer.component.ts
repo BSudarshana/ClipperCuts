@@ -222,7 +222,7 @@ export class CustomerComponent {
       .then((cuss: Customer[]) => {
         this.customers = cuss;
         this.imageurl = 'assets/fullfilled.png';
-        this.ns.setLastSequenceNumber(this.es[this.es.length-1].code);
+        this.ns.setLastSequenceNumber(this.customers[this.customers.length-1].code);
         this.generateNumber();
       })
       .catch((error) => {

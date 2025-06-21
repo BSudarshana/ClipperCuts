@@ -1,9 +1,11 @@
 <mat-toolbar>
-  <mat-toolbar-row style="background-image: url('assets/harvest/headerrow.png')">
+  <mat-toolbar-row id="top-toolbar" style="background-color : #ffffff">
+<!--    <mat-toolbar-row style="background-image: url('assets/harvest/headerrow.png')">-->
 
     <span class="toolbar-left">
       <button mat-icon-button (click)="opened=!opened" class="btn-nav"><mat-icon>menu</mat-icon></button>
-      <img src="/assets/harvest/headerimg.png" class="img-logo">
+<!--      <img src="/assets/harvest/headerimg.png" class="img-logo">-->
+      <h1 class="company-name">CLIPPER CUTS</h1>
     </span>
 
     <span class="toolbar-right">
@@ -17,22 +19,22 @@
 
 <mat-sidenav-container>
 
-  <mat-sidenav [(opened)]="opened" mode="side">
+  <mat-sidenav id="left-menu" [(opened)]="opened" mode="side">
 
     <mat-nav-list>
 
-      <mat-list-item routerLink="home"><mat-icon>home</mat-icon>Home</mat-list-item>
+      <mat-list-item  routerLink="home"><mat-icon>home</mat-icon> <span class="menu-text">Home</span></mat-list-item>
 
-      <mat-list-item routerLink="dashboard"><mat-icon>widgets</mat-icon>Dashboard</mat-list-item>
+      <mat-list-item routerLink="dashboard"><mat-icon>widgets</mat-icon><span class="menu-text">Dashboard</span></mat-list-item>
 
       <ng-container *ngFor="let menuItem of menuGroup">
         <mat-expansion-panel *ngIf="isMenuVisible(menuItem.Menu)">
-          <mat-expansion-panel-header >
+          <mat-expansion-panel-header class="panel-body-bs">
             <mat-list-item>
-              <mat-icon>{{ matIcons[menuItem.Menu] }}</mat-icon>{{ menuItem.Menu }}
+              <mat-icon>{{ matIcons[menuItem.Menu] }}</mat-icon><span class="menu-text">{{ menuItem.Menu }}</span>
             </mat-list-item>
           </mat-expansion-panel-header>
-          <ng-container *ngFor="let menuItem of menuItem.MenuItems">
+          <ng-container  class="panel-body-bs" *ngFor="let menuItem of menuItem.MenuItems">
             <mat-list-item *ngIf="menuItem.isVisible">
               <mat-list-item [routerLink]="menuItem.isVisible ? menuItem.routerLink : null"><a>{{ menuItem.name }}</a></mat-list-item>
             </mat-list-item>
@@ -42,7 +44,7 @@
 
       <mat-expansion-panel>
         <mat-expansion-panel-header>
-          <mat-list-item><mat-icon>poll</mat-icon>Report</mat-list-item>
+          <mat-list-item><mat-icon>poll</mat-icon><span class="menu-text">Report</span></mat-list-item>
         </mat-expansion-panel-header>
         <mat-list-item [routerLink]="menueitem.routerlink"  *ngFor="let menueitem of repGroup" >{{menueitem.name}} </mat-list-item>
       </mat-expansion-panel>

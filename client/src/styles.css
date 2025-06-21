@@ -10,6 +10,12 @@ body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
+@font-face {
+  font-family: 'Inika-Regular';
+  src: url('assets/fonts/Inika-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
 
 mat-form-field {
   margin: -5px !important;
@@ -41,8 +47,24 @@ mat-form-field input {
   color: darkgreen !important;
 }
 
+mat-card-header { background: #EFEFEF; color: #626262 }
+
 .dark-mode {
   filter: invert(100%) hue-rotate(180deg);
 }
+
+#top-toolbar{
+  background-color : #ffffff;
+}
+
+.mat-toolbar .company-name{
+  color: #C9CD03;
+  font-size: 32px;
+  font-family: 'Inika-Regular';
+  padding: 10px;
+  margin-bottom: 0px;
+}
+
+
 
 
