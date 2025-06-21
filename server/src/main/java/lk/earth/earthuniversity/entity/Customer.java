@@ -21,7 +21,6 @@ public class Customer {
     private String callingname;
     @Basic
     @Column(name = "code")
-    @Pattern(regexp = "^C\\d{7}$", message = "Invalid Address")
     private String code;
     @Basic
     @Column(name = "address")

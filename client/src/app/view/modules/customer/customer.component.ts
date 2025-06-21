@@ -19,8 +19,6 @@ import {Customertype} from "../../../entity/customertype";
 import {Cusstatusservice} from "../../../service/cusstatusservice";
 import {Custypeservice} from "../../../service/custypeservice";
 import {NumberService} from "../../../service/numberservice";
-import {Empstatus} from "../../../entity/empstatus";
-import {Emptype} from "../../../entity/emptype";
 
 
 @Component({
@@ -123,6 +121,7 @@ export class CustomerComponent {
 
   ngOnInit() {
     this.initialize();
+    this.enableButtons(true, false, false);
   }
 
   initialize() {
@@ -169,7 +168,7 @@ export class CustomerComponent {
 
   createForm() {
 
-    this.form.controls['code'].setValidators([Validators.required, Validators.pattern(this.regexes['number']['regex'])]);
+    this.form.controls['code'].setValidators([Validators.required]);
     this.form.controls['fullname'].setValidators([Validators.required, Validators.pattern(this.regexes['fullname']['regex'])]);
     this.form.controls['callingname'].setValidators([Validators.required, Validators.pattern(this.regexes['callingname']['regex'])]);
     this.form.controls['gender'].setValidators([Validators.required]);
@@ -177,7 +176,7 @@ export class CustomerComponent {
     this.form.controls['mobile'].setValidators([Validators.required, Validators.pattern(this.regexes['mobile']['regex'])]);
     this.form.controls['email'].setValidators([Validators.required,Validators.pattern(this.regexes['email']['regex'])]);
     this.form.controls['address'].setValidators([Validators.required, Validators.pattern(this.regexes['address']['regex'])]);
-    this.form.controls['doassignment'].setValidators([Validators.required]);
+    // this.form.controls['doassignment'].setValidators([Validators.required]);
     this.form.controls['customertype'].setValidators([Validators.required]);
     this.form.controls['customerstatus'].setValidators([Validators.required]);
 
@@ -311,10 +310,10 @@ export class CustomerComponent {
   //   }
   // }
 
-  clearImage(): void {
-    this.imageempurl = 'assets/default.png';
-    this.form.controls['photo'].setErrors({'required': true});
-  }
+  // clearImage(): void {
+  //   this.imageempurl = 'assets/default.png';
+  //   this.form.controls['photo'].setErrors({'required': true});
+  // }
 
 
   add() {
@@ -374,7 +373,7 @@ export class CustomerComponent {
             if (addstatus) {
               addmessage = "Successfully Saved";
               this.form.reset();
-              this.clearImage();
+              //this.clearImage();
               Object.values(this.form.controls).forEach(control => {
                 control.markAsTouched();
               });
@@ -513,7 +512,7 @@ export class CustomerComponent {
               if (updstatus) {
                 updmessage = "Successfully Updated";
                 this.form.reset();
-                this.clearImage();
+                //this.clearImage();
                  Object.values(this.form.controls).forEach(control => { control.markAsTouched(); });
                 this.loadTable("");
               }
@@ -600,8 +599,17 @@ export class CustomerComponent {
     confirm.afterClosed().subscribe(async result => {
       if (result) {
         this.form.reset();
-        this.clearImage();
-         this.createForm();
+        //this.clearImage();
+        Object.keys(this.form.controls).forEach(key => {
+          this.form.controls[key].clearValidators();
+          this.form.controls[key].updateValueAndValidity();
+        });
+        this.createForm();
+        if (this.form.valid) {
+          this.enableButtons(true, false, false);
+        } else {
+          console.error("Form is not valid, cannot enable add button.");
+        }
       }
     });
   }
