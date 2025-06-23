@@ -40,3 +40,142 @@ button[btn-b] {
   background: #2B8581 !important;
 }
 
+
+/*!* Reset and layout *!*/
+/** {*/
+/*  margin: 0;*/
+/*  padding: 0;*/
+/*  box-sizing: border-box;*/
+/*}*/
+
+/*html, body {*/
+/*  height: 100%;*/
+/*  font-family: Arial, sans-serif;*/
+/*}*/
+
+/*body {*/
+/*  background: url('your-background-image.jpg') no-repeat center center/cover;*/
+/*  position: relative;*/
+/*}*/
+
+/*!* Background overlay *!*/
+/*body::before {*/
+/*  content: "";*/
+/*  position: absolute;*/
+/*  top: 0; left: 0;*/
+/*  width: 100%;*/
+/*  height: 100%;*/
+/*  background-color: rgba(0, 0, 0, 0.5);*/
+/*  z-index: 0;*/
+/*}*/
+
+/*.login-container {*/
+/*  position: relative;*/
+/*  z-index: 1;*/
+/*  height: 100%;*/
+/*  display: flex;*/
+/*  align-items: center;*/
+/*  justify-content: center;*/
+/*  padding: 40px;*/
+/*}*/
+
+/*.login-box {*/
+/*  display: flex;*/
+/*  flex-direction: row;*/
+/*  background-color: white;*/
+/*  border-radius: 15px;*/
+/*  box-shadow: 0 0 20px rgba(0,0,0,0.2);*/
+/*  overflow: hidden;*/
+/*  max-width: 1000px;*/
+/*  width: 90%;*/
+/*}*/
+
+/*.branding {*/
+/*  background-color: #f4f4f4;*/
+/*  padding: 50px;*/
+/*  flex: 1;*/
+/*  display: flex;*/
+/*  flex-direction: column;*/
+/*  justify-content: center;*/
+/*  align-items: flex-start;*/
+/*}*/
+
+/*.branding h1 {*/
+/*  font-size: 66px;*/
+/*  color: #333;*/
+/*  margin-bottom: 20px;*/
+/*}*/
+
+/*.branding p {*/
+/*  font-size: 32px;*/
+/*  color: #666;*/
+/*  line-height: 1.4;*/
+/*}*/
+
+/*.login-form {*/
+/*  flex: 1;*/
+/*  padding: 50px;*/
+/*  display: flex;*/
+/*  flex-direction: column;*/
+/*  justify-content: center;*/
+/*}*/
+
+/*.login-form h2 {*/
+/*  font-size: 28px;*/
+/*  margin-bottom: 30px;*/
+/*  color: #333;*/
+/*}*/
+
+/*.login-form input {*/
+/*  padding: 12px;*/
+/*  margin-bottom: 20px;*/
+/*  font-size: 16px;*/
+/*  border: 1px solid #ccc;*/
+/*  border-radius: 6px;*/
+/*  width: 100%;*/
+/*}*/
+
+/*.login-form button {*/
+/*  padding: 12px;*/
+/*  font-size: 18px;*/
+/*  background-color: #333;*/
+/*  color: white;*/
+/*  border: none;*/
+/*  border-radius: 6px;*/
+/*  cursor: pointer;*/
+/*}*/
+
+/*.login-form button:hover {*/
+/*  background-color: #555;*/
+/*}*/
+
+/*.login-form a {*/
+/*  margin-top: 10px;*/
+/*  font-size: 14px;*/
+/*  color: #007BFF;*/
+/*  text-decoration: none;*/
+/*}*/
+
+/*.login-form a:hover {*/
+/*  text-decoration: underline;*/
+/*}*/
+
+/*@media (max-width: 768px) {*/
+/*  .login-box {*/
+/*    flex-direction: column;*/
+/*  }*/
+
+/*  .branding, .login-form {*/
+/*    width: 100%;*/
+/*    padding: 30px;*/
+/*  }*/
+
+/*  .branding h1 {*/
+/*    font-size: 48px;*/
+/*  }*/
+
+/*  .branding p {*/
+/*    font-size: 24px;*/
+/*  }*/
+/*}*/
+
