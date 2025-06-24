@@ -78,6 +78,14 @@ public class Employee {
     @OneToMany(mappedBy = "employee")
     private Collection<User> users;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "employee")
+    private Collection<GoodReceiveNote> goodReceiveNotes;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "employee")
+    private Collection<Purchaseorder> purchaseorders;
+
     public Employee(){}
 
     public Employee(Integer id, String callingname){
@@ -272,5 +280,21 @@ public class Employee {
 
     public void setUsers(Collection<User> users) {
         this.users = users;
+    }
+
+    public Collection<GoodReceiveNote> getGoodReceiveNotes() {
+        return goodReceiveNotes;
+    }
+
+    public void setGoodReceiveNotes(Collection<GoodReceiveNote> goodReceiveNotes) {
+        this.goodReceiveNotes = goodReceiveNotes;
+    }
+
+    public Collection<Purchaseorder> getPurchaseorders() {
+        return purchaseorders;
+    }
+
+    public void setPurchaseorders(Collection<Purchaseorder> purchaseorders) {
+        this.purchaseorders = purchaseorders;
     }
 }
