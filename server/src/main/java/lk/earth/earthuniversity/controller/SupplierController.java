@@ -82,58 +82,58 @@ public class SupplierController {
 
         return responce;
     }
-//
-//    @PutMapping
-//    @ResponseStatus(HttpStatus.CREATED)
-////    @PreAuthorize("hasAuthority('Customer-Update')")
-//    public HashMap<String,String> update(@RequestBody Customer customer){
-//
-//        HashMap<String,String> responce = new HashMap<>();
-//        String errors="";
-//
-//        Customer cus1 = supplierdao.findByCode(customer.getCode());
-//        Customer cus2 = supplierdao.findByMobile(customer.getMobile());
-//
-////        if(customer.getId().intValue() == supplierdao.findByMyId() )
-//        if(cus1!=null && customer.getId()!=cus1.getId())
-//            errors = errors+"<br> Existing Code";
-//        if(cus2!=null && customer.getId()!=cus2.getId())
+
+    @PutMapping
+    @ResponseStatus(HttpStatus.CREATED)
+//    @PreAuthorize("hasAuthority('Customer-Update')")
+    public HashMap<String,String> update(@RequestBody Supplier supplier){
+
+        HashMap<String,String> responce = new HashMap<>();
+        String errors="";
+
+//        Supplier sup1 = supplierdao.findRegNumber(supplier.getRegisternumber());
+//        Supplier cus2 = supplierdao.findByMobile(supplier.getMobile());
+
+//        if(sup1!=null && supplier.getId()!=sup1.getId())
+//            errors = errors+"<br> Existing Register Number";
+
+//        if(cus2!=null && supplier.getId()!=cus2.getId())
 //            errors = errors+"<br> Existing Mobile Number";
-//
-//        if(errors=="") supplierdao.save(customer);
-//        else errors = "Server Validation Errors : <br> "+errors;
-//
-//        responce.put("id",String.valueOf(customer.getId()));
-//        responce.put("url","/customers/"+customer.getId());
-//        responce.put("errors",errors);
-//
-//        return responce;
-//    }
-//
-//
-//    @DeleteMapping("/{id}")
-//    @ResponseStatus(HttpStatus.CREATED)
-//    public HashMap<String,String> delete(@PathVariable Integer id){
-//
-//        System.out.println(id);
-//
-//        HashMap<String,String> responce = new HashMap<>();
-//        String errors="";
-//
-//        Customer cus = supplierdao.findByMyId(id);
-//
-//        if(cus==null)
-//            errors = errors+"<br> Customer Does Not Existed";
-//
-//        if(errors=="") supplierdao.delete(cus);
-//        else errors = "Server Validation Errors : <br> "+errors;
-//
-//        responce.put("id",String.valueOf(id));
-//        responce.put("url","/customers/"+id);
-//        responce.put("errors",errors);
-//
-//        return responce;
-//    }
+
+        if(errors=="") supplierdao.save(supplier);
+        else errors = "Server Validation Errors : <br> "+errors;
+
+        responce.put("id",String.valueOf(supplier.getId()));
+        responce.put("url","/Suppliers/"+supplier.getId());
+        responce.put("errors",errors);
+
+        return responce;
+    }
+
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public HashMap<String,String> delete(@PathVariable Integer id){
+
+        System.out.println(id);
+
+        HashMap<String,String> responce = new HashMap<>();
+        String errors="";
+
+        Supplier sup = supplierdao.findByMyId(id);
+
+        if(sup==null)
+            errors = errors+"<br> Customer Does Not Existed";
+
+        if(errors=="") supplierdao.delete(sup);
+        else errors = "Server Validation Errors : <br> "+errors;
+
+        responce.put("id",String.valueOf(id));
+        responce.put("url","/Supplier/"+id);
+        responce.put("errors",errors);
+
+        return responce;
+    }
 
 }
 

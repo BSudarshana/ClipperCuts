@@ -17,7 +17,7 @@ public class Customer {
     private String fullname;
     @Basic
     @Column(name = "callingname")
-    @Pattern(regexp = "^([A-Z][a-z]+)$", message = "Invalid Calligname")
+    @Pattern(regexp = "^([A-Z][a-z]+)$", message = "Invalid Callingname")
     private String callingname;
     @Basic
     @Column(name = "code")
