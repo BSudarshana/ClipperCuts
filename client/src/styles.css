@@ -17,6 +17,20 @@ body {
   font-style: normal;
 }
 
+@font-face {
+  font-family: RobotoCondensed;
+  src: url('assets/fonts/RobotoCondensed-VariableFont_wght.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: Roboto;
+  src: url('assets/fonts/Roboto-VariableFont_wdth,wght.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 mat-form-field {
   margin: -5px !important;
   width: 100%;
