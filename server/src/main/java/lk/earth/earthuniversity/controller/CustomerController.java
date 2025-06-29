@@ -19,6 +19,13 @@ public class CustomerController {
     @Autowired
     private CustomerDao customerdao;
 
+    /**
+     * This method allows dynamic filtering of customers based on key-value pairs
+     *
+     * @param params A map of query parameters to filter the customer list.
+     * @return A list of customers that match the given filter criteria.
+     *         If no filters are provided, returns all customers.
+     */
     @GetMapping(produces = "application/json")
 //    @PreAuthorize("hasAuthority('customer-select')")p
     public List<Customer> get(@RequestParam HashMap<String, String> params) {
@@ -41,6 +48,11 @@ public class CustomerController {
 
     }
 
+    /**
+     * Retrieves a list of all customers registered in the system.
+     *
+     * @return list of all customers.
+     */
     @GetMapping(path ="/list",produces = "application/json")
     public List<Customer> get() {
 
@@ -48,8 +60,8 @@ public class CustomerController {
 
         customers = customers.stream().map(
                 customer -> {
-                    Customer c = new Customer(customer.getId(), customer.getCallingname());
-                    return  c;
+                    Customer cus = new Customer(customer.getId(), customer.getCallingname());
+                    return  cus;
                 }
         ).collect(Collectors.toList());
 
@@ -57,7 +69,12 @@ public class CustomerController {
 
     }
 
-
+    /**
+     * Adds a new customer to the system.
+     *
+     * @param customer object containing information of the customer.
+     * @return A HashMap containing a message such as success or error information.
+     */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
 //    @PreAuthorize("hasAuthority('Customer-Insert')")
@@ -82,6 +99,12 @@ public class CustomerController {
         return responce;
     }
 
+    /**
+     * Updates an existing customer information.
+     *
+     * @param customer object containing information of the existing customer.
+     * @return A HashMap containing a message such as success or error information.
+     */
     @PutMapping
     @ResponseStatus(HttpStatus.CREATED)
 //    @PreAuthorize("hasAuthority('Customer-Update')")
@@ -109,7 +132,12 @@ public class CustomerController {
         return responce;
     }
 
-
+    /**
+     * Delete a customer to the system.
+     *
+     * @param id is ID of Customer to be deleted.
+     * @return A HashMap containing a message such as success or error information.
+     */
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.CREATED)
     public HashMap<String,String> delete(@PathVariable Integer id){
@@ -119,12 +147,12 @@ public class CustomerController {
         HashMap<String,String> responce = new HashMap<>();
         String errors="";
 
-        Customer cus = customerdao.findByMyId(id);
+        Customer customer = customerdao.findByMyId(id);
 
-        if(cus==null)
+        if(customer==null)
             errors = errors+"<br> Customer Does Not Existed";
 
-        if(errors=="") customerdao.delete(cus);
+        if(errors=="") customerdao.delete(customer);
         else errors = "Server Validation Errors : <br> "+errors;
 
         responce.put("id",String.valueOf(id));

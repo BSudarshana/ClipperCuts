@@ -1,16 +1,18 @@
 mat-card {
   padding: 20px;
-  background: #2B775F;
+  /*background: #2B775F;*/
+  background-color: #C9CD03;
+  border-radius: 15px;
 }
 
 mat-card-title {
   padding: 10px 20px 10px 20px;
-  color: white;
+  color: #5a5a5a;
 }
 
 mat-card-content {
   padding: 10px 20px 20px 20px;
-  color: white;
+  color: #7a7a7a;
 }
 
 button {

@@ -15,17 +15,9 @@ mat-card-content { overflow: auto; height: 100%; }
 #ssearch button{ width: 195px; margin-left:10px; margin-top: 5px; background-color: #2B775F;   }
 
 
-
-/* Employee Form */
+/* Customer Form */
 #customerform{
   padding-top: 20px;
-}
-
-
-/* Employee Form > Photo Panel  */
-#imgpanel {
-  height: 100px;
-  margin-bottom: 30px;
 }
 
 #imgpanel img{
@@ -61,7 +53,6 @@ mat-card-content { overflow: auto; height: 100%; }
   background-color: #2B775F;
   color: white;
 }
-
 
 .selected-row{
   background-color: #c9e6ff!important;

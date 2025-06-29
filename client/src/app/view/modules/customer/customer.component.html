@@ -37,13 +37,6 @@
             <input matInput formControlName="mobile">
           </mat-form-field>
 
-<!--          <div id="imgpanel">-->
-<!--            <img [src]="imageempurl">-->
-<!--            <input id="userImage" hidden="hidden" (change)="selectImage($event)" Select type="file" formControlName="photo">-->
-<!--            <label for="userImage" id="selectbutton">Select</label>-->
-<!--            <label id="clearbutton" (click)="clearImage()">Clear</label>-->
-<!--          </div>-->
-
           <mat-form-field appearance="outline">
             <mat-label>Email</mat-label>
             <input matInput formControlName="email">
@@ -72,7 +65,6 @@
 
           <div id="butpanel">
             <button mat-raised-button (click)="add()" [disabled]="!(enaadd && hasInsertAuthority)">Add</button>
-<!--            <button mat-raised-button (click)="add()" >Add</button>-->
             <button mat-raised-button (click)="clear()">Clear</button>
             <button mat-raised-button (click)="update()" [disabled]="!(enaupd && hasUpdateAuthority)">Update</button>
             <button mat-raised-button (click)="delete()" [disabled]="!(enadel && hasDeleteAuthority)">Delete</button>

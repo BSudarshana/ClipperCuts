@@ -112,7 +112,7 @@ public class EmployeeController {
         return responce;
     }
 
-
+//Delete the Customer record
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.CREATED)
     public HashMap<String,String> delete(@PathVariable Integer id){
