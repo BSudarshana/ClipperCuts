@@ -12,7 +12,13 @@ mat-card-content { overflow: auto; height: 100%; }
 
 #ssearch mat-form-field { padding-left: 15px; width: 200px; }
 
-#ssearch button{ width: 195px; margin-left:10px; margin-top: 5px; background-color: #2B775F;   }
+#ssearch button{
+  width: 195px;
+  margin-left:10px;
+  margin-top: 5px;
+  color: #141414;
+  background-color: #C9CD03;
+}
 
 
 /* Customer Form */
@@ -25,7 +31,9 @@ mat-card-content { overflow: auto; height: 100%; }
   width: 100px;
 }
 
-#selectbutton, #clearbutton{
+/* Select and Clear Buttons */
+#selectbutton,
+#clearbutton{
   width: 150px;
   display: block;
   margin-left: 150px;
@@ -42,7 +50,7 @@ mat-card-content { overflow: auto; height: 100%; }
 }
 
 
-/* Employee Form > Button Panel  */
+/* Button Panel Styling */
 #butpanel{  margin-top: 30px;
   margin-bottom: 30px;
 }
@@ -50,8 +58,8 @@ mat-card-content { overflow: auto; height: 100%; }
 #butpanel button{
   width: 82px;
   margin:3px;
-  background-color: #2B775F;
-  color: white;
+  color: #141414;
+  background-color: #C9CD03;
 }
 
 .selected-row{
@@ -62,10 +70,11 @@ mat-card-content { overflow: auto; height: 100%; }
   background-color: inherit!important;
 }
 
-#employeeform mat-form-field .ng-dirty{
+#customerform mat-form-field .ng-dirty{
   background-color: gold;
 }
 
+/*Disabled button styles */
 button:disabled {
   opacity: 0.5;
 }
