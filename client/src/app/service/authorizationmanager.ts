@@ -6,21 +6,20 @@ import {jwtDecode} from "jwt-decode";
 @Injectable()
 export class AuthorizationManager {
 
+  // Holds the URL of the employee's profile image
   public imageempurl!: string;
 
+  // LocalStorage key for storing the logged-in username
   private readonly localStorageUsreName = 'username';
 
-  // please define all local storage suitable for relevant Main Menu name like below
-  // Ex : Main Menu -> Report
-  //  Then LocalStorage -> 'localstorageReportMenu'
-
+  // LocalStorage keys for saving menu visibility states per main menu category
   private readonly localStorageAdminMenus = 'admMenuState';
   private readonly localStorageAcademicMenus = 'acdMenuState';
   private readonly localStorageRegistrationMenus = 'regMenuState';
   private readonly localStorageClassMenus = 'clsMenuState';
   private readonly localStorageSalesMenus = 'salesMenuState';
 
-  // Define Main Menu with there MenuItems
+  // Admin menu items with visibility flags and routes
   Admin = [
     { name: 'Employee', isVisible: false, routerLink: 'employee' },
     { name: 'User', isVisible: false, routerLink: 'user' },
@@ -28,63 +27,58 @@ export class AuthorizationManager {
     { name: 'Operations', isVisible: false, routerLink: 'operation' }
   ];
 
+  // Sales menu items
   Sales = [
     { name: 'Customer', isVisible: false, routerLink: 'customer' }
   ];
 
-
-
-
-  // Return all the Main Menus
-  getNavListItem(){
+  // Returns the list of all main menus with their corresponding items
+  getNavListItem() {
     return [
-      { Menu : 'Admin' , MenuItems : this.Admin },
-      { Menu : 'Sales' , MenuItems : this.Sales }
-    ]
+      { Menu: 'Admin', MenuItems: this.Admin },
+      { Menu: 'Sales', MenuItems: this.Sales }
+    ];
   }
 
-  constructor(private us:UserService) {}
+  // Injects the UserService for backend communication
+  constructor(private us: UserService) {}
 
-  // Check login user have permission to view Menus by setting ture to "isVisible"
+  // Enables menu items for the logged-in user based on their authorities
   enableMenus(modules: { module: string; operation: string }[]): void {
-
     const menus = this.getNavListItem();
 
-    // Set is Visible to 'true' by checking logged user authorities (check that the module is inside authority)
+    // Check each menu item against the user's permissions
     menus.forEach(menuGroup => {
       menuGroup.MenuItems.forEach(menuItem => {
-        menuItem.isVisible = modules.some(module => module.module.toLowerCase() === menuItem.name.toLowerCase());
+        menuItem.isVisible = modules.some(
+          module => module.module.toLowerCase() === menuItem.name.toLowerCase()
+        );
       });
     });
 
-    // Save Menus States in localstorage
+    // Save the updated menu visibility states to localStorage
     menus.forEach(menuGroup => {
       // @ts-ignore
       localStorage.setItem(this["localStorage" + menuGroup.Menu + "Menus"], JSON.stringify(menuGroup));
     });
-
   }
 
+  // Loads user information and sets up menus based on permissions
   async getAuth(username: string): Promise<void> {
-
-    // Set Username for additional needs
     this.setUsername(username);
 
     try {
-      // get Authorities to relevant logged user (Decoded JWT Token)
+      // Extract authorities (permissions) from JWT token
       const authoritiesArray = this.getAuthorities();
 
-
-      // get Employee details by username
+      // Fetch employee details by username
       const employee = await this.us.getEmployeeByUserName(username);
 
-      //set employee for additional needs
       this.setEmployee(employee);
-      // set user profile
       this.setUserProfile();
 
+      // If authorities are valid, process and enable menus
       if (authoritiesArray !== undefined && Array.isArray(authoritiesArray)) {
-        // extract modules and authorities from previous authoritiesArray
         const authorities = this.extractAuthorities(authoritiesArray);
         this.enableMenus(authorities);
       } else {
@@ -96,7 +90,7 @@ export class AuthorizationManager {
     }
   }
 
-  // extract modules and authorities separately from JWT Token
+  // Converts raw authorities array (e.g., "Admin-Read") into structured objects
   extractAuthorities(authoritiesArray: string[]): { module: string; operation: string }[] {
     return authoritiesArray.map(authority => {
       const [module, operation] = authority.split('-');
@@ -104,18 +98,22 @@ export class AuthorizationManager {
     });
   }
 
+  // Retrieves the stored username from localStorage
   getUsername(): string {
     return localStorage.getItem(this.localStorageUsreName) || '';
   }
 
+  // Stores the logged-in username in localStorage
   setUsername(value: string): void {
     localStorage.setItem(this.localStorageUsreName, value);
   }
 
+  // Stores employee object (used for profile and other operations)
   setEmployee(employee: any): void {
     localStorage.setItem('employee', JSON.stringify(employee));
   }
 
+  // Decodes and sets the user profile image from localStorage
   setUserProfile(): void {
     const employee = localStorage.getItem('employee');
     if (employee) {
@@ -123,26 +121,25 @@ export class AuthorizationManager {
         const img = JSON.parse(employee).photo;
         this.imageempurl = atob(img);
       } catch (error) {
-        //console.error("Error decoding employee photo:", error);
-        this.imageempurl = "assets/default.png";
+        this.imageempurl = "assets/default.png"; // Fallback image
       }
     }
   }
 
-  // separate authorities (Modules and Authorities) from JWT Token
-  getAuthorities(){
+  // Extracts authorities (permission strings) from the JWT token
+  getAuthorities() {
     // @ts-ignore
     const jwtToken = localStorage.getItem("Authorization").split(' ')[1];
     return jwtDecode(jwtToken).aud;
   }
 
+  // Returns the currently loaded profile image URL
   getUserProfile(): string {
     return this.imageempurl;
   }
 
-  // Get all Menu States in localstorage storage to check what are visible again when refreshing
+  // Re-initializes menu visibility states from localStorage on app reload
   initializeMenuState(): void {
-
     const menus = this.getNavListItem();
 
     menus.forEach(menuState => {
@@ -154,11 +151,12 @@ export class AuthorizationManager {
     });
   }
 
+  // Clears the stored username
   clearUsername(): void {
     localStorage.removeItem(this.localStorageUsreName);
   }
 
-  // Clear all menu states when user logout
+  // Clears all menu states from localStorage (used during logout)
   clearMenuState(): void {
     const menus = this.getNavListItem();
     menus.forEach(menu => {
@@ -166,6 +164,4 @@ export class AuthorizationManager {
       localStorage.removeItem(this['localStorage' + menu.Menu + 'Menus']);
     });
   }
-
-
 }

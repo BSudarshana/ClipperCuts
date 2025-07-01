@@ -17,7 +17,6 @@ export class Customer{
   public cusstatus !: Customerstatus;
   public custype !: Customertype;
 
-
   constructor(id:number,
               fullname:string,
               code:string,
@@ -25,7 +24,8 @@ export class Customer{
               photo:string,
               address:string,
               mobile:string,
-              email:string, doassignment:string,
+              email:string,
+              doassignment:string,
               description:string,
               gender:Gender,
               cusstatus:Customerstatus,

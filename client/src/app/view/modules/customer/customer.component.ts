@@ -28,7 +28,7 @@ import {NumberService} from "../../../service/numberservice";
 })
 
 export class CustomerComponent {
-
+  // Table column keys, headers, and data bindings
   columns: string[] = ['code', 'fullname', 'gender', 'mobile', 'email', 'address'];
   headers: string[] = ['Code', 'Full Name', 'Gender', 'Mobile', 'Email', 'Address'];
   binders: string[] = ['code', 'fullname', 'gender.name', 'mobile', 'email', 'address'];
@@ -37,6 +37,7 @@ export class CustomerComponent {
   cscolumns: string[] = ['cscode', 'csfullname', 'csgender', 'csmobile', 'csemail','csaddress'];
   csprompts: string[] = ['Search by Code', 'Search by Full Name', 'Search by Gender', 'Search by Mobile', 'Search by Email', 'Search by Address'];
 
+  // Form groups for searching and customer entry
   public csearch!: FormGroup;
   public ssearch!: FormGroup;
   public form!: FormGroup;
@@ -53,6 +54,7 @@ export class CustomerComponent {
 
   imageempurl: string = 'assets/default.png'
 
+  // Button enable flags
   enaadd: boolean = false;
   enaupd: boolean = false;
   enadel: boolean = false;
@@ -61,10 +63,12 @@ export class CustomerComponent {
   hasUpdateAuthority: boolean = false;
   hasDeleteAuthority: boolean = false;
 
+  // Dropdown data
   genders: Array<Gender> = [];
   customerstatuses: Array<Customerstatus> = [];
   customertypes: Array<Customertype> = [];
 
+  // Regex pattern holder
   regexes: any;
 
   uiassist: UiAssist;
@@ -83,8 +87,10 @@ export class CustomerComponent {
     private ns: NumberService,
     public authService:AuthorizationManager) {
 
+    // Initialize UI helper class
     this.uiassist = new UiAssist(this);
 
+    // Create customer search form
     this.csearch = this.fb.group({
       "cscode": new FormControl(),
       "csfullname": new FormControl(),
@@ -94,13 +100,14 @@ export class CustomerComponent {
       "csaddress": new FormControl(),
     });
 
+    // Create short search filters
     this.ssearch = this.fb.group({
       "sscode": new FormControl(),
       "ssfullname": new FormControl(),
       "ssmobile": new FormControl()
     });
 
-
+    // Create customer form with basic validations
     this.form = this.fb.group({
       "code": new FormControl('', [Validators.required]),
       "fullname": new FormControl('', [Validators.required]),
@@ -119,6 +126,7 @@ export class CustomerComponent {
 
   }
 
+  // Initialize customer form
   ngOnInit() {
     this.initialize();
     this.enableButtons(true, false, false);
@@ -134,25 +142,30 @@ export class CustomerComponent {
 
     this.createView();
 
+    // Fetch dropdown values for Gender
     this.gs.getAllList().then((gens: Gender[]) => {
       this.genders = gens;
     });
 
+    // Fetch dropdown values for Customer status
     this.cs.getAllList().then((stes: Customerstatus[]) => {
       this.customerstatuses = stes;
     });
 
+    // Fetch dropdown values for Customer type
     this.ct.getAllList().then((types: Customertype[]) => {
       this.customertypes = types;
     });
 
+    // Load regex validations
     this.rs.get('customers').then((regs: []) => {
       this.regexes = regs;
-      //this.createForm();
+      this.createForm();
     });
 
   }
 
+  // Determine button access based on user roles
   buttonStates(authorities: { module: string; operation: string }[]): void {
     this.hasInsertAuthority = authorities.some(authority => authority.module === 'customer' && authority.operation === 'insert');
     this.hasUpdateAuthority = authorities.some(authority => authority.module === 'customer' && authority.operation === 'update');
@@ -165,9 +178,8 @@ export class CustomerComponent {
     this.loadTable("");
   }
 
-
+// Assign regex validations dynamically and detect field changes
   createForm() {
-
     this.form.controls['code'].setValidators([Validators.required]);
     this.form.controls['fullname'].setValidators([Validators.required, Validators.pattern(this.regexes['fullname']['regex'])]);
     this.form.controls['callingname'].setValidators([Validators.required, Validators.pattern(this.regexes['callingname']['regex'])]);
@@ -208,15 +220,15 @@ export class CustomerComponent {
 
   }
 
-
+  // Enable or disable Add, Update, and Delete buttons
   enableButtons(add:boolean, upd:boolean, del:boolean){
     this.enaadd=add;
     this.enaupd=upd;
-    // this.enadel=del;
+    this.enadel=del;
   }
 
+  // Fetch customer records and load into the table
   loadTable(query: string) {
-
     this.es.getAll(query)
       .then((cuss: Customer[]) => {
         this.customers = cuss;
@@ -257,11 +269,13 @@ export class CustomerComponent {
 
   }
 
+  // Generate new customer code
   generateNumber(): void{
     const newNumber : string = this.ns.generateNumber('C');
     this.form.controls['code'].setValue(newNumber);
   }
 
+  // Execute short search by criteria
   btnSearchMc(): void {
 
     const sserchdata = this.ssearch.getRawValue();
@@ -316,6 +330,7 @@ export class CustomerComponent {
   // }
 
 
+  // Add a new customer after validations and confirmation
   add() {
 
     let errors = this.getErrors();
@@ -396,7 +411,7 @@ export class CustomerComponent {
     }
   }
 
-
+// Return form errors for display
   getErrors(): string {
 
     let errors: string = "";
@@ -416,7 +431,7 @@ export class CustomerComponent {
     return errors;
   }
 
-
+// Fill form fields with selected customer data
   fillForm(customer: Customer) {
 
     this.selectedrow=customer;
@@ -447,7 +462,7 @@ export class CustomerComponent {
 
   }
 
-
+// Track what form fields were modified
   getUpdates(): string {
 
     let updates: string = "";
@@ -460,13 +475,12 @@ export class CustomerComponent {
     return updates;
   }
 
-
+  // Update existing customer with confirmation
   update() {
 
     let errors = this.getErrors();
 
     if (errors != "") {
-
         const errmsg = this.dg.open(MessageComponent, {
           width: '500px',
           data: {heading: "Errors - Customer Update ", message: "You have following Errors <br> " + errors}
@@ -478,7 +492,6 @@ export class CustomerComponent {
       let updates: string = this.getUpdates();
 
       if (updates != "") {
-
         let updstatus: boolean = false;
         let updmessage: string = "Server Not Found";
 
@@ -540,7 +553,7 @@ export class CustomerComponent {
 
   }
 
-
+// Delete customer after confirmation
   delete() {
 
         const confirm = this.dg.open(ConfirmComponent, {
@@ -587,6 +600,7 @@ export class CustomerComponent {
         });
       }
 
+  // Clear the form and reset all validations
   clear():void{
     const confirm = this.dg.open(ConfirmComponent, {
       width: '500px',
@@ -613,7 +627,6 @@ export class CustomerComponent {
       }
     });
   }
-
 
 }
 

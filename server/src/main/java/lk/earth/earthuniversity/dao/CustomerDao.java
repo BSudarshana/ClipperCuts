@@ -9,7 +9,10 @@ import java.util.List;
 
 public interface CustomerDao extends JpaRepository<Customer,Integer> {
 
+    // Finds a Customer by their code
     Customer findByCode(String number);
+
+    // Finds a Customer by mobile number
     Customer findByMobile(String mobile);
 
     @Query("select c from Customer c where c.id = :id")
@@ -17,8 +20,6 @@ public interface CustomerDao extends JpaRepository<Customer,Integer> {
 
     @Query("SELECT NEW Customer (c.id, c.callingname) FROM Customer c")
     List<Customer> findAllNameId();
-
-
 
 }
 

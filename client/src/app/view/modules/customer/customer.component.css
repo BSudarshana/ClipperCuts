@@ -49,7 +49,6 @@ mat-card-content { overflow: auto; height: 100%; }
   margin-top: -100px;
 }
 
-
 /* Button Panel Styling */
 #butpanel{  margin-top: 30px;
   margin-bottom: 30px;
@@ -62,6 +61,7 @@ mat-card-content { overflow: auto; height: 100%; }
   background-color: #C9CD03;
 }
 
+/*Customer detai grid row selected color*/
 .selected-row{
   background-color: #c9e6ff!important;
 }

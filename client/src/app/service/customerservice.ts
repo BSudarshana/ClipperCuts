@@ -9,21 +9,26 @@ import {Gender} from "../entity/gender";
 
 export class CustomerService {
 
+  private baseUrl = 'http://localhost:8080/customers';
+
   constructor(private http: HttpClient) {  }
+
+  async add(customer: Customer): Promise<[]|undefined>{
+    return this.http.post<[]>(`${this.baseUrl}`, customer).toPromise();
+  }
+
 
   async delete(id: number): Promise<[]|undefined>{
     // @ts-ignore
-    return this.http.delete('http://localhost:8080/customers/' + id).toPromise();
+    return this.http.delete(`${this.baseUrl}` + id).toPromise();
   }
 
   async update(customer: Customer): Promise<[]|undefined>{
-    //console.log("Customer Updating-"+customer.id);
-    return this.http.put<[]>('http://localhost:8080/customers', customer).toPromise();
+    return this.http.put<[]>(`${this.baseUrl}`, customer).toPromise();
   }
 
-
   async getAll(query:string): Promise<Array<Customer>> {
-    const customers = await this.http.get<Array<Customer>>('http://localhost:8080/customers'+query).toPromise();
+    const customers = await this.http.get<Array<Customer>>(`${this.baseUrl}`+query).toPromise();
     if(customers == undefined){
       return [];
     }
@@ -31,18 +36,11 @@ export class CustomerService {
   }
 
   async getAllListNameId(): Promise<Array<Customer>> {
-
-    const customers = await this.http.get<Array<Customer>>('http://localhost:8080/customers/list').toPromise();
+    const customers = await this.http.get<Array<Customer>>('http://localhost:8080/customers').toPromise();
     if(customers == undefined){
       return [];
     }
     return customers;
-  }
-
-  async add(customer: Customer): Promise<[]|undefined>{
-    //console.log("Customer Adding-"+JSON.stringify(customer));
-    //customer.number="47457";
-    return this.http.post<[]>('http://localhost:8080/customers', customer).toPromise();
   }
 
 }
