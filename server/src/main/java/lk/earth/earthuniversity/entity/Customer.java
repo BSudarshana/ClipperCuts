@@ -4,6 +4,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Pattern;
 import java.sql.Date;
 import java.util.Arrays;
+import java.util.Collection;
 
 @Entity
 public class Customer {
@@ -49,6 +50,10 @@ public class Customer {
     @ManyToOne
     @JoinColumn(name = "customerstatus_id", referencedColumnName = "id", nullable = false)
     private Customerstatus customerstatus;
+    @OneToMany(mappedBy = "customer")
+    private Collection<Appointment> appointments;
+    @OneToMany(mappedBy = "customer")
+    private Collection<Customerfeedback> customerfeedbacks;
 
     public Customer(Integer id, String callingname){
         this.id = id;
@@ -189,5 +194,21 @@ public class Customer {
 
     public void setCustomerstatus(Customerstatus customerstatus) {
         this.customerstatus = customerstatus;
+    }
+
+    public Collection<Appointment> getAppointments() {
+        return appointments;
+    }
+
+    public void setAppointments(Collection<Appointment> appointments) {
+        this.appointments = appointments;
+    }
+
+    public Collection<Customerfeedback> getCustomerfeedbacks() {
+        return customerfeedbacks;
+    }
+
+    public void setCustomerfeedbacks(Collection<Customerfeedback> customerfeedbacks) {
+        this.customerfeedbacks = customerfeedbacks;
     }
 }
