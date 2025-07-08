@@ -55,6 +55,12 @@ public class Item {
     @JsonIgnore
     @OneToMany(mappedBy = "item")
     private Collection<Poitem> poitems;
+    @OneToMany(mappedBy = "item")
+    private Collection<InvoiceItem> invoiceItems;
+    @OneToMany(mappedBy = "item")
+    private Collection<ItemstockLocation> itemstockLocations;
+    @OneToMany(mappedBy = "item")
+    private Collection<Transferitem> transferitems;
 
     public int getId() {
         return id;
@@ -179,5 +185,29 @@ public class Item {
 
     public void setPoitems(Collection<Poitem> poitems) {
         this.poitems = poitems;
+    }
+
+    public Collection<InvoiceItem> getInvoiceItems() {
+        return invoiceItems;
+    }
+
+    public void setInvoiceItems(Collection<InvoiceItem> invoiceItems) {
+        this.invoiceItems = invoiceItems;
+    }
+
+    public Collection<ItemstockLocation> getItemstockLocations() {
+        return itemstockLocations;
+    }
+
+    public void setItemstockLocations(Collection<ItemstockLocation> itemstockLocations) {
+        this.itemstockLocations = itemstockLocations;
+    }
+
+    public Collection<Transferitem> getTransferitems() {
+        return transferitems;
+    }
+
+    public void setTransferitems(Collection<Transferitem> transferitems) {
+        this.transferitems = transferitems;
     }
 }

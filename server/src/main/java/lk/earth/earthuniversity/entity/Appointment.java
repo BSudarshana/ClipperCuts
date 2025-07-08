@@ -29,6 +29,12 @@ public class Appointment {
     private Customer customer;
     @OneToMany(mappedBy = "appointment")
     private Collection<Customerfeedback> customerfeedbacks;
+    @OneToMany(mappedBy = "appointment")
+    private Collection<PackageHasAppointment> packageHasAppointments;
+    @OneToMany(mappedBy = "appointment")
+    private Collection<Appointmentservice> appointmentservices;
+    @OneToMany(mappedBy = "appointment")
+    private Collection<Invoice> invoices;
 
     public Integer getId() {
         return id;
@@ -97,5 +103,29 @@ public class Appointment {
 
     public void setCustomerfeedbacks(Collection<Customerfeedback> customerfeedbacks) {
         this.customerfeedbacks = customerfeedbacks;
+    }
+
+    public Collection<PackageHasAppointment> getPackageHasAppointments() {
+        return packageHasAppointments;
+    }
+
+    public void setPackageHasAppointments(Collection<PackageHasAppointment> packageHasAppointments) {
+        this.packageHasAppointments = packageHasAppointments;
+    }
+
+    public Collection<Appointmentservice> getAppointmentservices() {
+        return appointmentservices;
+    }
+
+    public void setAppointmentservices(Collection<Appointmentservice> appointmentservices) {
+        this.appointmentservices = appointmentservices;
+    }
+
+    public Collection<Invoice> getInvoices() {
+        return invoices;
+    }
+
+    public void setInvoices(Collection<Invoice> invoices) {
+        this.invoices = invoices;
     }
 }
