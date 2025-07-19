@@ -36,7 +36,7 @@ export class CustomerService {
   }
 
   async getAllListNameId(): Promise<Array<Customer>> {
-    const customers = await this.http.get<Array<Customer>>('http://localhost:8080/customers').toPromise();
+    const customers = await this.http.get<Array<Customer>>(`${this.baseUrl}`+"/list").toPromise();
     if(customers == undefined){
       return [];
     }

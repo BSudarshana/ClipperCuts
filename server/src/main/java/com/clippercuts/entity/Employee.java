@@ -21,7 +21,7 @@ public class Employee {
     private String number;
     @Basic
     @Column(name = "fullname")
-    @Pattern(regexp = "^([A-Z][a-z]*[.]?[\\s]?)*([A-Z][a-z]*)$", message = "Invalid Full Name")
+    @Pattern(regexp = "^[A-Z][a-zA-Z.'\\-\\s]*[A-Za-z]$", message = "Invalid Full Name")
     private String fullname;
     @Basic
     @Column(name = "callingname")
@@ -85,10 +85,16 @@ public class Employee {
     @JsonIgnore
     @OneToMany(mappedBy = "employee")
     private Collection<Purchaseorder> purchaseorders;
+
+    @JsonIgnore
     @OneToMany(mappedBy = "employee")
     private Collection<Appointmentservice> appointmentservices;
+
+    @JsonIgnore
     @OneToMany(mappedBy = "employee")
     private Collection<ServiceHasEmployee> serviceHasEmployees;
+
+    @JsonIgnore
     @OneToMany(mappedBy = "employee")
     private Collection<Stocktransfer> stocktransfers;
 

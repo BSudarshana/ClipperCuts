@@ -1,5 +1,7 @@
 package com.clippercuts.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.sql.Date;
 import java.util.Collection;
@@ -20,11 +22,12 @@ public class Promotion {
     @Basic
     @Column(name = "startdate")
     private Date startdate;
-    @Basic
-    @Column(name = "enddate")
-    private String enddate;
+
+    @JsonIgnore
     @OneToMany(mappedBy = "promotion")
     private Collection<Discount> discounts;
+
+    @JsonIgnore
     @OneToMany(mappedBy = "promotion")
     private Collection<Invoice> invoices;
     @ManyToOne
@@ -32,6 +35,9 @@ public class Promotion {
     private Promotionstatus promotionstatus;
     @OneToMany(mappedBy = "promotion")
     private Collection<ServiceHasPromotion> serviceHasPromotions;
+    @Basic
+    @Column(name = "enddate")
+    private Date enddate;
 
     public Integer getId() {
         return id;
@@ -65,25 +71,17 @@ public class Promotion {
         this.startdate = startdate;
     }
 
-    public String getEnddate() {
-        return enddate;
-    }
-
-    public void setEnddate(String enddate) {
-        this.enddate = enddate;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Promotion promotion = (Promotion) o;
-        return Objects.equals(id, promotion.id) && Objects.equals(title, promotion.title) && Objects.equals(description, promotion.description) && Objects.equals(startdate, promotion.startdate) && Objects.equals(enddate, promotion.enddate);
+        return Objects.equals(id, promotion.id) && Objects.equals(title, promotion.title) && Objects.equals(description, promotion.description) && Objects.equals(startdate, promotion.startdate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, description, startdate, enddate);
+        return Objects.hash(id, title, description, startdate);
     }
 
     public Collection<Discount> getDiscounts() {
@@ -116,5 +114,13 @@ public class Promotion {
 
     public void setServiceHasPromotions(Collection<ServiceHasPromotion> serviceHasPromotions) {
         this.serviceHasPromotions = serviceHasPromotions;
+    }
+
+    public Date getEnddate() {
+        return enddate;
+    }
+
+    public void setEnddate(Date enddate) {
+        this.enddate = enddate;
     }
 }

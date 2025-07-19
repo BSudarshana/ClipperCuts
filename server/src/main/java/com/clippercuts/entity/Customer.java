@@ -1,5 +1,7 @@
 package com.clippercuts.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import javax.validation.constraints.Pattern;
 import java.sql.Date;
@@ -50,8 +52,10 @@ public class Customer {
     @ManyToOne
     @JoinColumn(name = "customerstatus_id", referencedColumnName = "id", nullable = false)
     private Customerstatus customerstatus;
+    @JsonIgnore
     @OneToMany(mappedBy = "customer")
     private Collection<Appointment> appointments;
+    @JsonIgnore
     @OneToMany(mappedBy = "customer")
     private Collection<Customerfeedback> customerfeedbacks;
 

@@ -30,15 +30,15 @@ public class CustomerController {
 //    @PreAuthorize("hasAuthority('customer-select')")p
     public List<Customer> get(@RequestParam HashMap<String, String> params) {
 
-        List<Customer> customer = this.customerdao.findAll();
+        List<Customer> customers = this.customerdao.findAll();
 
-        if(params.isEmpty())  return customer;
+        if(params.isEmpty())  return customers;
 
         String code = params.get("code");
         String fullname= params.get("fullname");
         String mobile= params.get("mobile");
 
-        Stream<Customer> cstream = customer.stream();
+        Stream<Customer> cstream = customers.stream();
 
         if(code!=null) cstream = cstream.filter(c -> c.getCode().contains(code));
         if(fullname!=null) cstream = cstream.filter(c -> c.getFullname().contains(fullname));
