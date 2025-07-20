@@ -26,6 +26,9 @@ public class Payment {
     @ManyToOne
     @JoinColumn(name = "paymentmethod_id", referencedColumnName = "id", nullable = false)
     private Paymentmethod paymentmethod;
+    @Basic
+    @Column(name = "receiptnumber")
+    private String receiptnumber;
 
     public Integer getId() {
         return id;
@@ -86,5 +89,13 @@ public class Payment {
 
     public void setPaymentmethod(Paymentmethod paymentmethod) {
         this.paymentmethod = paymentmethod;
+    }
+
+    public String getReceiptnumber() {
+        return receiptnumber;
+    }
+
+    public void setReceiptnumber(String receiptnumber) {
+        this.receiptnumber = receiptnumber;
     }
 }

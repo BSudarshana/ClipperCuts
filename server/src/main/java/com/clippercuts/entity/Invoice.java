@@ -13,6 +13,9 @@ public class Invoice {
     @Column(name = "id")
     private Integer id;
     @Basic
+    @Column(name = "invoicenumber")
+    private String invoicenumber;
+    @Basic
     @Column(name = "invoicedate")
     private Timestamp invoicedate;
     @Basic
@@ -150,5 +153,13 @@ public class Invoice {
 
     public void setPayments(Collection<Payment> payments) {
         this.payments = payments;
+    }
+
+    public String getInvoicenumber() {
+        return invoicenumber;
+    }
+
+    public void setInvoicenumber(String invoicenumber) {
+        this.invoicenumber = invoicenumber;
     }
 }

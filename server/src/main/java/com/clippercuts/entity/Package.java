@@ -30,6 +30,9 @@ public class Package {
     private Collection<PackageHasInvoice> packageHasInvoices;
     @OneToMany(mappedBy = "Package")
     private Collection<PackageHasService> packageHasServices;
+    @Basic
+    @Column(name = "packagnumber")
+    private String packagnumber;
 
     public Integer getId() {
         return id;
@@ -106,5 +109,13 @@ public class Package {
 
     public void setPackageHasServices(Collection<PackageHasService> packageHasServices) {
         this.packageHasServices = packageHasServices;
+    }
+
+    public String getPackagnumber() {
+        return packagnumber;
+    }
+
+    public void setPackagnumber(String packagnumber) {
+        this.packagnumber = packagnumber;
     }
 }
