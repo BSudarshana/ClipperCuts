@@ -14,7 +14,7 @@ public class PackageHasAppointment {
     @JoinColumn(name = "appointment_id", referencedColumnName = "id", nullable = false)
     private Appointment appointment;
     @ManyToOne
-    @JoinColumn(name = " Package_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "Package_id", referencedColumnName = "id", nullable = false)
     private Package Package;
 
     public Integer getId() {

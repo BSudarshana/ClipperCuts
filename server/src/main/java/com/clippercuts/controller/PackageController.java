@@ -1,8 +1,9 @@
 package com.clippercuts.controller;
 
-import com.clippercuts.dao.ItemDao;
-import com.clippercuts.entity.Item;
+import com.clippercuts.dao.PackageDao;
+import com.clippercuts.entity.Package;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -12,125 +13,109 @@ import java.util.stream.Stream;
 
 @CrossOrigin
 @RestController
-@RequestMapping(value = "/items")
+@RequestMapping(value = "/packages")
 public class PackageController {
 
     @Autowired
-    private ItemDao itemDao;
+    private PackageDao packageDao;
 
     @GetMapping(produces = "application/json")
 //    @PreAuthorize("hasAuthority('customer-select')")p
-    public List<Item> get(@RequestParam HashMap<String, String> params) {
+    public List<Package> get(@RequestParam HashMap<String, String> params) {
 
-        List<Item> customer = this.itemDao.findAll();
+        List<Package> packages = this.packageDao.findAll();
 
-        if(params.isEmpty())  return customer;
+        if(params.isEmpty())  return packages;
 
-//        String code = params.get("code");
+        String pcknumber = params.get("packagnumber");
+        String pckname = params.get("name");
 
-        Stream<Item> itemStream = customer.stream();
+        Stream<Package> packageStream = packages.stream();
 
-//        if(code!=null) cstream = cstream.filter(c -> c.getCode().contains(code));
-//        if(fullname!=null) cstream = cstream.filter(c -> c.getFullname().contains(fullname));
-//        if(mobile!=null) cstream = cstream.filter(c -> c.getMobile().contains(mobile));
+        if(pcknumber!=null) packageStream = packageStream.filter(p -> p.getPackagnumber().contains(pcknumber));
+        if(pckname!=null) packageStream = packageStream.filter(p -> p.getName().contains(pckname));
 
-        return itemStream.collect(Collectors.toList());
-
-    }
-
-    @GetMapping(path ="/list",produces = "application/json")
-    public List<Item> get() {
-
-        List<Item> items = this.itemDao.findAll();
-
-        items = items.stream().map(
-                item -> {
-//                    Item i = new Item(item.getId(), item.getName());
-                    Item i = new Item();
-                    return  i;
-                }
-        ).collect(Collectors.toList());
-
-        return items;
+        return packageStream.collect(Collectors.toList());
 
     }
 
 
-//    @PostMapping
-//    @ResponseStatus(HttpStatus.CREATED)
-////    @PreAuthorize("hasAuthority('Customer-Insert')")
-//    public HashMap<String,String> add(@RequestBody Customer customer){
-//
-//        HashMap<String,String> responce = new HashMap<>();
-//        String errors="";
-//
-//        if(customerdao.findByCode(customer.getCode())!=null)
-//            errors = errors+"<br> Existing Number";
-//        if(customerdao.findByMobile(customer.getMobile())!=null)
-//            errors = errors+"<br> Existing Mobile Number";
-//
-//        if(errors=="")
-//        customerdao.save(customer);
-//        else errors = "Server Validation Errors : <br> "+errors;
-//
-//        responce.put("id",String.valueOf(customer.getId()));
-//        responce.put("url","/customers/"+customer.getId());
-//        responce.put("errors",errors);
-//
-//        return responce;
-//    }
-//
-//    @PutMapping
-//    @ResponseStatus(HttpStatus.CREATED)
-////    @PreAuthorize("hasAuthority('Customer-Update')")
-//    public HashMap<String,String> update(@RequestBody Customer customer){
-//
-//        HashMap<String,String> responce = new HashMap<>();
-//        String errors="";
-//
-//        Customer cus1 = customerdao.findByCode(customer.getCode());
-//        Customer cus2 = customerdao.findByMobile(customer.getMobile());
-//
-////        if(customer.getId().intValue() == customerdao.findByMyId() )
-//        if(cus1!=null && customer.getId()!=cus1.getId())
-//            errors = errors+"<br> Existing Code";
-//        if(cus2!=null && customer.getId()!=cus2.getId())
-//            errors = errors+"<br> Existing Mobile Number";
-//
-//        if(errors=="") customerdao.save(customer);
-//        else errors = "Server Validation Errors : <br> "+errors;
-//
-//        responce.put("id",String.valueOf(customer.getId()));
-//        responce.put("url","/customers/"+customer.getId());
-//        responce.put("errors",errors);
-//
-//        return responce;
-//    }
-//
-//
-//    @DeleteMapping("/{id}")
-//    @ResponseStatus(HttpStatus.CREATED)
-//    public HashMap<String,String> delete(@PathVariable Integer id){
-//
-//        System.out.println(id);
-//
-//        HashMap<String,String> responce = new HashMap<>();
-//        String errors="";
-//
-//        Customer cus = customerdao.findByMyId(id);
-//
-//        if(cus==null)
-//            errors = errors+"<br> Customer Does Not Existed";
-//
-//        if(errors=="") customerdao.delete(cus);
-//        else errors = "Server Validation Errors : <br> "+errors;
-//
-//        responce.put("id",String.valueOf(id));
-//        responce.put("url","/customers/"+id);
-//        responce.put("errors",errors);
-//
-//        return responce;
-//    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+//    @PreAuthorize("hasAuthority('Customer-Insert')")
+    public HashMap<String,String> add(@RequestBody Package servicePack){
+
+        HashMap<String,String> responce = new HashMap<>();
+        String errors="";
+
+        if(packageDao.findByPackageNumber(servicePack.getPackagnumber())!=null)
+            errors = errors+"<br> Existing Package Number";
+        if(packageDao.findByPackageName(servicePack.getName())!=null)
+            errors = errors+"<br> Existing Package Name";
+
+        if(errors=="")
+            packageDao.save(servicePack);
+        else errors = "Server Validation Errors : <br> "+errors;
+
+        responce.put("id",String.valueOf(servicePack.getId()));
+        responce.put("url","/packages/"+servicePack.getId());
+        responce.put("errors",errors);
+
+        return responce;
+    }
+
+    @PutMapping
+    @ResponseStatus(HttpStatus.CREATED)
+//    @PreAuthorize("hasAuthority('Customer-Update')")
+    public HashMap<String,String> update(@RequestBody Package servicePack){
+
+        HashMap<String,String> responce = new HashMap<>();
+        String errors="";
+
+        Package pack1 = packageDao.findByPackageNumber(servicePack.getPackagnumber());
+        Package pack2 = packageDao.findByPackageName(servicePack.getName());
+
+//        if(customer.getId().intValue() == customerdao.findByMyId() )
+        if(pack1!=null && servicePack.getId()!=pack1.getId())
+            errors = errors+"<br> Existing Package Number";
+        if(pack2!=null && servicePack.getId()!=pack2.getId())
+            errors = errors+"<br> Existing MPackage Name";
+
+        if(errors=="") packageDao.save(servicePack);
+        else errors = "Server Validation Errors : <br> "+errors;
+
+        responce.put("id",String.valueOf(servicePack.getId()));
+        responce.put("url","/customers/"+servicePack.getId());
+        responce.put("errors",errors);
+
+        return responce;
+    }
+
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public HashMap<String,String> delete(@PathVariable Integer id){
+
+        System.out.println(id);
+
+        HashMap<String,String> responce = new HashMap<>();
+        String errors="";
+
+        Package Pack = packageDao.findByPackageId(id);
+
+        if(Pack==null)
+            errors = errors+"<br> Package Does Not Existed";
+
+        if(errors=="") packageDao.delete(Pack);
+        else errors = "Server Validation Errors : <br> "+errors;
+
+        responce.put("id",String.valueOf(id));
+        responce.put("url","/packages/"+id);
+        responce.put("errors",errors);
+
+        return responce;
+    }
 
 }
 
