@@ -2,6 +2,7 @@ package com.clippercuts.controller;
 
 import com.clippercuts.dao.PurchaseorderDao;
 import com.clippercuts.entity.Purchaseorder;
+import com.clippercuts.entity.Poitem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +28,7 @@ public class PurchaseorderController {
 
         if(params.isEmpty())  return purchaseorder;
 
-        String poNumber = params.get("itemnumber");
+        String poNumber = params.get("po_number");
 
         Stream<Purchaseorder> purchaseorderStream = purchaseorder.stream();
 
@@ -48,6 +49,10 @@ public class PurchaseorderController {
 
         if(purchaseorderDao.findByPONumber(purchaseorder.getPoNumber())!=null)
             errors = errors+"<br> Existing PO Number";
+
+        for (Poitem poitems : purchaseorder.getPoitems()) {
+            poitems.setPurchaseorder(purchaseorder);
+        }
 
         if(errors=="")
         purchaseorderDao.save(purchaseorder);
