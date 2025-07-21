@@ -9,8 +9,8 @@ public interface GoodReceiveNoteDao extends JpaRepository<GoodReceiveNote,Intege
     @Query("select g from GoodReceiveNote g where g.id = :id")
     GoodReceiveNote findByGrnId(@Param("id") Integer id);
 
-    @Query("select g from GoodReceiveNote g where g.grnNumber = :name")
-    GoodReceiveNote findByGrnNumber(String name);
+    @Query("select g from GoodReceiveNote g where g.grnNumber = :grnNumber")
+    GoodReceiveNote findByGrnNumber(String grnNumber);
 
 }
 
