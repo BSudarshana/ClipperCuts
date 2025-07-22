@@ -26,6 +26,7 @@ public class Stocktransfer {
     @ManyToOne
     @JoinColumn(name = "employee_id", referencedColumnName = "id", nullable = false)
     private Employee employee;
+
     @OneToMany(mappedBy = "stocktransfer")
     private Collection<Transferitem> transferitems;
 

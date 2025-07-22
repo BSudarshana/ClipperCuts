@@ -50,8 +50,8 @@ public class PurchaseorderController {
         if(purchaseorderDao.findByPONumber(purchaseorder.getPoNumber())!=null)
             errors = errors+"<br> Existing PO Number";
 
-        for (Poitem poitems : purchaseorder.getPoitems()) {
-            poitems.setPurchaseorder(purchaseorder);
+        for (Poitem poitem : purchaseorder.getPoitems()) {
+            poitem.setPurchaseorder(purchaseorder);
         }
 
         if(errors=="")
@@ -77,6 +77,10 @@ public class PurchaseorderController {
 
         if(po1!=null && purchaseorder.getId()!=po1.getId())
             errors = errors+"<br> Existing PO Number";
+
+        for (Poitem poitem : purchaseorder.getPoitems()) {
+            poitem.setPurchaseorder(purchaseorder);
+        }
 
         if(errors=="") purchaseorderDao.save(purchaseorder);
         else errors = "Server Validation Errors : <br> "+errors;

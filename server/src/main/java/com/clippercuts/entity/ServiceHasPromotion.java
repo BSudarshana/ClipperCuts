@@ -1,5 +1,7 @@
 package com.clippercuts.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -13,6 +15,8 @@ public class ServiceHasPromotion {
     @ManyToOne
     @JoinColumn(name = "service_id", referencedColumnName = "id", nullable = false)
     private Service service;
+
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "promotion_id", referencedColumnName = "id", nullable = false)
     private Promotion promotion;

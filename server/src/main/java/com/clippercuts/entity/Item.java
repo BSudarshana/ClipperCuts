@@ -55,10 +55,12 @@ public class Item {
     @JsonIgnore
     @OneToMany(mappedBy = "item")
     private Collection<Poitem> poitems;
+    @JsonIgnore
     @OneToMany(mappedBy = "item")
     private Collection<InvoiceItem> invoiceItems;
     @OneToMany(mappedBy = "item")
     private Collection<ItemstockLocation> itemstockLocations;
+    @JsonIgnore
     @OneToMany(mappedBy = "item")
     private Collection<Transferitem> transferitems;
 

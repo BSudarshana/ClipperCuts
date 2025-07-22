@@ -1,5 +1,7 @@
 package com.clippercuts.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.Objects;
@@ -13,6 +15,8 @@ public class Locationtype {
     @Basic
     @Column(name = "name")
     private String name;
+
+    @JsonIgnore
     @OneToMany(mappedBy = "locationtype")
     private Collection<Location> locations;
 

@@ -47,6 +47,8 @@ public class Service {
     private Servicecategory servicecategory;
     @OneToMany(mappedBy = "service")
     private Collection<ServiceHasEmployee> serviceHasEmployees;
+
+    @JsonIgnore
     @OneToMany(mappedBy = "service")
     private Collection<ServiceHasPromotion> serviceHasPromotions;
 

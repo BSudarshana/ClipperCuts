@@ -1,5 +1,7 @@
 package com.clippercuts.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.Objects;
@@ -16,15 +18,23 @@ public class Location {
     @Basic
     @Column(name = "description")
     private String description;
+
+    @JsonIgnore
     @OneToMany(mappedBy = "location")
     private Collection<InvoiceItem> invoiceItems;
+
+    @JsonIgnore
     @OneToMany(mappedBy = "location")
     private Collection<ItemstockLocation> itemstockLocations;
     @ManyToOne
     @JoinColumn(name = "locationtype_id", referencedColumnName = "id", nullable = false)
     private Locationtype locationtype;
+
+    @JsonIgnore
     @OneToMany(mappedBy = "locationfrom")
     private Collection<Stocktransfer> stocktransfersFrom;
+
+    @JsonIgnore
     @OneToMany(mappedBy = "locationto")
     private Collection<Stocktransfer> stocktransfersTo;
 

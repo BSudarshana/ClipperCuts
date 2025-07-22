@@ -1,5 +1,7 @@
 package com.clippercuts.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Collection;
@@ -24,10 +26,15 @@ public class Package {
     @Basic
     @Column(name = "status")
     private Byte status;
+
+    @JsonIgnore
     @OneToMany(mappedBy = "Package")
     private Collection<PackageHasAppointment> packageHasAppointments;
+
+    @JsonIgnore
     @OneToMany(mappedBy = "Package")
     private Collection<PackageHasInvoice> packageHasInvoices;
+
     @OneToMany(mappedBy = "Package")
     private Collection<PackageHasService> packageHasServices;
     @Basic

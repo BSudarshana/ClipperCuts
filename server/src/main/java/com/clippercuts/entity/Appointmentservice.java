@@ -1,5 +1,7 @@
 package com.clippercuts.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -12,6 +14,8 @@ public class Appointmentservice {
     @ManyToOne
     @JoinColumn(name = "appointment_id", referencedColumnName = "id", nullable = false)
     private Appointment appointment;
+
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "service_id", referencedColumnName = "id", nullable = false)
     private Service service;

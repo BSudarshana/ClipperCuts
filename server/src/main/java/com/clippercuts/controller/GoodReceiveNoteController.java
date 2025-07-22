@@ -2,6 +2,7 @@ package com.clippercuts.controller;
 
 import com.clippercuts.dao.GoodReceiveNoteDao;
 import com.clippercuts.entity.GoodReceiveNote;
+import com.clippercuts.entity.GrnItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -49,6 +50,10 @@ public class GoodReceiveNoteController {
         if(goodReceiveNoteDao.findByGrnNumber(goodReceiveNote.getGrnNumber())!=null)
             errors = errors+"<br> Existing GRN Number";
 
+        for (GrnItem grnItem : goodReceiveNote.getGrnItems()) {
+            grnItem.setGoodReceiveNote(goodReceiveNote);
+        }
+
         if(errors=="")
             goodReceiveNoteDao.save(goodReceiveNote);
         else errors = "Server Validation Errors : <br> "+errors;
@@ -72,6 +77,10 @@ public class GoodReceiveNoteController {
 
         if(grn1!=null && goodReceiveNote.getId()!=grn1.getId())
             errors = errors+"<br> Existing GRN Number";
+
+        for (GrnItem grnItem : goodReceiveNote.getGrnItems()) {
+            grnItem.setGoodReceiveNote(goodReceiveNote);
+        }
 
         if(errors=="") goodReceiveNoteDao.save(goodReceiveNote);
         else errors = "Server Validation Errors : <br> "+errors;
