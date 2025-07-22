@@ -10,7 +10,10 @@ import java.util.List;
 public interface CustomerfeedbackDao extends JpaRepository<Customerfeedback,Integer> {
 
     @Query("select c from Customerfeedback c where c.id = :id")
-    Customerfeedback findByfeedbackId(@Param("id") Integer id);
+    Customerfeedback customerfeedbackById(@Param("id") Integer id);
+
+    @Query("select cf from Customerfeedback cf where cf.customer.id = :id")
+    List<Customerfeedback> customerfeedbackByCusId(@Param("id") Integer id);
 
 }
 

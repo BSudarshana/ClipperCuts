@@ -1,5 +1,7 @@
 package com.clippercuts.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.Objects;
@@ -16,6 +18,8 @@ public class Question {
     @Basic
     @Column(name = "isactive")
     private Byte isactive;
+
+    @JsonIgnore
     @OneToMany(mappedBy = "question")
     private Collection<Response> responses;
 
