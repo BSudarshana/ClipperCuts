@@ -17,7 +17,7 @@ public class PackageHasInvoice {
     @JoinColumn(name = "invoice_id", referencedColumnName = "id", nullable = false)
     private Invoice invoice;
     @ManyToOne
-    @JoinColumn(name = " Package_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "Package_id", referencedColumnName = "id", nullable = false)
     private Package Package;
 
     public Integer getId() {

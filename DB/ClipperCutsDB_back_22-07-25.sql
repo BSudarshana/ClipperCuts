@@ -16,6 +16,175 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table ` package`
+--
+
+DROP TABLE IF EXISTS ` package`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE ` package` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `packagnumber` varchar(45) DEFAULT NULL,
+  `name` varchar(100) DEFAULT NULL,
+  `price` decimal(10,2) DEFAULT NULL,
+  `duration` int DEFAULT NULL,
+  `status` tinyint DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table ` package`
+--
+
+LOCK TABLES ` package` WRITE;
+/*!40000 ALTER TABLE ` package` DISABLE KEYS */;
+/*!40000 ALTER TABLE ` package` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table ` package_has_appointment`
+--
+
+DROP TABLE IF EXISTS ` package_has_appointment`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE ` package_has_appointment` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `Package_id` int NOT NULL,
+  `appointment_id` int NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_ Package_has_appointment_appointment1_idx` (`appointment_id`),
+  KEY `fk_ Package_has_appointment_ Package1_idx` (`Package_id`),
+  CONSTRAINT `fk_ Package_has_appointment_ Package1` FOREIGN KEY (`Package_id`) REFERENCES ` package` (`id`),
+  CONSTRAINT `fk_ Package_has_appointment_appointment1` FOREIGN KEY (`appointment_id`) REFERENCES `appointment` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table ` package_has_appointment`
+--
+
+LOCK TABLES ` package_has_appointment` WRITE;
+/*!40000 ALTER TABLE ` package_has_appointment` DISABLE KEYS */;
+/*!40000 ALTER TABLE ` package_has_appointment` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table ` package_has_invoice`
+--
+
+DROP TABLE IF EXISTS ` package_has_invoice`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE ` package_has_invoice` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `Package_id` int NOT NULL,
+  `invoice_id` int NOT NULL,
+  `prpice` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_ Package_has_invoice_invoice1_idx` (`invoice_id`),
+  KEY `fk_ Package_has_invoice_ Package1_idx` (`Package_id`),
+  CONSTRAINT `fk_ Package_has_invoice_ Package1` FOREIGN KEY (`Package_id`) REFERENCES ` package` (`id`),
+  CONSTRAINT `fk_ Package_has_invoice_invoice1` FOREIGN KEY (`invoice_id`) REFERENCES `invoice` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table ` package_has_invoice`
+--
+
+LOCK TABLES ` package_has_invoice` WRITE;
+/*!40000 ALTER TABLE ` package_has_invoice` DISABLE KEYS */;
+/*!40000 ALTER TABLE ` package_has_invoice` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `appointment`
+--
+
+DROP TABLE IF EXISTS `appointment`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `appointment` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `appointment_date` date NOT NULL,
+  `appointment_time` time DEFAULT NULL,
+  `description` varchar(500) DEFAULT NULL,
+  `appointmentstatus_id` int NOT NULL,
+  `customer_id` int NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_appointment_appointmentstatus1_idx` (`appointmentstatus_id`),
+  KEY `fk_appointment_customer1_idx` (`customer_id`),
+  CONSTRAINT `fk_appointment_appointmentstatus1` FOREIGN KEY (`appointmentstatus_id`) REFERENCES `appointmentstatus` (`id`),
+  CONSTRAINT `fk_appointment_customer1` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `appointment`
+--
+
+LOCK TABLES `appointment` WRITE;
+/*!40000 ALTER TABLE `appointment` DISABLE KEYS */;
+/*!40000 ALTER TABLE `appointment` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `appointmentservice`
+--
+
+DROP TABLE IF EXISTS `appointmentservice`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `appointmentservice` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `appointment_id` int NOT NULL,
+  `service_id` int NOT NULL,
+  `employee_id` int NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_appointment_has_service_service1_idx` (`service_id`),
+  KEY `fk_appointment_has_service_appointment1_idx` (`appointment_id`),
+  KEY `fk_appointmentservice_employee1_idx` (`employee_id`),
+  CONSTRAINT `fk_appointment_has_service_appointment1` FOREIGN KEY (`appointment_id`) REFERENCES `appointment` (`id`),
+  CONSTRAINT `fk_appointment_has_service_service1` FOREIGN KEY (`service_id`) REFERENCES `service` (`id`),
+  CONSTRAINT `fk_appointmentservice_employee1` FOREIGN KEY (`employee_id`) REFERENCES `employee` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `appointmentservice`
+--
+
+LOCK TABLES `appointmentservice` WRITE;
+/*!40000 ALTER TABLE `appointmentservice` DISABLE KEYS */;
+/*!40000 ALTER TABLE `appointmentservice` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `appointmentstatus`
+--
+
+DROP TABLE IF EXISTS `appointmentstatus`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `appointmentstatus` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `appointmentstatus`
+--
+
+LOCK TABLES `appointmentstatus` WRITE;
+/*!40000 ALTER TABLE `appointmentstatus` DISABLE KEYS */;
+/*!40000 ALTER TABLE `appointmentstatus` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `category`
 --
 
@@ -68,7 +237,7 @@ CREATE TABLE `customer` (
   CONSTRAINT `fk_customer_customerstatus1` FOREIGN KEY (`customerstatus_id`) REFERENCES `customerstatus` (`id`),
   CONSTRAINT `fk_customer_customertype1` FOREIGN KEY (`customertype_id`) REFERENCES `customertype` (`id`),
   CONSTRAINT `fk_customer_gender1` FOREIGN KEY (`gender_id`) REFERENCES `gender` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=97 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=98 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -77,8 +246,38 @@ CREATE TABLE `customer` (
 
 LOCK TABLES `customer` WRITE;
 /*!40000 ALTER TABLE `customer` DISABLE KEYS */;
-INSERT INTO `customer` VALUES (1,'John Doe','John','C1234567','1234 Elm Street','0712345678','john.doe@example.com',NULL,1,'2025-03-30',1,1),(80,'Tom Lee','Tom','C1234569','9101 Pine Road','0734567890','tom.lee@example.com',NULL,1,'2025-03-30',1,2),(81,'Sara Adams','Sara','C1234570','2345 Oak Drive','0745678901','sara.adams@example.com',NULL,2,'2025-03-30',3,2),(82,'Peter Brown','Peter','C1234571','6789 Birch Lane','0756789012','peter.brown@example.com',NULL,1,'2025-03-30',1,3),(83,'Emily Davis','Emily','C1234572','3456 Cedar Street','0767890123','emily.davis@example.com',NULL,2,'2025-03-30',2,1),(84,'Michael Clark','Mike','C1234573','4567 Maple Lane','0778901234','michael.clark@example.com',NULL,1,'2025-03-30',3,1),(85,'Rachel White','Rachel','C1234574','7890 Elm Street','0789012345','rachel.white@example.com',NULL,2,'2025-03-30',1,2),(86,'David Green','David','C1234575','1122 Pine Avenue','0790123456','david.green@example.com',NULL,1,'2025-03-30',2,3),(87,'Linda King','Linda','C1234576','3344 Oak Road','0701234567','linda.king@example.com',NULL,2,'2025-03-30',3,2),(88,'Buddhika Wanniarachchi','Buddhika','C1234583','6789 Birch Lane','0710714400','peter.brown@example.com',NULL,1,'2025-03-30',1,3),(89,'Sugath Nishantha','Nishantha','C1234584','6789 Moratuwa','0710714455','nishantha.brown@example.com',NULL,1,'2025-04-30',1,3),(90,'Sugath Nishantha','Nishantha','C0000001','6789 Moratuwa','0710714465','nishantha.brown@example.com',NULL,1,NULL,1,3),(91,'John Doe','John','C1234599','1234 Elm Street','0712345600','john.doe@example.com',NULL,1,'2025-03-30',1,1),(92,'Amal Perera','Amal','C0000004',NULL,'0710714435','amal@hotmail.com',NULL,1,NULL,1,2),(93,'Kasun Kalhara','Kasun','C0000005','Moratuwa','0777745678','kasun@gmail.com',NULL,1,NULL,1,2),(94,'Dilushi Rathnayake','Dilu','C0000007','411/15, Pepiliyana','0715663851','dilu@gmail.com',NULL,2,NULL,1,3),(95,'Randula Pernando','Randula','C202506220001','No 90, Katubedda, Moratuwa','0774563215','randu@gmail.com',NULL,1,NULL,2,1),(96,'Namal Karunarathna','Namal','C0000010','1234 Elm Street','0712345000','Namal.doe@example.com',NULL,1,'2025-06-30',1,1);
+INSERT INTO `customer` VALUES (1,'John Doe','John','C1234567','1234 Elm Street','0712345678','john.doe@example.com',NULL,1,'2025-03-30',1,1),(80,'Tom Lee','Tom','C1234569','9101 Pine Road','0734567890','tom.lee@example.com',NULL,1,'2025-03-30',1,2),(81,'Sara Adams','Sara','C1234570','2345 Oak Drive','0745678901','sara.adams@example.com',NULL,2,'2025-03-30',3,2),(82,'Peter Brown','Peter','C1234571','6789 Birch Lane','0756789012','peter.brown@example.com',NULL,1,'2025-03-30',1,3),(83,'Emily Davis','Emily','C1234572','3456 Cedar Street','0767890123','emily.davis@example.com',NULL,2,'2025-03-30',2,1),(84,'Michael Clark','Mike','C1234573','4567 Maple Lane','0778901234','michael.clark@example.com',NULL,1,'2025-03-30',3,1),(85,'Rachel White','Rachel','C1234574','7890 Elm Street','0789012345','rachel.white@example.com',NULL,2,'2025-03-30',1,2),(86,'David Green','David','C1234575','1122 Pine Avenue','0790123456','david.green@example.com',NULL,1,'2025-03-30',2,3),(87,'Linda King','Linda','C1234576','3344 Oak Road','0701234567','linda.king@example.com',NULL,2,'2025-03-30',3,2),(88,'Buddhika Wanniarachchi','Buddhika','C1234583','6789 Birch Lane','0710714400','peter.brown@example.com',NULL,1,'2025-03-30',1,3),(89,'Sugath Nishantha','Nishantha','C1234584','6789 Moratuwa','0710714455','nishantha.brown@example.com',NULL,1,'2025-04-30',1,3),(90,'Sugath Nishantha','Nishantha','C0000001','6789 Moratuwa','0710714465','nishantha.brown@example.com',NULL,1,NULL,1,3),(91,'John Doe','John','C1234599','1234 Elm Street','0712345600','john.doe@example.com',NULL,1,'2025-03-30',1,1),(92,'Amal Perera','Amal','C0000004',NULL,'0710714435','amal@hotmail.com',NULL,1,NULL,1,2),(93,'Kasun Kalhara','Kasun','C0000005','Moratuwa','0777745678','kasun@gmail.com',NULL,1,NULL,1,2),(94,'Dilushi Rathnayake','Dilu','C0000007','411/15, Pepiliyana','0715663851','dilu@gmail.com',NULL,2,NULL,1,3),(95,'Randula Pernando','Randula','C202506220001','No 90, Katubedda, Moratuwa','0774563215','randu@gmail.com',NULL,1,NULL,2,1),(96,'Namal Karunarathna','Namal','C0000010','1234 Elm Street','0712345000','Namal.doe@example.com',NULL,1,'2025-06-30',1,1),(97,'Amal Samantha','Samantha','C0000089','Moratuwa','0714455660','samantha@hotmail.com',NULL,1,NULL,1,2);
 /*!40000 ALTER TABLE `customer` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `customerfeedback`
+--
+
+DROP TABLE IF EXISTS `customerfeedback`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `customerfeedback` (
+  `id` int NOT NULL,
+  `date` date DEFAULT NULL,
+  `comment` text,
+  `customer_id` int NOT NULL,
+  `appointment_id` int NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_customerfeedback_customer1_idx` (`customer_id`),
+  KEY `fk_customerfeedback_appointment1_idx` (`appointment_id`),
+  CONSTRAINT `fk_customerfeedback_appointment1` FOREIGN KEY (`appointment_id`) REFERENCES `appointment` (`id`),
+  CONSTRAINT `fk_customerfeedback_customer1` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `customerfeedback`
+--
+
+LOCK TABLES `customerfeedback` WRITE;
+/*!40000 ALTER TABLE `customerfeedback` DISABLE KEYS */;
+/*!40000 ALTER TABLE `customerfeedback` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -151,6 +350,59 @@ LOCK TABLES `designation` WRITE;
 /*!40000 ALTER TABLE `designation` DISABLE KEYS */;
 INSERT INTO `designation` VALUES (1,'Salon Manager'),(2,'Receptionist'),(3,'Beautician'),(4,'Hairdresser'),(5,'Cleaner'),(6,'Cashier'),(7,'Assistant Beautician');
 /*!40000 ALTER TABLE `designation` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `discount`
+--
+
+DROP TABLE IF EXISTS `discount`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `discount` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `value` decimal(10,2) DEFAULT NULL,
+  `maxvalue` decimal(10,2) DEFAULT NULL,
+  `discounttype_id` int NOT NULL,
+  `promotion_id` int NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_discount_discounttype1_idx` (`discounttype_id`),
+  KEY `fk_discount_promotion1_idx` (`promotion_id`),
+  CONSTRAINT `fk_discount_discounttype1` FOREIGN KEY (`discounttype_id`) REFERENCES `discounttype` (`id`),
+  CONSTRAINT `fk_discount_promotion1` FOREIGN KEY (`promotion_id`) REFERENCES `promotion` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `discount`
+--
+
+LOCK TABLES `discount` WRITE;
+/*!40000 ALTER TABLE `discount` DISABLE KEYS */;
+/*!40000 ALTER TABLE `discount` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `discounttype`
+--
+
+DROP TABLE IF EXISTS `discounttype`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `discounttype` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `discounttype`
+--
+
+LOCK TABLES `discounttype` WRITE;
+/*!40000 ALTER TABLE `discounttype` DISABLE KEYS */;
+/*!40000 ALTER TABLE `discounttype` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -362,6 +614,76 @@ LOCK TABLES `grn_status` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `invoice`
+--
+
+DROP TABLE IF EXISTS `invoice`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `invoice` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `invoicenumber` varchar(45) DEFAULT NULL,
+  `invoicedate` datetime DEFAULT NULL,
+  `totalamount` decimal(10,2) DEFAULT NULL,
+  `discount` decimal(10,2) DEFAULT NULL,
+  `tax` decimal(10,2) DEFAULT NULL,
+  `final_amount` decimal(10,2) DEFAULT NULL,
+  `paymentstatus_id` int NOT NULL,
+  `appointment_id` int NOT NULL,
+  `promotion_id` int NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_invoice_paymentstatus1_idx` (`paymentstatus_id`),
+  KEY `fk_invoice_appointment1_idx` (`appointment_id`),
+  KEY `fk_invoice_promotion1_idx` (`promotion_id`),
+  CONSTRAINT `fk_invoice_appointment1` FOREIGN KEY (`appointment_id`) REFERENCES `appointment` (`id`),
+  CONSTRAINT `fk_invoice_paymentstatus1` FOREIGN KEY (`paymentstatus_id`) REFERENCES `paymentstatus` (`id`),
+  CONSTRAINT `fk_invoice_promotion1` FOREIGN KEY (`promotion_id`) REFERENCES `promotion` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `invoice`
+--
+
+LOCK TABLES `invoice` WRITE;
+/*!40000 ALTER TABLE `invoice` DISABLE KEYS */;
+/*!40000 ALTER TABLE `invoice` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `invoice_item`
+--
+
+DROP TABLE IF EXISTS `invoice_item`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `invoice_item` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `quantity` decimal(8,2) DEFAULT NULL,
+  `price` decimal(10,2) DEFAULT NULL,
+  `invoice_id` int NOT NULL,
+  `item_id` int NOT NULL,
+  `location_id` int NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_invoice_has_item_item1_idx` (`item_id`),
+  KEY `fk_invoice_has_item_invoice1_idx` (`invoice_id`),
+  KEY `fk_invoice_item_location1_idx` (`location_id`),
+  CONSTRAINT `fk_invoice_has_item_invoice1` FOREIGN KEY (`invoice_id`) REFERENCES `invoice` (`id`),
+  CONSTRAINT `fk_invoice_has_item_item1` FOREIGN KEY (`item_id`) REFERENCES `item` (`id`),
+  CONSTRAINT `fk_invoice_item_location1` FOREIGN KEY (`location_id`) REFERENCES `location` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `invoice_item`
+--
+
+LOCK TABLES `invoice_item` WRITE;
+/*!40000 ALTER TABLE `invoice_item` DISABLE KEYS */;
+/*!40000 ALTER TABLE `invoice_item` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `item`
 --
 
@@ -452,6 +774,86 @@ INSERT INTO `itemstatus` VALUES (1,'Active'),(2,'Inactive'),(3,'Discontinued');
 UNLOCK TABLES;
 
 --
+-- Table structure for table `itemstock_location`
+--
+
+DROP TABLE IF EXISTS `itemstock_location`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `itemstock_location` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `item_id` int NOT NULL,
+  `location_id` int NOT NULL,
+  `quantity` decimal(10,2) DEFAULT NULL,
+  `lastupdate` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_item_has_location_location1_idx` (`location_id`),
+  KEY `fk_item_has_location_item1_idx` (`item_id`),
+  CONSTRAINT `fk_item_has_location_item1` FOREIGN KEY (`item_id`) REFERENCES `item` (`id`),
+  CONSTRAINT `fk_item_has_location_location1` FOREIGN KEY (`location_id`) REFERENCES `location` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `itemstock_location`
+--
+
+LOCK TABLES `itemstock_location` WRITE;
+/*!40000 ALTER TABLE `itemstock_location` DISABLE KEYS */;
+/*!40000 ALTER TABLE `itemstock_location` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `location`
+--
+
+DROP TABLE IF EXISTS `location`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `location` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) DEFAULT NULL,
+  `description` varchar(250) DEFAULT NULL,
+  `locationtype_id` int NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_location_locationtype1_idx` (`locationtype_id`),
+  CONSTRAINT `fk_location_locationtype1` FOREIGN KEY (`locationtype_id`) REFERENCES `locationtype` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `location`
+--
+
+LOCK TABLES `location` WRITE;
+/*!40000 ALTER TABLE `location` DISABLE KEYS */;
+/*!40000 ALTER TABLE `location` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `locationtype`
+--
+
+DROP TABLE IF EXISTS `locationtype`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `locationtype` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `locationtype`
+--
+
+LOCK TABLES `locationtype` WRITE;
+/*!40000 ALTER TABLE `locationtype` DISABLE KEYS */;
+/*!40000 ALTER TABLE `locationtype` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `module`
 --
 
@@ -527,6 +929,166 @@ LOCK TABLES `opetype` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `package`
+--
+
+DROP TABLE IF EXISTS `package`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `package` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  ` packagnumber` varchar(45) DEFAULT NULL,
+  `name` varchar(100) DEFAULT NULL,
+  `price` decimal(10,2) DEFAULT NULL,
+  `duration` int DEFAULT NULL,
+  `status` tinyint DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `package`
+--
+
+LOCK TABLES `package` WRITE;
+/*!40000 ALTER TABLE `package` DISABLE KEYS */;
+/*!40000 ALTER TABLE `package` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `package_has_appointment`
+--
+
+DROP TABLE IF EXISTS `package_has_appointment`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `package_has_appointment` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `package_id` int NOT NULL,
+  `appointment_id` int NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_appointment_id` (`appointment_id`),
+  KEY `idx_package_id` (`package_id`),
+  CONSTRAINT `fk_package_appointment_appointment` FOREIGN KEY (`appointment_id`) REFERENCES `appointment` (`id`),
+  CONSTRAINT `fk_package_appointment_package` FOREIGN KEY (`package_id`) REFERENCES `package` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `package_has_appointment`
+--
+
+LOCK TABLES `package_has_appointment` WRITE;
+/*!40000 ALTER TABLE `package_has_appointment` DISABLE KEYS */;
+/*!40000 ALTER TABLE `package_has_appointment` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `package_has_service`
+--
+
+DROP TABLE IF EXISTS `package_has_service`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `package_has_service` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `Package_id` int NOT NULL,
+  `service_id` int NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_ Package_has_service_service1_idx` (`service_id`),
+  KEY `fk_ Package_has_service_ Package1_idx` (`Package_id`),
+  CONSTRAINT `fk_ Package_has_service_service1` FOREIGN KEY (`service_id`) REFERENCES `service` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `package_has_service`
+--
+
+LOCK TABLES `package_has_service` WRITE;
+/*!40000 ALTER TABLE `package_has_service` DISABLE KEYS */;
+/*!40000 ALTER TABLE `package_has_service` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `payment`
+--
+
+DROP TABLE IF EXISTS `payment`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `payment` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `receiptnumber` varchar(45) DEFAULT NULL,
+  `payment_date` datetime DEFAULT NULL,
+  `amount` decimal(10,2) DEFAULT NULL,
+  `remarks` varchar(255) DEFAULT NULL,
+  `invoice_id` int NOT NULL,
+  `paymentmethod_id` int NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_payment_invoice1_idx` (`invoice_id`),
+  KEY `fk_payment_paymentmethod1_idx` (`paymentmethod_id`),
+  CONSTRAINT `fk_payment_invoice1` FOREIGN KEY (`invoice_id`) REFERENCES `invoice` (`id`),
+  CONSTRAINT `fk_payment_paymentmethod1` FOREIGN KEY (`paymentmethod_id`) REFERENCES `paymentmethod` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `payment`
+--
+
+LOCK TABLES `payment` WRITE;
+/*!40000 ALTER TABLE `payment` DISABLE KEYS */;
+/*!40000 ALTER TABLE `payment` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `paymentmethod`
+--
+
+DROP TABLE IF EXISTS `paymentmethod`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `paymentmethod` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `paymentmethod`
+--
+
+LOCK TABLES `paymentmethod` WRITE;
+/*!40000 ALTER TABLE `paymentmethod` DISABLE KEYS */;
+/*!40000 ALTER TABLE `paymentmethod` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `paymentstatus`
+--
+
+DROP TABLE IF EXISTS `paymentstatus`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `paymentstatus` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `paymentstatus`
+--
+
+LOCK TABLES `paymentstatus` WRITE;
+/*!40000 ALTER TABLE `paymentstatus` DISABLE KEYS */;
+/*!40000 ALTER TABLE `paymentstatus` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `poitem`
 --
 
@@ -534,8 +1096,8 @@ DROP TABLE IF EXISTS `poitem`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `poitem` (
-  `id` int NOT NULL,
-  `quantity` int DEFAULT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `quantity` decimal(8,2) DEFAULT NULL,
   `sub_total` decimal(8,2) DEFAULT NULL,
   `item_id` int NOT NULL,
   `purchaseorder_id` int NOT NULL,
@@ -612,6 +1174,58 @@ LOCK TABLES `privilege` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `promotion`
+--
+
+DROP TABLE IF EXISTS `promotion`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `promotion` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `title` varchar(100) DEFAULT NULL,
+  `description` varchar(250) DEFAULT NULL,
+  `startdate` date DEFAULT NULL,
+  `enddate` date DEFAULT NULL,
+  `promotionstatus_id` int NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_promotion_promotionstatus1_idx` (`promotionstatus_id`),
+  CONSTRAINT `fk_promotion_promotionstatus1` FOREIGN KEY (`promotionstatus_id`) REFERENCES `promotionstatus` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `promotion`
+--
+
+LOCK TABLES `promotion` WRITE;
+/*!40000 ALTER TABLE `promotion` DISABLE KEYS */;
+/*!40000 ALTER TABLE `promotion` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `promotionstatus`
+--
+
+DROP TABLE IF EXISTS `promotionstatus`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `promotionstatus` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `promotionstatus`
+--
+
+LOCK TABLES `promotionstatus` WRITE;
+/*!40000 ALTER TABLE `promotionstatus` DISABLE KEYS */;
+/*!40000 ALTER TABLE `promotionstatus` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `purchaseorder`
 --
 
@@ -647,6 +1261,59 @@ LOCK TABLES `purchaseorder` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `question`
+--
+
+DROP TABLE IF EXISTS `question`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `question` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `qutext` varchar(300) DEFAULT NULL,
+  `isactive` tinyint DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `question`
+--
+
+LOCK TABLES `question` WRITE;
+/*!40000 ALTER TABLE `question` DISABLE KEYS */;
+/*!40000 ALTER TABLE `question` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `response`
+--
+
+DROP TABLE IF EXISTS `response`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `response` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `rating` int DEFAULT NULL,
+  `customerfeedback_id` int NOT NULL,
+  `question_id` int NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_response_customerfeedback1_idx` (`customerfeedback_id`),
+  KEY `fk_response_question1_idx` (`question_id`),
+  CONSTRAINT `fk_response_customerfeedback1` FOREIGN KEY (`customerfeedback_id`) REFERENCES `customerfeedback` (`id`),
+  CONSTRAINT `fk_response_question1` FOREIGN KEY (`question_id`) REFERENCES `question` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `response`
+--
+
+LOCK TABLES `response` WRITE;
+/*!40000 ALTER TABLE `response` DISABLE KEYS */;
+/*!40000 ALTER TABLE `response` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `role`
 --
 
@@ -667,6 +1334,173 @@ CREATE TABLE `role` (
 LOCK TABLES `role` WRITE;
 /*!40000 ALTER TABLE `role` DISABLE KEYS */;
 /*!40000 ALTER TABLE `role` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `service`
+--
+
+DROP TABLE IF EXISTS `service`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `service` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `code` varchar(8) DEFAULT NULL,
+  `name` varchar(75) DEFAULT NULL,
+  `duration` int DEFAULT NULL,
+  `price` decimal(8,2) DEFAULT NULL,
+  `servicestatus_id` int NOT NULL,
+  `servicecategory_id` int NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_service_servicestatus1_idx` (`servicestatus_id`),
+  KEY `fk_service_servicecategory1_idx` (`servicecategory_id`),
+  CONSTRAINT `fk_service_servicecategory1` FOREIGN KEY (`servicecategory_id`) REFERENCES `servicecategory` (`id`),
+  CONSTRAINT `fk_service_servicestatus1` FOREIGN KEY (`servicestatus_id`) REFERENCES `servicestatus` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `service`
+--
+
+LOCK TABLES `service` WRITE;
+/*!40000 ALTER TABLE `service` DISABLE KEYS */;
+/*!40000 ALTER TABLE `service` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `service_has_employee`
+--
+
+DROP TABLE IF EXISTS `service_has_employee`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `service_has_employee` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `service_id` int NOT NULL,
+  `employee_id` int NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_service_has_employee_employee1_idx` (`employee_id`),
+  KEY `fk_service_has_employee_service1_idx` (`service_id`),
+  CONSTRAINT `fk_service_has_employee_employee1` FOREIGN KEY (`employee_id`) REFERENCES `employee` (`id`),
+  CONSTRAINT `fk_service_has_employee_service1` FOREIGN KEY (`service_id`) REFERENCES `service` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `service_has_employee`
+--
+
+LOCK TABLES `service_has_employee` WRITE;
+/*!40000 ALTER TABLE `service_has_employee` DISABLE KEYS */;
+/*!40000 ALTER TABLE `service_has_employee` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `service_has_promotion`
+--
+
+DROP TABLE IF EXISTS `service_has_promotion`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `service_has_promotion` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `service_id` int NOT NULL,
+  `promotion_id` int NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_service_has_promotion_promotion1_idx` (`promotion_id`),
+  KEY `fk_service_has_promotion_service1_idx` (`service_id`),
+  CONSTRAINT `fk_service_has_promotion_promotion1` FOREIGN KEY (`promotion_id`) REFERENCES `promotion` (`id`),
+  CONSTRAINT `fk_service_has_promotion_service1` FOREIGN KEY (`service_id`) REFERENCES `service` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `service_has_promotion`
+--
+
+LOCK TABLES `service_has_promotion` WRITE;
+/*!40000 ALTER TABLE `service_has_promotion` DISABLE KEYS */;
+/*!40000 ALTER TABLE `service_has_promotion` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `servicecategory`
+--
+
+DROP TABLE IF EXISTS `servicecategory`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `servicecategory` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `servicecategory`
+--
+
+LOCK TABLES `servicecategory` WRITE;
+/*!40000 ALTER TABLE `servicecategory` DISABLE KEYS */;
+/*!40000 ALTER TABLE `servicecategory` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `servicestatus`
+--
+
+DROP TABLE IF EXISTS `servicestatus`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `servicestatus` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `servicestatus`
+--
+
+LOCK TABLES `servicestatus` WRITE;
+/*!40000 ALTER TABLE `servicestatus` DISABLE KEYS */;
+/*!40000 ALTER TABLE `servicestatus` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `stocktransfer`
+--
+
+DROP TABLE IF EXISTS `stocktransfer`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `stocktransfer` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `transferdate` date DEFAULT NULL,
+  `note` varchar(200) DEFAULT NULL,
+  `from_location_id` int NOT NULL,
+  `to_location_id` int NOT NULL,
+  `employee_id` int NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_stocktransfer_location1_idx` (`from_location_id`),
+  KEY `fk_stocktransfer_location2_idx` (`to_location_id`),
+  KEY `fk_stocktransfer_employee1_idx` (`employee_id`),
+  CONSTRAINT `fk_stocktransfer_employee1` FOREIGN KEY (`employee_id`) REFERENCES `employee` (`id`),
+  CONSTRAINT `fk_stocktransfer_location1` FOREIGN KEY (`from_location_id`) REFERENCES `location` (`id`),
+  CONSTRAINT `fk_stocktransfer_location2` FOREIGN KEY (`to_location_id`) REFERENCES `location` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `stocktransfer`
+--
+
+LOCK TABLES `stocktransfer` WRITE;
+/*!40000 ALTER TABLE `stocktransfer` DISABLE KEYS */;
+/*!40000 ALTER TABLE `stocktransfer` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -807,6 +1641,35 @@ CREATE TABLE `supply` (
 LOCK TABLES `supply` WRITE;
 /*!40000 ALTER TABLE `supply` DISABLE KEYS */;
 /*!40000 ALTER TABLE `supply` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `transferitem`
+--
+
+DROP TABLE IF EXISTS `transferitem`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `transferitem` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `quantity` decimal(8,2) DEFAULT NULL,
+  `stocktransfer_id` int NOT NULL,
+  `item_id` int NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_transferitem_stocktransfer1_idx` (`stocktransfer_id`),
+  KEY `fk_transferitem_item1_idx` (`item_id`),
+  CONSTRAINT `fk_transferitem_item1` FOREIGN KEY (`item_id`) REFERENCES `item` (`id`),
+  CONSTRAINT `fk_transferitem_stocktransfer1` FOREIGN KEY (`stocktransfer_id`) REFERENCES `stocktransfer` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `transferitem`
+--
+
+LOCK TABLES `transferitem` WRITE;
+/*!40000 ALTER TABLE `transferitem` DISABLE KEYS */;
+/*!40000 ALTER TABLE `transferitem` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -953,4 +1816,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-06-29 16:14:07
+-- Dump completed on 2025-07-22 22:16:56

@@ -9,12 +9,8 @@ import java.util.List;
 
 public interface CustomerfeedbackDao extends JpaRepository<Customerfeedback,Integer> {
 
-
-
     @Query("select c from Customerfeedback c where c.id = :id")
     Customerfeedback findByfeedbackId(@Param("id") Integer id);
-
-
 
 }
 
