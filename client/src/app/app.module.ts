@@ -42,6 +42,7 @@ import { OperationComponent } from './view/modules/operation/operation.component
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MatRadioModule} from "@angular/material/radio";
 import { SupplierComponent } from './view/modules/supplier/supplier.component';
+import {PurchaseorderComponent} from "./view/modules/purchaseorder/purorder.component";
 
 
 @NgModule({
@@ -58,7 +59,8 @@ import { SupplierComponent } from './view/modules/supplier/supplier.component';
     MessageComponent,
     PrivilageComponent,
     OperationComponent,
-    SupplierComponent
+    SupplierComponent,
+    PurchaseorderComponent
   ],
   imports: [
     MatDatepickerModule,
