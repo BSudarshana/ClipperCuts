@@ -25,10 +25,10 @@ public class SuppliertypeController {
         List<Supplierstype> suptypes = this.suptypedao.findAll();
 
         suptypes = suptypes.stream().map(
-                suptype -> { Supplierstype ct = new Supplierstype();
-                    ct.setId(suptype.getId());
-                    ct.setName(suptype.getName());
-                    return ct; }
+                suptype -> { Supplierstype supplierstype = new Supplierstype();
+                    supplierstype.setId(suptype.getId());
+                    supplierstype.setName(suptype.getName());
+                    return supplierstype; }
         ).collect(Collectors.toList());
 
         return suptypes;

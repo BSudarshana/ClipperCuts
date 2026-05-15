@@ -25,9 +25,9 @@ public class SupplierstatesController {
         List<Supplierstate> supstates = this.supstatesDao.findAll();
 
         supstates = supstates.stream().map(
-                cusstatus -> { Supplierstate supst = new Supplierstate();
-                    supst.setId(cusstatus.getId());
-                    supst.setName(cusstatus.getName());
+                supplierstate -> { Supplierstate supst = new Supplierstate();
+                    supst.setId(supplierstate.getId());
+                    supst.setName(supplierstate.getName());
                     return supst; }
         ).collect(Collectors.toList());
 

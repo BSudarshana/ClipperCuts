@@ -20,7 +20,7 @@ public class SupplierController {
     private SupplierDao supplierdao;
 
     @GetMapping(produces = "application/json")
-//    @PreAuthorize("hasAuthority('customer-select')")p
+//    @PreAuthorize("hasAuthority('supplier-select')")p
     public List<Supplier> get(@RequestParam HashMap<String, String> params) {
 
         List<Supplier> supplier = this.supplierdao.findAll();
@@ -60,7 +60,7 @@ public class SupplierController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-//    @PreAuthorize("hasAuthority('Customer-Insert')")
+//    @PreAuthorize("hasAuthority('supplier-insert')")
     public HashMap<String,String> add(@RequestBody Supplier supplier){
 
         HashMap<String,String> responce = new HashMap<>();
@@ -85,7 +85,7 @@ public class SupplierController {
 
     @PutMapping
     @ResponseStatus(HttpStatus.CREATED)
-//    @PreAuthorize("hasAuthority('Customer-Update')")
+//    @PreAuthorize("hasAuthority('supplier-update')")
     public HashMap<String,String> update(@RequestBody Supplier supplier){
 
         HashMap<String,String> responce = new HashMap<>();

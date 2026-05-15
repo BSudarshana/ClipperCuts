@@ -14,7 +14,7 @@ public interface DiscountDao extends JpaRepository<Discount,Integer> {
     Discount findByDiscountById(@Param("id") Integer id);
 
     @Query("select d from Discount d where d.value = :value")
-    Discount findByDiscountValue(@Param("id") BigDecimal value);
+    Discount findByDiscountValue(@Param("value") BigDecimal value);
 
 
 

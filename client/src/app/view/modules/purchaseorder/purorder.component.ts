@@ -12,7 +12,7 @@ import {AuthorizationManager} from "../../../service/authorizationmanager";
 import { Purchaseorder } from 'src/app/entity/purchaseorder';
 import { Postatusservice } from 'src/app/service/postatusservice';
 import { Postatus } from 'src/app/entity/postatus';
-import { PurchaseorderService } from 'src/app/service/Purchaseorderservice';
+import { PurchaseorderService } from 'src/app/service/purchaseorderservice';
 import { Employee } from 'src/app/entity/employee';
 import { Item } from 'src/app/entity/item';
 import { Poitem } from 'src/app/entity/poitem';
@@ -81,7 +81,7 @@ export class PurchaseorderComponent {
   constructor(
     private pos: PurchaseorderService,
     private poss: Postatusservice,
-    private itms: ItemService,
+    private itms: Itemservice,
     private emps: EmployeeService,
     private sups: SupplierService,
     private rs: RegexService,
@@ -653,10 +653,10 @@ export class PurchaseorderComponent {
   }
 
   filteritem(){
-    let supplier = this.form.controls['supplier'].value.id;
-    this.itms.getItemBySupplier(supplier).then((msys: Item[]) => {
-      this.items = msys;
-    });
+    // let supplier = this.form.controls['supplier'].value.id;
+    // this.itms.getItemBySupplier(supplier).then((msys: Item[]) => {
+    //   this.items = msys;
+    // });
   }
 
 }

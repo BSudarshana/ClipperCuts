@@ -10,6 +10,7 @@ import {OperationComponent} from "./view/modules/operation/operation.component";
 import {CountByDesignationComponent} from "./report/view/countbydesignation/countbydesignation.component";
 import {CustomerComponent} from "./view/modules/customer/customer.component";
 import {PurchaseorderComponent} from "./view/modules/purchaseorder/purorder.component";
+import {SupplierComponent} from "./view/modules/supplier/supplier.component";
 
 const routes: Routes = [
   {path: "login", component: LoginComponent},
@@ -24,6 +25,7 @@ const routes: Routes = [
       {path: "user", component: UserComponent},
       {path: "privilege", component: PrivilageComponent},
       {path: "customer", component: CustomerComponent},
+      {path: "supplier", component: SupplierComponent},
       {path: "purchaseorder", component: PurchaseorderComponent},
       {path:"reports/countbydesignation", component: CountByDesignationComponent},
     ]

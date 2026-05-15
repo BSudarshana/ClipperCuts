@@ -22,7 +22,7 @@ mat-card-content { overflow: auto; height: 100%; }
 
 
 /* Customer Form */
-#customerform{
+#supplierrform{
   padding-top: 20px;
 }
 
@@ -38,8 +38,9 @@ mat-card-content { overflow: auto; height: 100%; }
   display: block;
   margin-left: 150px;
   margin-bottom: 5px;
-  background-color: #2B775F;
-  color: white;
+  /*background-color: #2B775F;*/
+  background-color: #C9CD03;
+  color: #141414;
   padding: 8px;
   border-radius: 5px;
   text-align: center;
@@ -70,7 +71,7 @@ mat-card-content { overflow: auto; height: 100%; }
   background-color: inherit!important;
 }
 
-#customerform mat-form-field .ng-dirty{
+#supplierrform mat-form-field .ng-dirty{
   background-color: gold;
 }
 

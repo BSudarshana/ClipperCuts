@@ -32,11 +32,17 @@ export class AuthorizationManager {
     { name: 'Customer', isVisible: false, routerLink: 'customer' }
   ];
 
+  // Purchase menu items
+  Purchase = [
+    { name: 'Supplier', isVisible: true, routerLink: 'supplier' }
+  ];
+
   // Returns the list of all main menus with their corresponding items
   getNavListItem() {
     return [
       { Menu: 'Admin', MenuItems: this.Admin },
-      { Menu: 'Sales', MenuItems: this.Sales }
+      { Menu: 'Sales', MenuItems: this.Sales },
+      { Menu: 'Purchase', MenuItems: this.Purchase }
     ];
   }
 

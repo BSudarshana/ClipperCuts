@@ -11,7 +11,7 @@ public interface QuestionDao extends JpaRepository<Question,Integer> {
     Question findQuestionById(@Param("id") Integer id);
 
     @Query("select q from Question q where q.id = :text")
-    Question findQuestionByText(@Param("id") String text);
+    Question findQuestionByText(String text);
 
 }
 

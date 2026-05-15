@@ -6,7 +6,6 @@ import {MatTableDataSource} from "@angular/material/table";
 import {FormBuilder, FormControl, FormGroup, ValidationErrors, Validators} from "@angular/forms";
 import {UiAssist} from "../../../util/ui/ui.assist";
 import {Gender} from "../../../entity/gender";
-import {Designation} from "../../../entity/designation";
 import {GenderService} from "../../../service/genderservice";
 import {MatDialog} from "@angular/material/dialog";
 import {MessageComponent} from "../../../util/dialog/message/message.component";
@@ -33,7 +32,6 @@ export class CustomerComponent {
   headers: string[] = ['Code', 'Full Name', 'Gender', 'Mobile', 'Email', 'Address'];
   binders: string[] = ['code', 'fullname', 'gender.name', 'mobile', 'email', 'address'];
 
-  // cscolumns: string[] = ['cscode', 'cscallingname', 'csgender', 'csdesignation', 'csname', 'csmodi'];
   cscolumns: string[] = ['cscode', 'csfullname', 'csgender', 'csmobile', 'csemail','csaddress'];
   csprompts: string[] = ['Search by Code', 'Search by Full Name', 'Search by Gender', 'Search by Mobile', 'Search by Email', 'Search by Address'];
 
@@ -90,7 +88,7 @@ export class CustomerComponent {
     // Initialize UI helper class
     this.uiassist = new UiAssist(this);
 
-    // Create customer search form
+    // Create filters for the customer form
     this.csearch = this.fb.group({
       "cscode": new FormControl(),
       "csfullname": new FormControl(),
@@ -113,12 +111,9 @@ export class CustomerComponent {
       "fullname": new FormControl('', [Validators.required]),
       "callingname": new FormControl('', [Validators.required]),
       "gender": new FormControl('', [Validators.required]),
-      // "nic": new FormControl('', [Validators.required]),
-      // "photo": new FormControl('', [Validators.required]),
       "mobile": new FormControl('', [Validators.required]),
       "email": new FormControl('', [Validators.required]),
       "address": new FormControl('', [Validators.required]),
-      // "doassignment": new FormControl('', [Validators.required]),
       "customertype": new FormControl('', [Validators.required]),
       "customerstatus": new FormControl('', [Validators.required]),
     }, {updateOn: 'change'});
@@ -438,14 +433,6 @@ export class CustomerComponent {
 
     this.customer = JSON.parse(JSON.stringify(customer));
     this.oldcustomer = JSON.parse(JSON.stringify(customer));
-
-    // if (this.customer.photo != null) {
-    //   this.imageempurl = atob(this.customer.photo);
-    //   this.form.controls['photo'].clearValidators();
-    // } else {
-    //   this.clearImage();
-    // }
-    // this.customer.photo = "";
 
     //@ts-ignore
     this.customer.gender = this.genders.find(g => g.id === this.customer.gender.id);

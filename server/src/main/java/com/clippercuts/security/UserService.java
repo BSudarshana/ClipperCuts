@@ -81,6 +81,11 @@ public class UserService implements UserDetailsService {
             authorities.add(new SimpleGrantedAuthority("customer-update"));
             authorities.add(new SimpleGrantedAuthority("customer-insert"));
 
+            authorities.add(new SimpleGrantedAuthority("supplier-select"));
+            authorities.add(new SimpleGrantedAuthority("supplier-delete"));
+            authorities.add(new SimpleGrantedAuthority("supplier-update"));
+            authorities.add(new SimpleGrantedAuthority("supplier-insert"));
+
 
             return org.springframework.security.core.userdetails.User
                     .withUsername("AdminEUC")

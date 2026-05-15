@@ -15,10 +15,10 @@ public interface PaymentDao extends JpaRepository<Payment,Integer> {
     Payment findPaymentById(@Param("id") Integer id);
 
     @Query("select p from Payment p where p.paymentDate = :date")
-    Payment findBydate(@Param("id") String date);
+    Payment findBydate(@Param("date") String date);
 
     @Query("select p from Payment p where p.receiptnumber = :receiptnumber")
-    Payment findByReceiptnumber(@Param("id") String receiptnumber);
+    Payment findByReceiptnumber(@Param("receiptnumber") String receiptnumber);
 
 }
 
