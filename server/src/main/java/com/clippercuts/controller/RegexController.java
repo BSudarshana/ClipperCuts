@@ -2,6 +2,7 @@ package com.clippercuts.controller;
 
 import com.clippercuts.entity.Customer;
 import com.clippercuts.entity.Employee;
+import com.clippercuts.entity.Supplier;
 import com.clippercuts.entity.User;
 import com.clippercuts.util.RegexProvider;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -30,6 +31,8 @@ public class RegexController {
     @GetMapping(path ="/customers", produces = "application/json")
     public HashMap<String, HashMap<String, String>> Customer() { return RegexProvider.get(new Customer());}
 
+    @GetMapping(path ="/supplier", produces = "application/json")
+    public HashMap<String, HashMap<String, String>> Supplier() { return RegexProvider.get(new Supplier());}
 
 }
 

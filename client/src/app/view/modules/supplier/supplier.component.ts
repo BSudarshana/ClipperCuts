@@ -174,12 +174,12 @@ export class SupplierComponent {
   createForm() {
     this.form.controls['registernumber'].setValidators([Validators.required]);
     this.form.controls['name'].setValidators([Validators.required, Validators.pattern(this.regexes['name']['regex'])]);
-    this.form.controls['mobile'].setValidators([Validators.required, Validators.pattern(this.regexes['mobile']['regex'])]);
+    this.form.controls['contactnumber'].setValidators([Validators.required, Validators.pattern(this.regexes['contactnumber']['regex'])]);
     this.form.controls['email'].setValidators([Validators.required,Validators.pattern(this.regexes['email']['regex'])]);
     this.form.controls['address'].setValidators([Validators.required, Validators.pattern(this.regexes['address']['regex'])]);
     // this.form.controls['doassignment'].setValidators([Validators.required]);
-    this.form.controls['customertype'].setValidators([Validators.required]);
-    this.form.controls['customerstatus'].setValidators([Validators.required]);
+    this.form.controls['suppliertype'].setValidators([Validators.required]);
+    this.form.controls['supplierstatus'].setValidators([Validators.required]);
 
     Object.values(this.form.controls).forEach( control => { control.markAsTouched(); } );
 
@@ -222,8 +222,8 @@ export class SupplierComponent {
       .then((cuss: Supplier[]) => {
         this.suppliers = cuss;
         this.imageurl = 'assets/fullfilled.png';
-        this.numberService.setLastSequenceNumber(this.suppliers[this.suppliers.length-1].registernumber);
-        this.generateNumber();
+        // this.numberService.setLastSequenceNumber(this.suppliers[this.suppliers.length-1].registernumber);
+        // this.generateNumber();
       })
       .catch((error) => {
         console.log(error);
@@ -247,18 +247,18 @@ export class SupplierComponent {
 
     this.data.filterPredicate = (supplier: Supplier, filter: string) => {
       return (supserchdata.cscode == null || supplier.registernumber.includes(supserchdata.cscode)) &&
-        (supserchdata.csfullname == null || supplier.name.toLowerCase().includes(supserchdata.csfullname)) &&
-        (supserchdata.csgender == null || supplier.supplierstype.name.toLowerCase().includes(supserchdata.csgender)) &&
-        (supserchdata.csmobile == null || supplier.contactnumber.toLowerCase().includes(supserchdata.csmobile)) &&
-        (supserchdata.csemail == null || supplier.email.includes(supserchdata.csemail)) &&
-        (supserchdata.csaddress == null || supplier.address.toLowerCase().includes(supserchdata.csaddress)) ;
+        (supserchdata.csname == null || supplier.name.toLowerCase().includes(supserchdata.csname)) &&
+        (supserchdata.csaddress == null || supplier.address.toLowerCase().includes(supserchdata.csaddress)) &&
+        (supserchdata.cscontactperson == null || supplier.contactperson.toLowerCase().includes(supserchdata.cscontactperson)) &&
+        (supserchdata.cscontactnumber == null || supplier.contactnumber.includes(supserchdata.cscontactnumber)) &&
+        (supserchdata.csdescription == null || supplier.description.toLowerCase().includes(supserchdata.csdescription)) ;
     };
 
     this.data.filter = 'xx';
 
   }
 
-  // Generate new customer code
+  // Generate new Supplier code
   generateNumber(): void{
     const newNumber : string = this.numberService.generateNumber('S');
     this.form.controls['code'].setValue(newNumber);
@@ -270,14 +270,14 @@ export class SupplierComponent {
     const sserchdata = this.ssearch.getRawValue();
 
     let code = sserchdata.sscode;
-    let fullname = sserchdata.ssfullname;
-    let mobile = sserchdata.ssmobile;
+    let name = sserchdata.ssname;
+    // let mobile = sserchdata.ssmobile;
 
     let query = "";
 
     if (code != null && code.trim() != "") query = query + "&code=" + code;
-    if (fullname != null && fullname.trim() != "") query = query + "&fullname=" + fullname;
-    if (mobile != null && mobile.trim() != "") query = query + "&mobile=" + mobile;
+    if (name != null && name.trim() != "") query = query + "&name=" + name;
+    // if (mobile != null && mobile.trim() != "") query = query + "&mobile=" + mobile;
 
     if (query != "") query = query.replace(/^./, "?")
 
@@ -449,82 +449,81 @@ export class SupplierComponent {
   }
 
   // Update existing Supplier with confirmation
-  // update() {
-  //
-  //   let errors = this.getErrors();
-  //
-  //   if (errors != "") {
-  //     const errmsg = this.matdialog.open(MessageComponent, {
-  //       width: '500px',
-  //       data: {heading: "Errors - Customer Update ", message: "You have following Errors <br> " + errors}
-  //     });
-  //     errmsg.afterClosed().subscribe(async result => { if (!result) { return; } });
-  //
-  //   } else {
-  //
-  //     let updates: string = this.getUpdates();
-  //
-  //     if (updates != "") {
-  //       let updstatus: boolean = false;
-  //       let updmessage: string = "Server Not Found";
-  //
-  //       const confirm = this.matdialog.open(ConfirmComponent, {
-  //         width: '500px',
-  //         data: {
-  //           heading: "Confirmation - Customer Update",
-  //           message: "Are you sure to Save folowing Updates? <br> <br>" + updates
-  //         }
-  //       });
-  //       confirm.afterClosed().subscribe(async result => {
-  //         if (result) {
-  //           //console.log("CustomerService.update()");
-  //           this.customer = this.form.getRawValue();
-  //           if (this.form.controls['photo'].dirty) this.customer.photo = btoa(this.imageempurl);
-  //           else this.customer.photo = this.oldsupplier.photo;
-  //           this.customer.id = this.oldsupplier.id;
-  //
-  //           this.es.update(this.customer).then((responce: [] | undefined) => {
-  //             if (responce != undefined) {
-  //               // @ts-ignore
-  //               updstatus = responce['errors'] == "";
-  //               if (!updstatus) { // @ts-ignore
-  //                 updmessage = responce['errors'];
-  //               }
-  //             } else {
-  //               updstatus = false;
-  //               updmessage = "Content Not Found"
-  //             }
-  //           } ).finally(() => {
-  //             if (updstatus) {
-  //               updmessage = "Successfully Updated";
-  //               this.form.reset();
-  //               //this.clearImage();
-  //               Object.values(this.form.controls).forEach(control => { control.markAsTouched(); });
-  //               this.loadTable("");
-  //             }
-  //
-  //             const stsmsg = this.dg.open(MessageComponent, {
-  //               width: '500px',
-  //               data: {heading: "Status -Customer Add", message: updmessage}
-  //             });
-  //             stsmsg.afterClosed().subscribe(async result => { if (!result) { return; } });
-  //
-  //           });
-  //         }
-  //       });
-  //     }
-  //     else {
-  //
-  //       const updmsg = this.matdialog.open(MessageComponent, {
-  //         width: '500px',
-  //         data: {heading: "Confirmation - Customer Update", message: "Nothing Changed"}
-  //       });
-  //       updmsg.afterClosed().subscribe(async result => { if (!result) { return; } });
-  //
-  //     }
-  //   }
-  //
-  // }
+  update() {
+
+    let errors = this.getErrors();
+
+    if (errors != "") {
+      const errmsg = this.matdialog.open(MessageComponent, {
+        width: '500px',
+        data: {heading: "Errors - Customer Update ", message: "You have following Errors <br> " + errors}
+      });
+      errmsg.afterClosed().subscribe(async result => { if (!result) { return; } });
+
+    } else {
+
+      let updates: string = this.getUpdates();
+
+      if (updates != "") {
+        let updstatus: boolean = false;
+        let updmessage: string = "Server Not Found";
+
+        const confirm = this.matdialog.open(ConfirmComponent, {
+          width: '500px',
+          data: {
+            heading: "Confirmation - Customer Update",
+            message: "Are you sure to Save folowing Updates? <br> <br>" + updates
+          }
+        });
+        confirm.afterClosed().subscribe(async result => {
+          if (result) {
+            //console.log("CustomerService.update()");
+            this.supplier= this.form.getRawValue();
+
+            this.supplier.id = this.oldsupplier.id;
+
+            this.suppService.update(this.supplier).then((responce: [] | undefined) => {
+              if (responce != undefined) {
+                // @ts-ignore
+                updstatus = responce['errors'] == "";
+                if (!updstatus) { // @ts-ignore
+                  updmessage = responce['errors'];
+                }
+              } else {
+                updstatus = false;
+                updmessage = "Content Not Found"
+              }
+            } ).finally(() => {
+              if (updstatus) {
+                updmessage = "Successfully Updated";
+                this.form.reset();
+                //this.clearImage();
+                Object.values(this.form.controls).forEach(control => { control.markAsTouched(); });
+                this.loadTable("");
+              }
+
+              const stsmsg = this.matdialog.open(MessageComponent, {
+                width: '500px',
+                data: {heading: "Status -Customer Add", message: updmessage}
+              });
+              stsmsg.afterClosed().subscribe(async result => { if (!result) { return; } });
+
+            });
+          }
+        });
+      }
+      else {
+
+        const updmsg = this.matdialog.open(MessageComponent, {
+          width: '500px',
+          data: {heading: "Confirmation - Customer Update", message: "Nothing Changed"}
+        });
+        updmsg.afterClosed().subscribe(async result => { if (!result) { return; } });
+
+      }
+    }
+
+  }
 
 // Delete customer after confirmation
   delete() {

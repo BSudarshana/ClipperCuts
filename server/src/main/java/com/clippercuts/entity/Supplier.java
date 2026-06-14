@@ -3,6 +3,7 @@ package com.clippercuts.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import javax.validation.constraints.Pattern;
 import java.sql.Date;
 import java.util.Collection;
 import java.util.Objects;
@@ -15,21 +16,26 @@ public class Supplier {
     private int id;
     @Basic
     @Column(name = "name")
+    @Pattern(regexp = "^([A-Z][a-z]+)$", message = "Invalid Name")
     private String name;
     @Basic
     @Column(name = "registernumber")
     private String registernumber;
     @Basic
     @Column(name = "address")
+    @Pattern(regexp = "^([\\w\\/\\-,\\s]{2,})$", message = "Invalid Address")
     private String address;
     @Basic
     @Column(name = "contactnumber")
+    @Pattern(regexp = "^0\\d{9}$", message = "Invalid Contact Number")
     private String contactnumber;
     @Basic
     @Column(name = "contactperson")
+    @Pattern(regexp = "^([A-Z][a-z]*[.]?[\\s]?)*([A-Z][a-z]*)$", message = "Invalid Contact Person Name")
     private String contactperson;
     @Basic
     @Column(name = "email")
+    @Pattern(regexp = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$", message = "Invalid Email Address")
     private String email;
     @Basic
     @Column(name = "doregister")

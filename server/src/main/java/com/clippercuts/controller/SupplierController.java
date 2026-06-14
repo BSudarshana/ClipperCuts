@@ -135,6 +135,13 @@ public class SupplierController {
         return responce;
     }
 
+    @GetMapping(path = "/last", produces = "application/json")
+    public Supplier lastSupplier(){
+        Supplier supplier = supplierdao.findTopByOrderByIdDesc();
+
+        return supplier;
+    }
+
 }
 
 

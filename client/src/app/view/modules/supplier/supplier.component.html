@@ -14,7 +14,7 @@
           <!-- Customer Code -->
           <mat-form-field appearance="outline">
             <mat-label>Code</mat-label>
-            <input matInput formControlName="code">
+            <input matInput formControlName="registernumber">
           </mat-form-field>
 
           <!--Full Name-->
@@ -23,11 +23,6 @@
             <input matInput formControlName="name">
           </mat-form-field>
 
-          <!-- Calling Name -->
-          <mat-form-field appearance="outline">
-            <mat-label>Calling Name</mat-label>
-            <input matInput formControlName="callingname">
-          </mat-form-field>
 
           <!-- Gender Selection -->
 <!--          <mat-form-field appearance="outline">-->
@@ -38,10 +33,22 @@
 <!--            </mat-select>-->
 <!--          </mat-form-field>-->
 
-          <!-- Mobile Number-->
+          <!-- Address Number-->
           <mat-form-field appearance="outline">
-            <mat-label>Mobile</mat-label>
-            <input matInput formControlName="mobile">
+            <mat-label>Address</mat-label>
+            <input matInput formControlName="address">
+          </mat-form-field>
+
+          <!-- Phone Number-->
+          <mat-form-field appearance="outline">
+            <mat-label>Phone Number</mat-label>
+            <input matInput formControlName="contactnumber">
+          </mat-form-field>
+
+          <!-- Contact Person-->
+          <mat-form-field appearance="outline">
+            <mat-label>Contact Person</mat-label>
+            <input matInput formControlName="contactperson">
           </mat-form-field>
 
           <!-- Email Address -->
@@ -52,16 +59,16 @@
 
           <!-- Postel Address -->
           <mat-form-field appearance="outline">
-            <mat-label>Address</mat-label>
-            <input matInput formControlName="address">
+            <mat-label>Description</mat-label>
+            <input matInput formControlName="description">
           </mat-form-field>
 
-          <!-- Customer Type -->
+          <!-- Supplier Type -->
           <mat-form-field appearance="outline">
             <mat-label>Supplier Type</mat-label>
-            <mat-select formControlName="suppliertype">
+            <mat-select formControlName="supplierstype">
               <mat-option [value]="null" selected>Not Selected</mat-option>
-              <mat-option *ngFor="let suppliertype of supplierstypes" [value]="suppliertype">{{suppliertype.name}}</mat-option>
+              <mat-option *ngFor="let supplierstype of supplierstypes" [value]="supplierstype">{{supplierstype.name}}</mat-option>
             </mat-select>
           </mat-form-field>
 
@@ -78,7 +85,7 @@
           <div id="butpanel">
             <button mat-raised-button (click)="add()" [disabled]="!(enaadd && hasInsertAuthority)">Add</button>
             <button mat-raised-button (click)="clear()">Clear</button>
-<!--            <button mat-raised-button (click)="update()" [disabled]="!(enaupd && hasUpdateAuthority)">Update</button>-->
+            <button mat-raised-button (click)="update()" [disabled]="!(enaupd && hasUpdateAuthority)">Update</button>
             <button mat-raised-button (click)="delete()" [disabled]="!(enadel && hasDeleteAuthority)">Delete</button>
           </div>
 
@@ -106,15 +113,15 @@
 
           <!-- Search by Full Name -->
           <mat-form-field appearance="outline">
-            <mat-label>Search by Fullname</mat-label>
-            <input matInput formControlName="ssfullname">
+            <mat-label>Search by name</mat-label>
+            <input matInput formControlName="ssname">
           </mat-form-field>
 
           <!-- Search by Mobile -->
-          <mat-form-field appearance="outline">
-            <mat-label>Search by Mobile</mat-label>
-            <input matInput formControlName="ssmobile">
-          </mat-form-field>
+<!--          <mat-form-field appearance="outline">-->
+<!--            <mat-label>Search by Mobile</mat-label>-->
+<!--            <input matInput formControlName="ssmobile">-->
+<!--          </mat-form-field>-->
 
           <!-- Search Buttons -->
           <div>

@@ -162,6 +162,13 @@ public class CustomerController {
         return responce;
     }
 
+    @GetMapping(path ="/last",produces = "application/json")
+    public Customer lastCustomer(){
+        Customer customer = customerdao.findTopByOrderByIdDesc();
+
+        return  customer;
+    }
+
 }
 
 

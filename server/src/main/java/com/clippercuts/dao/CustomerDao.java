@@ -21,5 +21,7 @@ public interface CustomerDao extends JpaRepository<Customer,Integer> {
     @Query("SELECT NEW Customer (c.id, c.callingname) FROM Customer c")
     List<Customer> findAllNameId();
 
+    Customer findTopByOrderByIdDesc();
+
 }
 
