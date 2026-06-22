@@ -21,8 +21,6 @@ import {DatePipe} from "@angular/common";
 import {AuthorizationManager} from "../../../service/authorizationmanager";
 
 import {NumberService} from "../../../service/numberservice";
-import {Customerstatus} from "../../../entity/customerstatus";
-import {Customertype} from "../../../entity/customertype";
 
 @Component({
   selector: 'app-supplier',
@@ -117,7 +115,7 @@ export class SupplierComponent {
       "contactnumber": new FormControl('', [Validators.required]),
       "email": new FormControl('', [Validators.required]),
       "description": new FormControl('', [Validators.required]),
-      "suplierstate": new FormControl('', [Validators.required]),
+      "supplierstate": new FormControl('', [Validators.required]),
       "supplierstype": new FormControl('', [Validators.required]),
     }, {updateOn: 'change'});
 
@@ -172,14 +170,15 @@ export class SupplierComponent {
 
 // Assign regex validations dynamically and detect field changes
   createForm() {
-    this.form.controls['registernumber'].setValidators([Validators.required]);
-    this.form.controls['name'].setValidators([Validators.required, Validators.pattern(this.regexes['name']['regex'])]);
+    // this.form.controls['registernumber'].setValidators([Validators.required]);
+    // this.form.controls['name'].setValidators([Validators.required, Validators.pattern(this.regexes['name']['regex'])]);
+    this.form.controls['name'].setValidators([Validators.required]);
     this.form.controls['contactnumber'].setValidators([Validators.required, Validators.pattern(this.regexes['contactnumber']['regex'])]);
     this.form.controls['email'].setValidators([Validators.required,Validators.pattern(this.regexes['email']['regex'])]);
     this.form.controls['address'].setValidators([Validators.required, Validators.pattern(this.regexes['address']['regex'])]);
     // this.form.controls['doassignment'].setValidators([Validators.required]);
     this.form.controls['suppliertype'].setValidators([Validators.required]);
-    this.form.controls['supplierstatus'].setValidators([Validators.required]);
+    this.form.controls['supplierstate'].setValidators([Validators.required]);
 
     Object.values(this.form.controls).forEach( control => { control.markAsTouched(); } );
 
@@ -304,7 +303,7 @@ export class SupplierComponent {
 
 
 
-  // Add a new customer after validations and confirmation
+  // Add a new Supplier after validations and confirmation
   add() {
 
     let errors = this.getErrors();
@@ -322,7 +321,6 @@ export class SupplierComponent {
     } else {
 
       this.supplier = this.form.getRawValue();
-      // this.customer.photo = btoa(this.imageempurl);
 
       let cusdata: string = "";
 
@@ -333,7 +331,7 @@ export class SupplierComponent {
         width: '500px',
         data: {
           heading: "Confirmation - Supplier Add",
-          message: "Are you sure to Add the following Customer? <br> <br>" + cusdata
+          message: "Are you sure to Add the following Supplier? <br> <br>" + cusdata
         }
       });
 
@@ -370,7 +368,7 @@ export class SupplierComponent {
 
             const stsmsg = this.matdialog.open(MessageComponent, {
               width: '500px',
-              data: {heading: "Status -Customer Add", message: addmessage}
+              data: {heading: "Status -Supplier Add", message: addmessage}
             });
 
             stsmsg.afterClosed().subscribe(async result => {
@@ -404,7 +402,7 @@ export class SupplierComponent {
     return errors;
   }
 
-// Fill form fields with selected customer data
+// Fill form fields with selected Supplier data
   fillForm(supplier: Supplier) {
 
     this.selectedrow=supplier;
@@ -412,21 +410,11 @@ export class SupplierComponent {
     this.supplier = JSON.parse(JSON.stringify(supplier));
     this.oldsupplier = JSON.parse(JSON.stringify(supplier));
 
-    // if (this.customer.photo != null) {
-    //   this.imageempurl = atob(this.customer.photo);
-    //   this.form.controls['photo'].clearValidators();
-    // } else {
-    //   this.clearImage();
-    // }
-    // this.customer.photo = "";
+    //@ts-ignore
+    this.supplier.supplierstate = this.supplierstates.find(data => data.id === this.supplier.supplierstate.id)
 
     //@ts-ignore
-    this.customer.gender = this.genders.find(g => g.id === this.customer.gender.id);
-    //@ts-ignore
-    this.customer.customerstatus = this.customerstatuses.find(d => d.id === this.customer.customerstatus.id);
-
-    //@ts-ignore
-    this.customer.customertype = this.customertypes.find(s => s.id === this.customer.customertype.id);
+    this.supplier.supplierstype = this.supplierstypes.find(data => data.id === this.supplier.supplierstype.id)
 
     this.form.patchValue(this.supplier);
     this.form.markAsPristine();
@@ -525,7 +513,7 @@ export class SupplierComponent {
 
   }
 
-// Delete customer after confirmation
+// Delete Supplier after confirmation
   delete() {
 
     const confirm = this.matdialog.open(ConfirmComponent, {

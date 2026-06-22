@@ -20,7 +20,7 @@ export class CustomerService {
 
   async delete(id: number): Promise<[]|undefined>{
     // @ts-ignore
-    return this.http.delete(`${this.baseUrl}` + id).toPromise();
+    return this.http.delete(`${this.baseUrl}` + '/' + id).toPromise();
   }
 
   async update(customer: Customer): Promise<[]|undefined>{

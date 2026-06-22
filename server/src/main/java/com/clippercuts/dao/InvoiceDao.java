@@ -11,11 +11,17 @@ public interface InvoiceDao extends JpaRepository<Invoice,Integer> {
     @Query("select i from Invoice i where i.id = :id")
     Invoice findInvoiceById(@Param("id") Integer id);
 
-//    @Query("select s from Service s where s.name = :name")
-//    Service findByServiceName(String name);
-
     @Query("select i from Invoice i where i.invoicenumber = :invoicenumber")
     Invoice findByInvoiceNumber(String invoicenumber);
+
+    @Query(value =
+            "SELECT invoice_no " +
+                    "FROM invoice " +
+                    "WHERE invoice_no LIKE CONCAT('INV-', :year, '-%') " +
+                    "ORDER BY invoice_id DESC " +
+                    "LIMIT 1",
+            nativeQuery = true)
+    String getLastInvoiceByYear(@Param("year") int year);
 
 }
 

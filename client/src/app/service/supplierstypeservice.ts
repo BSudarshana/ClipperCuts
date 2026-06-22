@@ -11,7 +11,7 @@ export class Supplierstypeservice{
 
   async getAllList(): Promise<Array<Supplierstype>> {
 
-    const supplierstypes = await this.http.get<Array<Supplierstype>>('http://localhost:8080/supplierstates/list').toPromise();
+    const supplierstypes = await this.http.get<Array<Supplierstype>>('http://localhost:8080/supplierstypes/list').toPromise();
     if(supplierstypes == undefined){
       return [];
     }

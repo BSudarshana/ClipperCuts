@@ -2,6 +2,7 @@ package com.clippercuts.controller;
 
 import com.clippercuts.dao.SupplierDao;
 import com.clippercuts.entity.Supplier;
+import com.clippercuts.util.NumberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +19,9 @@ public class SupplierController {
 
     @Autowired
     private SupplierDao supplierdao;
+
+    @Autowired
+    private NumberService numberService;
 
     @GetMapping(produces = "application/json")
 //    @PreAuthorize("hasAuthority('supplier-select')")p
@@ -71,6 +75,8 @@ public class SupplierController {
 
 //        if(supplierdao.findByMobile(supplier.getMobile())!=null)
 //            errors = errors+"<br> Existing Mobile Number";
+        String regnum = numberService.generateSupplierCode();
+        supplier.setRegisternumber(regnum);
 
         if(errors=="")
         supplierdao.save(supplier);

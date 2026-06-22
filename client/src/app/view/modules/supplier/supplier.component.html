@@ -14,7 +14,7 @@
           <!-- Customer Code -->
           <mat-form-field appearance="outline">
             <mat-label>Code</mat-label>
-            <input matInput formControlName="registernumber">
+            <input matInput formControlName="registernumber" class="readonly-field" readonly>
           </mat-form-field>
 
           <!--Full Name-->
@@ -23,15 +23,6 @@
             <input matInput formControlName="name">
           </mat-form-field>
 
-
-          <!-- Gender Selection -->
-<!--          <mat-form-field appearance="outline">-->
-<!--            <mat-label>Gender</mat-label>-->
-<!--            <mat-select formControlName="gender">-->
-<!--              <mat-option [value]="null" selected>Not Selected</mat-option>-->
-<!--              <mat-option *ngFor="let gender of genders" [value]="gender">{{gender.name}}</mat-option>-->
-<!--            </mat-select>-->
-<!--          </mat-form-field>-->
 
           <!-- Address Number-->
           <mat-form-field appearance="outline">
@@ -72,14 +63,14 @@
             </mat-select>
           </mat-form-field>
 
-          <!-- Supplier Status -->
-<!--          <mat-form-field appearance="outline">-->
-<!--            <mat-label>Supplier Status</mat-label>-->
-<!--            <mat-select formControlName="supplierstatus">-->
-<!--              <mat-option [value]="null" selected>Not Selected</mat-option>-->
-<!--              <mat-option *ngFor="let supplierstatus of supplierstatuses" [value]="supplierstatus">{{supplierstatus.name}}</mat-option>-->
-<!--            </mat-select>-->
-<!--          </mat-form-field>-->
+<!--           Supplier State-->
+          <mat-form-field appearance="outline">
+            <mat-label>Supplier State</mat-label>
+            <mat-select formControlName="supplierstate">
+              <mat-option [value]="null" selected>Not Selected</mat-option>
+              <mat-option *ngFor="let supplierstate of supplierstates" [value]="supplierstate">{{supplierstate.name}}</mat-option>
+            </mat-select>
+          </mat-form-field>
 
           <!-- Form Action Buttons -->
           <div id="butpanel">
