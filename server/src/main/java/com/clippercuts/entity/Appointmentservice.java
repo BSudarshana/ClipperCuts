@@ -19,6 +19,8 @@ public class Appointmentservice {
     @ManyToOne
     @JoinColumn(name = "service_id", referencedColumnName = "id", nullable = false)
     private Service service;
+
+
     @ManyToOne
     @JoinColumn(name = "employee_id", referencedColumnName = "id", nullable = false)
     private Employee employee;

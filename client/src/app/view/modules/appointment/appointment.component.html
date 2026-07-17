@@ -1,0 +1,46 @@
+<p>appointment works!</p>
+
+<mat-grid-list [cols]="12" rowHeight="4rem">
+
+  <!-- ============ Left Panel of the Form =============== -->
+  <mat-grid-tile [colspan]="4" [rowspan]="12">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Appointment Detail</mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content id="appointmentform" >
+        <!-- Customer Form -->
+        <form  [formGroup]="form" >
+
+          <!-- Customer Code -->
+          <mat-form-field appearance="outline">
+            <mat-label>Code</mat-label>
+            <input matInput formControlName="registernumber" class="readonly-field" readonly>
+          </mat-form-field>
+
+
+
+          <!--           Supplier State-->
+          <mat-form-field appearance="outline">
+            <mat-label>Appointment Status</mat-label>
+            <mat-select formControlName="appointmentstatus">
+              <mat-option [value]="null" selected>Not Selected</mat-option>
+              <mat-option *ngFor="let appointmentstatus of appointmentstatuses" [value]="appointmentstatus">{{appointmentstatus.name}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <!-- Form Action Buttons -->
+          <div id="butpanel">
+<!--            <button mat-raised-button (click)="add()" [disabled]="!(enaadd && hasInsertAuthority)">Add</button>-->
+<!--            <button mat-raised-button (click)="clear()">Clear</button>-->
+<!--            <button mat-raised-button (click)="update()" [disabled]="!(enaupd && hasUpdateAuthority)">Update</button>-->
+<!--            <button mat-raised-button (click)="delete()" [disabled]="!(enadel && hasDeleteAuthority)">Delete</button>-->
+          </div>
+
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </mat-grid-tile>
+
+</mat-grid-list>

@@ -3,10 +3,8 @@ package com.clippercuts.controller;
 import com.clippercuts.dao.AppointmentstatusDao;
 import com.clippercuts.entity.Appointmentstatus;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,5 +27,13 @@ public class AppointmentstatusController {
             s.setName(status.getName());
             return s;
         }).collect(Collectors.toList());
+    }
+
+    // This is a test function
+    @PostMapping
+    public String add(@RequestBody Appointmentstatus appointmentstatus) {
+        appointmentstatusDao.save(appointmentstatus);
+
+        return "success";
     }
 }

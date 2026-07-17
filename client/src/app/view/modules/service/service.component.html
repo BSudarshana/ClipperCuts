@@ -4,71 +4,50 @@
   <mat-grid-tile [colspan]="4" [rowspan]="12">
     <mat-card>
       <mat-card-header>
-        <mat-card-title>Supplier Detail</mat-card-title>
+        <mat-card-title>Service Detail</mat-card-title>
       </mat-card-header>
 
-      <mat-card-content id="supplierrform" >
-        <!-- Customer Form -->
+      <mat-card-content id="serviceform" >
+        <!-- Servicer Form -->
         <form  [formGroup]="form" >
 
-          <!-- Customer Code -->
+          <!-- Service Code -->
           <mat-form-field appearance="outline">
             <mat-label>Code</mat-label>
-            <input matInput formControlName="registernumber" class="readonly-field" readonly>
+            <input matInput formControlName="code" class="readonly-field" >
           </mat-form-field>
 
-          <!--Full Name-->
+          <!--Name-->
           <mat-form-field appearance="outline">
             <mat-label>Name</mat-label>
             <input matInput formControlName="name">
           </mat-form-field>
 
-
-          <!-- Address Number-->
           <mat-form-field appearance="outline">
-            <mat-label>Address</mat-label>
-            <input matInput formControlName="address">
+            <mat-label>Duration</mat-label>
+            <input matInput formControlName="duration">
           </mat-form-field>
 
-          <!-- Phone Number-->
           <mat-form-field appearance="outline">
-            <mat-label>Phone Number</mat-label>
-            <input matInput formControlName="contactnumber">
+            <mat-label>Price</mat-label>
+            <input matInput formControlName="price">
           </mat-form-field>
 
-          <!-- Contact Person-->
+          <!-- Service Category -->
           <mat-form-field appearance="outline">
-            <mat-label>Contact Person</mat-label>
-            <input matInput formControlName="contactperson">
-          </mat-form-field>
-
-          <!-- Email Address -->
-          <mat-form-field appearance="outline">
-            <mat-label>Email</mat-label>
-            <input matInput formControlName="email">
-          </mat-form-field>
-
-          <!-- Postel Address -->
-          <mat-form-field appearance="outline">
-            <mat-label>Description</mat-label>
-            <input matInput formControlName="description">
-          </mat-form-field>
-
-          <!-- Supplier Type -->
-          <mat-form-field appearance="outline">
-            <mat-label>Supplier Type</mat-label>
-            <mat-select formControlName="supplierstype">
+            <mat-label>Service Category</mat-label>
+            <mat-select formControlName="servicecategory">
               <mat-option [value]="null" selected>Not Selected</mat-option>
-              <mat-option *ngFor="let supplierstype of supplierstypes" [value]="supplierstype">{{supplierstype.name}}</mat-option>
+              <mat-option *ngFor="let servicecategory of serviceCategories" [value]="servicecategory">{{servicecategory.name}}</mat-option>
             </mat-select>
           </mat-form-field>
 
-<!--           Supplier State-->
+          <!--  Service Status-->
           <mat-form-field appearance="outline">
-            <mat-label>Supplier State</mat-label>
-            <mat-select formControlName="supplierstate">
+            <mat-label>Service Status</mat-label>
+            <mat-select formControlName="servicestatus">
               <mat-option [value]="null" selected>Not Selected</mat-option>
-              <mat-option *ngFor="let supplierstate of supplierstates" [value]="supplierstate">{{supplierstate.name}}</mat-option>
+              <mat-option *ngFor="let servicestatus of serviceStatuses" [value]="servicestatus">{{servicestatus.name}}</mat-option>
             </mat-select>
           </mat-form-field>
 
@@ -85,34 +64,30 @@
     </mat-card>
   </mat-grid-tile>
 
-  <!-- =========== Top Right Panel: Supplier Search ========== -->
+
+  <!-- =========== Top Right Panel: Service Search ========== -->
   <mat-grid-tile [colspan]="8" [rowspan]="4">
-    <mat-card id="ssearch">
+    <mat-card id="ServiceSearch">
       <mat-card-header>
-        <mat-card-title>Supplier Search</mat-card-title>
+        <mat-card-title>Service Search</mat-card-title>
       </mat-card-header>
 
       <mat-card-content>
         <!-- Search Form -->
-        <form [formGroup]="ssearch" id="customer-form">
+        <form [formGroup]="serviceSearchForm" id="ServiceSearchForm">
 
           <!-- Search by Code -->
           <mat-form-field appearance="outline">
             <mat-label>Search Code</mat-label>
-            <input matInput formControlName="sscode">
+            <input matInput formControlName="srcode">
           </mat-form-field>
 
           <!-- Search by Full Name -->
           <mat-form-field appearance="outline">
             <mat-label>Search by name</mat-label>
-            <input matInput formControlName="ssname">
+            <input matInput formControlName="srname">
           </mat-form-field>
 
-          <!-- Search by Mobile -->
-<!--          <mat-form-field appearance="outline">-->
-<!--            <mat-label>Search by Mobile</mat-label>-->
-<!--            <input matInput formControlName="ssmobile">-->
-<!--          </mat-form-field>-->
 
           <!-- Search Buttons -->
           <div>
@@ -127,11 +102,11 @@
     </mat-card>
   </mat-grid-tile>
 
-  <!--======Bottom Right Panel of the Supplier Table =======-->
+  <!--======Bottom Right Panel of the Service Table =======-->
   <mat-grid-tile [colspan]="8" [rowspan]="8">
     <mat-card>
       <mat-card-header>
-        <mat-card-title>Supplier Table</mat-card-title>
+        <mat-card-title>Service Table</mat-card-title>
 
         <!-- Loading Spinner -->
         <div id="loading">
@@ -149,7 +124,7 @@
           <!-- Column Search Inputs -->
           <ng-container *ngFor="let cscolumn of cscolumns;let i = index;" [matColumnDef]="cscolumn">
             <mat-header-cell *matHeaderCellDef>
-              <form [formGroup]="csearch" class="csearch">
+              <form [formGroup]="serviceFilterForm" class="csearch">
                 <mat-form-field appearance="outline">
                   <mat-label>{{csprompts[i]}}</mat-label>
                   <input matInput [formControlName]="cscolumn"
@@ -173,8 +148,5 @@
     </mat-card>
   </mat-grid-tile>
 
+
 </mat-grid-list>
-
-
-
-

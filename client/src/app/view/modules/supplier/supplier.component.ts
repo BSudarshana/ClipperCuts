@@ -160,7 +160,6 @@ export class SupplierComponent {
     this.hasInsertAuthority = authorities.some(authority => authority.module === 'supplier' && authority.operation === 'insert');
     this.hasUpdateAuthority = authorities.some(authority => authority.module === 'supplier' && authority.operation === 'update');
     this.hasDeleteAuthority = authorities.some(authority => authority.module === 'supplier' && authority.operation === 'delete');
-
   }
 
   createView() {
@@ -177,7 +176,7 @@ export class SupplierComponent {
     this.form.controls['email'].setValidators([Validators.required,Validators.pattern(this.regexes['email']['regex'])]);
     this.form.controls['address'].setValidators([Validators.required, Validators.pattern(this.regexes['address']['regex'])]);
     // this.form.controls['doassignment'].setValidators([Validators.required]);
-    this.form.controls['suppliertype'].setValidators([Validators.required]);
+    this.form.controls['supplierstype'].setValidators([Validators.required]);
     this.form.controls['supplierstate'].setValidators([Validators.required]);
 
     Object.values(this.form.controls).forEach( control => { control.markAsTouched(); } );
@@ -444,7 +443,7 @@ export class SupplierComponent {
     if (errors != "") {
       const errmsg = this.matdialog.open(MessageComponent, {
         width: '500px',
-        data: {heading: "Errors - Customer Update ", message: "You have following Errors <br> " + errors}
+        data: {heading: "Errors - Supplier Update ", message: "You have following Errors <br> " + errors}
       });
       errmsg.afterClosed().subscribe(async result => { if (!result) { return; } });
 
@@ -459,7 +458,7 @@ export class SupplierComponent {
         const confirm = this.matdialog.open(ConfirmComponent, {
           width: '500px',
           data: {
-            heading: "Confirmation - Customer Update",
+            heading: "Confirmation - Supplier Update",
             message: "Are you sure to Save folowing Updates? <br> <br>" + updates
           }
         });
@@ -492,7 +491,7 @@ export class SupplierComponent {
 
               const stsmsg = this.matdialog.open(MessageComponent, {
                 width: '500px',
-                data: {heading: "Status -Customer Add", message: updmessage}
+                data: {heading: "Status -Supplier Add", message: updmessage}
               });
               stsmsg.afterClosed().subscribe(async result => { if (!result) { return; } });
 
@@ -504,7 +503,7 @@ export class SupplierComponent {
 
         const updmsg = this.matdialog.open(MessageComponent, {
           width: '500px',
-          data: {heading: "Confirmation - Customer Update", message: "Nothing Changed"}
+          data: {heading: "Confirmation - Supplier Update", message: "Nothing Changed"}
         });
         updmsg.afterClosed().subscribe(async result => { if (!result) { return; } });
 
@@ -519,7 +518,7 @@ export class SupplierComponent {
     const confirm = this.matdialog.open(ConfirmComponent, {
       width: '500px',
       data: {
-        heading: "Confirmation - Customer Delete",
+        heading: "Confirmation - Supplier Delete",
         message: "Are you sure to Delete following Supplier? <br> <br>" + this.supplier.name
       }
     });

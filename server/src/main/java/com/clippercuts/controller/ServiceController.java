@@ -28,7 +28,7 @@ public class ServiceController {
         if(params.isEmpty())  return services;
 
         String servicecode = params.get("code");;
-        String serviceName = params.get("serviceName");
+        String serviceName = params.get("name");
 
         Stream<Service> serviceStream = services.stream();
 

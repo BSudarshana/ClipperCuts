@@ -1,9 +1,6 @@
 package com.clippercuts.controller;
 
-import com.clippercuts.entity.Customer;
-import com.clippercuts.entity.Employee;
-import com.clippercuts.entity.Supplier;
-import com.clippercuts.entity.User;
+import com.clippercuts.entity.*;
 import com.clippercuts.util.RegexProvider;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,6 +30,9 @@ public class RegexController {
 
     @GetMapping(path ="/supplier", produces = "application/json")
     public HashMap<String, HashMap<String, String>> Supplier() { return RegexProvider.get(new Supplier());}
+
+    @GetMapping(path ="/service", produces = "application/json")
+    public HashMap<String, HashMap<String, String>> Service() { return RegexProvider.get(new Service());}
 
 }
 

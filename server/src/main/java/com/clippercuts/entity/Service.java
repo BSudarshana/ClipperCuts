@@ -3,7 +3,7 @@ package com.clippercuts.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
-import javax.validation.constraints.Pattern;
+import javax.validation.constraints.*;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Objects;
@@ -14,21 +14,32 @@ public class Service {
     @Id
     @Column(name = "id")
     private Integer id;
+
     @Basic
     @Column(name = "code")
-    @Pattern(regexp = "^[0-9]+(\\.[0-9]{1,2})?$", message = "Invalid Service Code")
+    @Pattern(
+            regexp = "^SR[0-9]{4}$",
+            message = "Invalid Service Code. Format should be SR0001"
+    )
     private String code;
+
     @Basic
     @Column(name = "name")
     @Pattern(regexp = "^[A-Za-z0-9][A-Za-z0-9 '\\-()]{1,74}$", message = "Invalid Service Name")
     private String name;
+
     @Basic
-    @Column(name = "duration")
-    @Pattern(regexp = "^[1-9][0-9]{0,2}$", message = "Invalid Service Price")
+    @Column(name = "duration", nullable = false)
+    @NotNull(message = "Duration is required")
+    @Min(value = 1, message = "Duration must be greater than 0")
+    @Max(value = 999, message = "Duration cannot exceed 999")
     private Integer duration;
+
     @Basic
-    @Column(name = "price")
-    @Pattern(regexp = "^[0-9]+(\\.[0-9]{1,2})?$", message = "Invalid Service Price")
+    @Column(name = "price", nullable = false)
+    @NotNull(message = "Service Price is required")
+    @DecimalMin(value = "0.00", inclusive = false, message = "Service Price must be greater than zero")
+    @Digits(integer = 8, fraction = 2, message = "Service Price can have up to 8 digits and 2 decimal places")
     private BigDecimal price;
 
     @JsonIgnore
@@ -45,6 +56,8 @@ public class Service {
     @ManyToOne
     @JoinColumn(name = "servicecategory_id", referencedColumnName = "id", nullable = false)
     private Servicecategory servicecategory;
+
+    @JsonIgnore
     @OneToMany(mappedBy = "service")
     private Collection<ServiceHasEmployee> serviceHasEmployees;
 

@@ -12,8 +12,6 @@ public interface SupplierDao extends JpaRepository<Supplier,Integer> {
     @Query("select s from Supplier s where s.id = :id")
     Supplier findByMyId(@Param("id") Integer id);
 
-
-
     Supplier findTopByOrderByIdDesc();
 }
 
