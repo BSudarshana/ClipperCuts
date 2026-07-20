@@ -1,0 +1,182 @@
+/*.promotion-page {*/
+/*  display: grid;*/
+/*  grid-template-columns: minmax(320px, 4fr) minmax(560px, 8fr);*/
+/*  gap: 20px;*/
+/*  padding: 10px;*/
+/*}*/
+/*.right-panel {*/
+/*  display: grid; gap: 20px;*/
+/*  min-width: 0;*/
+/*}*/
+
+/*mat-card { width: 100%; box-sizing: border-box; }*/
+/*mat-card-content { padding-top: 20px; overflow: auto; }*/
+/*.promotion-form-card mat-form-field, .discount-form mat-form-field { width: 100%; }*/
+/*.date-row, .search-form, .discount-form { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }*/
+/*.date-row mat-form-field { flex: 1 1 140px; }*/
+/*.search-form mat-form-field { flex: 1 1 190px; }*/
+/*.discount-form mat-form-field { flex: 1 1 180px; }*/
+/*.action-panel { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin: 20px 0; }*/
+/*.action-panel button, .search-form button, .discount-form button { color: #141414; background: #c9cd03; }*/
+/*.selected-row { background: #c9e6ff !important; }*/
+/*.loading-state { width: 30px; height: 25px; margin-left: auto; object-fit: contain; }*/
+/*.ng-dirty:not(form) { background-color: gold; }*/
+/*button:disabled { opacity: .5; }*/
+/*@media (max-width: 900px) { .promotion-page { grid-template-columns: 1fr; } }*/
+
+/* Main two-column layout */
+.promotion-page {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 10px;
+}
+
+/* Left panel: approximately 4/12 of available width */
+.promotion-form-card {
+  flex: 4 1 320px;
+  min-width: 320px;
+}
+
+/* Right panel: approximately 8/12 of available width */
+.right-panel {
+  display: flex;
+  flex: 8 1 560px;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+}
+
+/* Material cards */
+mat-card {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+mat-card-content {
+  padding-top: 20px;
+  overflow: auto;
+}
+
+/* Form fields */
+.promotion-form-card mat-form-field,
+.discount-form mat-form-field {
+  width: 100%;
+}
+
+/* Date, search and discount form layouts */
+.date-row,
+.search-form,
+.discount-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.date-row mat-form-field {
+  flex: 1 1 140px;
+}
+
+.search-form mat-form-field {
+  flex: 1 1 190px;
+}
+
+.discount-form mat-form-field {
+  flex: 1 1 180px;
+}
+
+/* Promotion action buttons */
+.action-panel {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 20px 0;
+}
+
+.action-panel button {
+  flex: 1 1 calc(50% - 4px);
+}
+
+/* Button colours */
+.action-panel button,
+.search-form button,
+.discount-form button {
+  color: #141414;
+  background-color: #c9cd03;
+}
+
+/* Tables */
+mat-table {
+  width: 100%;
+  min-width: 500px;
+}
+
+.selected-row {
+  background-color: #c9e6ff !important;
+}
+
+/* Loading image */
+.loading-state {
+  width: 30px;
+  height: 25px;
+  margin-left: auto;
+  object-fit: contain;
+}
+
+/* Modified form-control indication */
+.ng-dirty:not(form) {
+  background-color: gold;
+}
+
+/* Disabled buttons */
+button:disabled {
+  opacity: 0.5;
+}
+
+/* Tablet and smaller screens */
+@media (max-width: 900px) {
+  .promotion-page {
+    flex-direction: column;
+  }
+
+  .promotion-form-card,
+  .right-panel {
+    flex: 1 1 auto;
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+/* Mobile screens */
+@media (max-width: 600px) {
+  .date-row,
+  .search-form,
+  .discount-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .date-row mat-form-field,
+  .search-form mat-form-field,
+  .discount-form mat-form-field {
+    flex: 1 1 auto;
+    width: 100%;
+  }
+
+  .search-form button,
+  .discount-form button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .action-panel {
+    flex-direction: column;
+  }
+
+  .action-panel button {
+    flex: 1 1 auto;
+    width: 100%;
+  }
+}

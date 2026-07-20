@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,17 +26,19 @@ public class PromotionController {
 
         List<Promotion> promotions = this.promotionDao.findAll();
 
-        if(params.isEmpty())  return promotions;
+//        if(params.isEmpty())  return promotions;
+//
+//        String promoTitle = params.get("title");
+//        String promoStartDate = params.get("startdate");
+//
+//        Stream<Promotion> promotionStream = promotions.stream();
+//
+//        if(promoTitle!=null) promotionStream = promotionStream.filter(p -> p.getTitle().contains(promoTitle));
+//        if(promoStartDate!=null) promotionStream  = promotionStream.filter(p -> p.getStartdate().toString().contains(promoStartDate));
+//
+//        return promotionStream.collect(Collectors.toList());
 
-        String promoTitle = params.get("title");
-        String promoStartDate = params.get("startdate");
-
-        Stream<Promotion> promotionStream = promotions.stream();
-
-        if(promoTitle!=null) promotionStream = promotionStream.filter(p -> p.getTitle().contains(promoTitle));
-        if(promoStartDate!=null) promotionStream  = promotionStream.filter(p -> p.getStartdate().toString().contains(promoStartDate));
-
-        return promotionStream.collect(Collectors.toList());
+        return promotions;
 
     }
 
@@ -43,46 +46,72 @@ public class PromotionController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
 //    @PreAuthorize("hasAuthority('Customer-Insert')")
-    public HashMap<String,String> add(@RequestBody Promotion promotion){
+    public HashMap<String,String> add(@Valid @RequestBody Promotion promotion){
 
-        HashMap<String,String> responce = new HashMap<>();
+        HashMap<String,String> response = new HashMap<>();
         String errors="";
 
         if(promotionDao.findByPromotionTitle(promotion.getTitle())!=null)
             errors = errors+"<br> Existing Promotion Title: "+promotion.getTitle();
 
-        if(errors=="")
+        if(errors.isEmpty())
             promotionDao.save(promotion);
         else errors = "Server Validation Errors : <br> "+errors;
 
-        responce.put("id",String.valueOf(promotion.getId()));
-        responce.put("url","/promotions/"+promotion.getId());
-        responce.put("errors",errors);
+        response.put("id",String.valueOf(promotion.getId()));
+        response.put("url","/promotions/"+promotion.getId());
+        response.put("errors",errors);
 
-        return responce;
+        return response;
     }
 
     @PutMapping
     @ResponseStatus(HttpStatus.CREATED)
 //    @PreAuthorize("hasAuthority('Customer-Update')")
-    public HashMap<String,String> update(@RequestBody Promotion promotion){
+    public HashMap<String,Object> update(@Valid @RequestBody Promotion promotion){
 
-        HashMap<String,String> responce = new HashMap<>();
-        String errors="";
+        HashMap<String, Object> response = new HashMap<>();
+        String errors = "";
 
-        Promotion promo = promotionDao.findByPromotionTitle(promotion.getTitle());
+        // Check whether the promotion has an ID
+        if (promotion.getId() == null) {
+            errors += "<br>Promotion ID is required";
+        } else {
+            // Check whether the promotion exists in the database
+            Promotion existingPromotion =
+                    promotionDao.findById(promotion.getId()).orElse(null);
 
-        if(promo!=null && promotion.getId()!=promo.getId())
-            errors = errors+"<br> Existing Promotion Title: "+promotion.getTitle();
+            if (existingPromotion == null) {
+                errors += "<br>Promotion does not exist";
+            }
+        }
 
-        if(errors=="") promotionDao.save(promotion);
-        else errors = "Server Validation Errors : <br> "+errors;
+        if (errors.isEmpty()) {
+            try {
+                Promotion savedPromotion = promotionDao.save(promotion);
 
-        responce.put("id ",String.valueOf(promotion.getId()));
-        responce.put("url ","/promotions/"+promotion.getId());
-        responce.put("error ",errors);
+                response.put("id", savedPromotion.getId());
+                response.put(
+                        "url",
+                        "/promotions/" + savedPromotion.getId()
+                );
+                response.put("errors", "");
 
-        return responce;
+            } catch (Exception e) {
+                response.put("id", null);
+                response.put("url", "");
+                response.put(
+                        "errors",
+                        "Server error while updating the promotion"
+                );
+            }
+        } else {
+            response.put("id", promotion.getId());
+            response.put("url", "");
+            response.put("errors", errors);
+        }
+
+        return response;
     }
 
 
@@ -90,7 +119,7 @@ public class PromotionController {
     @ResponseStatus(HttpStatus.CREATED)
     public HashMap<String,String> delete(@PathVariable Integer id){
 
-        HashMap<String,String> responce = new HashMap<>();
+        HashMap<String,String> response = new HashMap<>();
         String errors="";
 
         Promotion promotion = promotionDao.findByPromotionId(id);
@@ -98,14 +127,14 @@ public class PromotionController {
         if(promotion==null)
             errors = errors+"<br> The Promotion Does Not Existed";
 
-        if(errors=="") promotionDao.delete(promotion);
+        if(errors.isEmpty()) promotionDao.delete(promotion);
         else errors = "Server Validation Errors : <br> "+errors;
 
-        responce.put("id",String.valueOf(id));
-        responce.put("url","/service/"+id);
-        responce.put("errors",errors);
+        response.put("id",String.valueOf(id));
+        response.put("url","/service/"+id);
+        response.put("errors",errors);
 
-        return responce;
+        return response;
     }
 
 }

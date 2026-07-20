@@ -13,6 +13,7 @@ import {PurchaseorderComponent} from "./view/modules/purchaseorder/purorder.comp
 import {SupplierComponent} from "./view/modules/supplier/supplier.component";
 import {ServiceComponent} from "./view/modules/service/service.component";
 import {AppointmentComponent} from "./view/modules/appointment/appointment.component";
+import {PromotionComponent} from "./view/modules/promotion/promotion.component";
 
 const routes: Routes = [
   {path: "login", component: LoginComponent},
@@ -29,6 +30,7 @@ const routes: Routes = [
       {path: "customer", component: CustomerComponent},
       {path: "supplier", component: SupplierComponent},
       {path: "service", component: ServiceComponent},
+      {path: "promotion", component: PromotionComponent},
       {path: "appointment", component: AppointmentComponent},
       {path: "purchaseorder", component: PurchaseorderComponent},
       {path:"reports/countbydesignation", component: CountByDesignationComponent},

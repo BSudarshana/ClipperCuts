@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import javax.validation.Valid;
 
 @CrossOrigin
 @RestController
@@ -28,11 +29,10 @@ public class DiscountController {
         if(params.isEmpty())  return discounts;
 
         String discountValue = params.get("value");
-        String promoStartDate = params.get("startdate");
 
         Stream<Discount> discountStream = discounts.stream();
 
-        if(discountValue!=null) discountStream = discountStream.filter(d -> d.getValue().toString().contains(discountValue));
+        if(discountValue!=null) discountStream = discountStream.filter(d -> d.getDiscountvalue().toString().contains(discountValue));
 
         return discountStream.collect(Collectors.toList());
 
@@ -42,46 +42,79 @@ public class DiscountController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
 //    @PreAuthorize("hasAuthority('Customer-Insert')")
-    public HashMap<String,String> add(@RequestBody Discount discount){
+    public HashMap<String,String> add(@Valid @RequestBody Discount discount){
 
-        HashMap<String,String> responce = new HashMap<>();
+        HashMap<String,String> response = new HashMap<>();
         String errors="";
 
-        if(discountDao.findByDiscountValue(discount.getValue())!=null)
-            errors = errors+"<br> Existing Discount Value: "+discount.getValue();
+//        if(discountDao.findByDiscountValue(discount.getValue())!=null)
+//            errors = errors+"<br> Existing Discount Value: "+discount.getValue();
 
-        if(errors=="")
-            discountDao.save(discount);
-        else errors = "Server Validation Errors : <br> "+errors;
+        try {
+            Discount savedDiscount = discountDao.save(discount);
 
-        responce.put("id",String.valueOf(discount.getId()));
-        responce.put("url","/disdounts/"+discount.getId());
-        responce.put("errors",errors);
+            response.put("id", String.valueOf(savedDiscount.getId()));
+            response.put(
+                    "url",
+                    "/discounts/" + savedDiscount.getId()
+            );
+            response.put("errors", "");
 
-        return responce;
+        } catch (Exception e) {
+            response.put("id", String.valueOf(discount.getId()));
+            response.put("url", "");
+            response.put(
+                    "errors",
+                    "Failed to update the discount: " + e.getMessage()
+            );
+        }
+
+        return response;
     }
 
     @PutMapping
     @ResponseStatus(HttpStatus.CREATED)
-//    @PreAuthorize("hasAuthority('Customer-Update')")
+//    @PreAuthorize("hasAuthority('Promotion-Update')")
     public HashMap<String,String> update(@RequestBody Discount discount){
 
-        HashMap<String,String> responce = new HashMap<>();
-        String errors="";
+        HashMap<String,String> response = new HashMap<>();
 
-        Discount disc = discountDao.findByDiscountValue(discount.getValue());
+        // Validate the ID
+        if (discount.getId() == null) {
+            response.put("id", "");
+            response.put("url", "");
+            response.put("errors", "Discount ID is required");
+            return response;
+        }
 
-        if(disc!=null && discount.getId()!=disc.getId())
-            errors = errors+"<br> Existing Discount Value: "+discount.getValue();
+        // Check whether the discount exists
+        if (!discountDao.existsById(discount.getId())) {
+            response.put("id", String.valueOf(discount.getId()));
+            response.put("url", "");
+            response.put("errors", "Discount does not exist");
+            return response;
+        }
 
-        if(errors=="") discountDao.save(discount);
-        else errors = "Server Validation Errors : <br> "+errors;
+        try {
+            Discount savedDiscount = discountDao.save(discount);
 
-        responce.put("id ",String.valueOf(discount.getId()));
-        responce.put("url ","/promotions/"+discount.getId());
-        responce.put("error ",errors);
+            response.put("id", String.valueOf(savedDiscount.getId()));
+            response.put(
+                    "url",
+                    "/discounts/" + savedDiscount.getId()
+            );
+            response.put("errors", "");
 
-        return responce;
+        } catch (Exception e) {
+            response.put("id", String.valueOf(discount.getId()));
+            response.put("url", "");
+            response.put(
+                    "errors",
+                    "Failed to update the discount: " + e.getMessage()
+            );
+        }
+
+        return response;
     }
 
 
@@ -89,7 +122,7 @@ public class DiscountController {
     @ResponseStatus(HttpStatus.CREATED)
     public HashMap<String,String> delete(@PathVariable Integer id){
 
-        HashMap<String,String> responce = new HashMap<>();
+        HashMap<String,String> response = new HashMap<>();
         String errors="";
 
         Discount discount = discountDao.findByDiscountById(id);
@@ -97,14 +130,14 @@ public class DiscountController {
         if(discount==null)
             errors = errors+"<br> The Promotion Does Not Existed";
 
-        if(errors=="") discountDao.delete(discount);
+        if(errors.isEmpty()) discountDao.delete(discount);
         else errors = "Server Validation Errors : <br> "+errors;
 
-        responce.put("id",String.valueOf(id));
-        responce.put("url","/discount/"+id);
-        responce.put("errors",errors);
+        response.put("id",String.valueOf(id));
+        response.put("url","/discount/"+id);
+        response.put("errors",errors);
 
-        return responce;
+        return response;
     }
 
 }
