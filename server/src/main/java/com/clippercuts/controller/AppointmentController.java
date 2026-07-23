@@ -62,5 +62,24 @@ public class AppointmentController {
         }
         return response;
     }
+
+    @PutMapping("/{id}")
+    public HashMap<String, String> update(
+            @PathVariable Integer id,
+            @Valid @RequestBody AppointmentCreateRequest request) {
+
+        HashMap<String, String> response = new HashMap<>();
+
+        try {
+            return bookingService.updateAppointment(id, request);
+
+        } catch (Exception e) {
+            response.put("id", String.valueOf(id));
+            response.put("url", "/appointments/" + id);
+            response.put("errors", e.getMessage());
+
+            return response;
+        }
+    }
 }
 

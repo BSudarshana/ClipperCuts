@@ -15,6 +15,7 @@ import {AuthorizationManager} from '../../../service/authorizationmanager';
 
 
 interface BookingLine {
+  id?: number;
   service: Service;
   employee: Employee | null;
   startTime: string;
@@ -47,6 +48,7 @@ export class AppointmentComponent implements OnInit {
   customerSearchPerformed = false;
   hasInsertAuthority = false;
   minDate = new Date();
+  selectedAppointmentId: number | null = null;
 
   appointments = new MatTableDataSource<Appointment>([]);
 
@@ -60,6 +62,7 @@ export class AppointmentComponent implements OnInit {
 
   editingAppointment: Appointment | null = null;
   isEditMode = false;
+
 
   constructor(
     private fb: FormBuilder,
@@ -248,16 +251,34 @@ export class AppointmentComponent implements OnInit {
       };
 
       try {
-        const response = await this.appointmentService.add(request);
-        if (response.errors) {
-          this.showMessage('Appointment Not Saved', response.errors);
+        // const response = await this.appointmentService.add(request);
+        let response;
+
+        if (this.isEditMode && this.selectedAppointmentId !== null) {
+          response = await this.appointmentService.update(
+            this.selectedAppointmentId,
+            request
+          );
         } else {
-          this.showMessage('Appointment', 'Successfully saved.');
+          response = await this.appointmentService.add(request);
+        }
+        if (response.errors) {
+          this.showMessage(
+            this.isEditMode ? 'Appointment Not Updated' : 'Appointment Not Saved', response.errors);
+        } else {
+          this.showMessage('Appointment',this.isEditMode?'Successfully Updated' : ' Successfully Saved');
           await this.loadAppointments();
           this.reset();
         }
       } catch (error) {
-        this.showMessage('Appointment Not Saved', 'The server could not save the appointment.');
+        this.showMessage(
+          this.isEditMode
+            ? 'Appointment Not Updated'
+            : 'Appointment Not Saved',
+          this.isEditMode
+            ? 'The server could not update the appointment.'
+            : 'The server could not save the appointment.'
+        );
       } finally {
         this.saving = false;
       }
@@ -287,7 +308,16 @@ export class AppointmentComponent implements OnInit {
         return;
       }
 
+      if (!fullAppointment.id) {
+        this.showMessage(
+          'Appointment',
+          'The loaded appointment does not have an ID.'
+        );
+        return;
+      }
+
       this.editingAppointment = fullAppointment;
+      this.selectedAppointmentId = fullAppointment.id;
       this.isEditMode = true;
 
       // Tab 1: Customer
@@ -362,6 +392,9 @@ export class AppointmentComponent implements OnInit {
     this.bookingLines = [];
     this.customerSearchPerformed = false;
     this.selectedTab = 0;
+    this.editingAppointment = null;
+    this.selectedAppointmentId = null;
+    this.isEditMode = false;
   }
 
   get totalDuration(): number {
