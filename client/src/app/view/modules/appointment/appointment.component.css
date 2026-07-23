@@ -1,0 +1,64 @@
+:host { display: block; }
+.appointment-page { padding: 20px; background: #f5f6f8; min-height: calc(100vh - 64px); }
+.appointment-card { max-width: 1180px; margin: 0 auto; }
+.tab-content { padding: 24px 8px 8px; min-height: 430px; }
+.phone-search, .schedule-form { display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-start; }
+.phone-search mat-form-field { width: min(100%, 360px); }
+.phone-search button { height: 56px; }
+.customer-grid, .service-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+  margin-top: 20px;
+  max-height: 350px;
+  overflow-y: scroll;
+}
+.customer-option { border: 1px solid #d7dbe2; background: #fff; border-radius: 8px; padding: 16px; display: flex; align-items: center; gap: 12px; text-align: left; cursor: pointer; }
+.customer-option span { flex: 1; display: flex; flex-direction: column; }
+.customer-option small, .booking-line small { color: #68707d; margin-top: 4px; }
+.customer-option.selected, .service-card.selected { border-color: #3f51b5; background: #f3f5ff; }
+.empty-state { margin: 36px auto; max-width: 520px; text-align: center; color: #59616d; }
+.empty-state mat-icon { font-size: 42px; width: 42px; height: 42px; }
+.service-card { border: 1px solid transparent; box-shadow: none; background: #f8f9fb; }
+.service-card p { margin: 12px 0 4px; color: #68707d; }
+.price { font-size: 18px; font-weight: 600; }
+.summary-strip { display: flex; flex-wrap: wrap; gap: 28px; padding: 16px; margin-top: 20px; border-radius: 8px; background: #eef1f7; }
+.schedule-form mat-form-field { min-width: 210px; flex: 1; }
+.schedule-form .description-field { flex: 2; }
+.schedule-form button { height: 56px; }
+.line-list { margin-top: 20px; display: grid; gap: 10px; }
+.booking-line { display: grid; grid-template-columns: minmax(220px, 1fr) minmax(240px, 360px); gap: 18px; align-items: center; padding: 14px; border: 1px solid #e0e3e8; border-radius: 8px; }
+.booking-line > div { display: flex; flex-direction: column; }
+.booking-line mat-form-field { width: 100%; }
+.review-header { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 18px; }
+.review-header > div { padding: 14px; background: #f2f4f8; border-radius: 8px; display: flex; flex-direction: column; }
+.review-header small { color: #68707d; margin-bottom: 5px; }
+.review-line { display: grid; grid-template-columns: 2fr 1fr 1.5fr 1fr; gap: 12px; padding: 14px 8px; border-bottom: 1px solid #e0e3e8; }
+.step-actions { display: flex; justify-content: flex-end; margin-top: 28px; gap: 10px; }
+.step-actions.between { justify-content: space-between; }
+@media (max-width: 700px) {
+  .appointment-page { padding: 8px; }
+  .booking-line, .review-header, .review-line { grid-template-columns: 1fr; }
+  .schedule-form { flex-direction: column; }
+  .schedule-form mat-form-field, .schedule-form button { width: 100%; }
+}
+
+.appointment-list-card {
+  margin-top: 24px;
+}
+
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+}
+
+.no-data {
+  padding: 24px;
+  text-align: center;
+  color: #777;
+}
+

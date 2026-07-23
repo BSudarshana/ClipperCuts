@@ -52,6 +52,7 @@ public class Customer {
     @ManyToOne
     @JoinColumn(name = "customerstatus_id", referencedColumnName = "id", nullable = false)
     private Customerstatus customerstatus;
+
     @JsonIgnore
     @OneToMany(mappedBy = "customer")
     private Collection<Appointment> appointments;

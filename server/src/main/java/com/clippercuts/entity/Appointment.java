@@ -1,10 +1,13 @@
 package com.clippercuts.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.sql.Date;
 import java.sql.Time;
 import java.util.Collection;
 import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 public class Appointment {
@@ -21,18 +24,28 @@ public class Appointment {
     @Basic
     @Column(name = "description")
     private String description;
+
     @ManyToOne
     @JoinColumn(name = "appointmentstatus_id", referencedColumnName = "id", nullable = false)
     private Appointmentstatus appointmentstatus;
+
     @ManyToOne
     @JoinColumn(name = "customer_id", referencedColumnName = "id", nullable = false)
     private Customer customer;
+
+    @JsonIgnore
     @OneToMany(mappedBy = "appointment")
     private Collection<Customerfeedback> customerfeedbacks;
+
+    @JsonIgnore
     @OneToMany(mappedBy = "appointment")
     private Collection<PackageHasAppointment> packageHasAppointments;
-    @OneToMany(mappedBy = "appointment")
+
+    @JsonManagedReference
+    @OneToMany(mappedBy = "appointment", fetch = FetchType.LAZY)
     private Collection<Appointmentservice> appointmentservices;
+
+    @JsonIgnore
     @OneToMany(mappedBy = "appointment")
     private Collection<Invoice> invoices;
 

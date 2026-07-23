@@ -1,46 +1,240 @@
-<p>appointment works!</p>
+<section class="appointment-page">
+  <mat-card class="appointment-card">
+    <mat-card-header>
+      <mat-card-title>New Appointment</mat-card-title>
+      <mat-card-subtitle>Search customer, select services and check beautician availability</mat-card-subtitle>
+    </mat-card-header>
 
-<mat-grid-list [cols]="12" rowHeight="4rem">
+    <mat-card-content>
+      <mat-tab-group [(selectedIndex)]="selectedTab">
+        <mat-tab label="1. Customer">
+          <div class="tab-content">
+            <form [formGroup]="phoneForm" class="phone-search" (ngSubmit)="searchCustomers()">
+              <mat-form-field appearance="outline">
+                <mat-label>Customer phone number</mat-label>
+                <input matInput formControlName="mobile" maxlength="10" inputmode="tel" placeholder="0771234567">
+                <mat-icon matSuffix>phone</mat-icon>
+                <mat-error *ngIf="phoneForm.controls['mobile'].hasError('required')">Phone number is required</mat-error>
+                <mat-error *ngIf="phoneForm.controls['mobile'].hasError('pattern')">Enter a valid 10-digit number</mat-error>
+              </mat-form-field>
+              <button mat-raised-button color="primary" type="submit" [disabled]="searchingCustomers">
+                <mat-icon>search</mat-icon> {{searchingCustomers ? 'Searching...' : 'Search'}}
+              </button>
+            </form>
 
-  <!-- ============ Left Panel of the Form =============== -->
-  <mat-grid-tile [colspan]="4" [rowspan]="12">
-    <mat-card>
-      <mat-card-header>
-        <mat-card-title>Appointment Detail</mat-card-title>
-      </mat-card-header>
+            <div *ngIf="customers.length" class="customer-grid">
+              <button type="button" class="customer-option"
+                      *ngFor="let customer of customers"
+                      [class.selected]="selectedCustomer?.id === customer.id"
+                      (click)="selectCustomer(customer)">
+                <mat-icon>person</mat-icon>
+                <span><strong>{{customer.fullname}}</strong><small>{{customer.code}} · {{customer.mobile}}</small></span>
+                <mat-icon *ngIf="selectedCustomer?.id === customer.id">check_circle</mat-icon>
+              </button>
+            </div>
 
-      <mat-card-content id="appointmentform" >
-        <!-- Customer Form -->
-        <form  [formGroup]="form" >
+            <div class="empty-state" *ngIf="customerSearchPerformed && customers.length === 0">
+              <mat-icon>person_add</mat-icon>
+              <h3>No customer found</h3>
+              <p>Register this customer in the Customer module, then search again. Multiple people may share this phone number.</p>
+            </div>
 
-          <!-- Customer Code -->
-          <mat-form-field appearance="outline">
-            <mat-label>Code</mat-label>
-            <input matInput formControlName="registernumber" class="readonly-field" readonly>
-          </mat-form-field>
-
-
-
-          <!--           Supplier State-->
-          <mat-form-field appearance="outline">
-            <mat-label>Appointment Status</mat-label>
-            <mat-select formControlName="appointmentstatus">
-              <mat-option [value]="null" selected>Not Selected</mat-option>
-              <mat-option *ngFor="let appointmentstatus of appointmentstatuses" [value]="appointmentstatus">{{appointmentstatus.name}}</mat-option>
-            </mat-select>
-          </mat-form-field>
-
-          <!-- Form Action Buttons -->
-          <div id="butpanel">
-<!--            <button mat-raised-button (click)="add()" [disabled]="!(enaadd && hasInsertAuthority)">Add</button>-->
-<!--            <button mat-raised-button (click)="clear()">Clear</button>-->
-<!--            <button mat-raised-button (click)="update()" [disabled]="!(enaupd && hasUpdateAuthority)">Update</button>-->
-<!--            <button mat-raised-button (click)="delete()" [disabled]="!(enadel && hasDeleteAuthority)">Delete</button>-->
+            <div class="step-actions">
+              <button mat-raised-button color="primary" type="button"
+                      [disabled]="!selectedCustomer" (click)="continueFromCustomer()">Continue</button>
+            </div>
           </div>
+        </mat-tab>
 
-        </form>
-      </mat-card-content>
-    </mat-card>
-  </mat-grid-tile>
+        <mat-tab label="2. Services" [disabled]="!selectedCustomer">
+          <div class="tab-content">
+            <div class="summary-strip" *ngIf="selectedServices.length">
+              <span><strong>{{selectedServices.length}}</strong> services</span>
+              <span><strong>{{totalDuration}}</strong> minutes</span>
+              <span><strong>Rs. {{estimatedCost | number:'1.2-2'}}</strong> estimated</span>
+            </div>
 
-</mat-grid-list>
+            <div class="service-grid" *ngIf="!loadingServices">
+              <mat-card class="service-card" *ngFor="let service of services"
+                        [class.selected]="isServiceSelected(service)">
+                <mat-card-content>
+                  <mat-checkbox [checked]="isServiceSelected(service)"
+                                (change)="toggleService(service, $event.checked)">
+                    <strong>{{service.name}}</strong>
+                  </mat-checkbox>
+                  <p>{{service.code}} · {{service.duration}} minutes</p>
+                  <div class="price">Rs. {{service.price | number:'1.2-2'}}</div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+
+
+
+            <div class="step-actions between">
+              <button mat-button type="button" (click)="selectedTab = 0">Back</button>
+              <button mat-raised-button color="primary" type="button"
+                      [disabled]="selectedServices.length === 0" (click)="continueFromServices()">Continue</button>
+            </div>
+          </div>
+        </mat-tab>
+
+        <mat-tab label="3. Schedule" [disabled]="selectedServices.length === 0">
+          <div class="tab-content">
+            <form [formGroup]="appointmentForm" class="schedule-form">
+              <mat-form-field appearance="outline">
+                <mat-label>Appointment date</mat-label>
+                <input matInput [matDatepicker]="picker" [min]="minDate" formControlName="appointmentDate">
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+                <mat-error>Date is required</mat-error>
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Starting time</mat-label>
+                <input matInput type="time" formControlName="appointmentTime">
+                <mat-error>Time is required</mat-error>
+              </mat-form-field>
+              <mat-form-field appearance="outline" class="description-field">
+                <mat-label>Description or customer requests</mat-label>
+                <textarea matInput rows="2" formControlName="description"></textarea>
+              </mat-form-field>
+              <button mat-raised-button color="primary" type="button" (click)="buildSchedule()">Check availability</button>
+            </form>
+
+            <div class="line-list" *ngIf="bookingLines.length">
+              <div class="booking-line" *ngFor="let line of bookingLines">
+                <div>
+                  <strong>{{line.service.name}}</strong>
+                  <small>{{line.startTime.substring(0,5)}}–{{line.endTime.substring(0,5)}} · {{line.service.duration}} min</small>
+                </div>
+                <mat-form-field appearance="outline">
+                  <mat-label>Beautician</mat-label>
+                  <mat-select [value]="line.employee" (selectionChange)="employeeChanged(line, $event.value)">
+                    <mat-option [value]="null">Leave pending</mat-option>
+                    <mat-option *ngFor="let employee of line.availableEmployees" [value]="employee">
+                      {{employee.callingname}}
+                    </mat-option>
+                  </mat-select>
+                  <mat-hint *ngIf="!line.loading && line.availableEmployees.length === 0">No available beautician; leave pending</mat-hint>
+                </mat-form-field>
+              </div>
+            </div>
+
+            <div class="step-actions between">
+              <button mat-button type="button" (click)="selectedTab = 1">Back</button>
+              <button mat-raised-button color="primary" type="button"
+                      [disabled]="bookingLines.length === 0" (click)="goToReview()">Review</button>
+            </div>
+          </div>
+        </mat-tab>
+
+        <mat-tab label="4. Review" [disabled]="bookingLines.length === 0">
+          <div class="tab-content review">
+            <div class="review-header">
+              <div><small>Customer</small><strong>{{selectedCustomer?.fullname}}</strong></div>
+              <div><small>Date and time</small><strong>{{dateValue}} · {{timeValue}}</strong></div>
+              <div><small>Estimate</small><strong>Rs. {{estimatedCost | number:'1.2-2'}}</strong></div>
+            </div>
+            <div class="review-line" *ngFor="let line of bookingLines">
+              <span>{{line.service.name}}</span>
+              <span>{{line.startTime.substring(0,5)}}–{{line.endTime.substring(0,5)}}</span>
+              <span>{{line.employee?.callingname || 'Pending assignment'}}</span>
+              <strong>Rs. {{line.service.price | number:'1.2-2'}}</strong>
+            </div>
+            <div class="step-actions between">
+              <button mat-button type="button" (click)="selectedTab = 2">Back</button>
+              <div>
+                <button mat-button type="button" (click)="reset()">Clear</button>
+                <button mat-raised-button color="primary" type="button"
+                        [disabled]="saving || !hasInsertAuthority" (click)="save()">
+                  {{saving ? 'Saving...' : 'Confirm Appointment'}}
+                </button>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- New appointment list card -->
+  <mat-card class="appointment-list-card">
+
+    <mat-card-header>
+      <mat-card-title>Appointment List</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+
+      <div class="table-container">
+        <table mat-table [dataSource]="appointments">
+
+          <!-- Customer column -->
+          <ng-container matColumnDef="customer">
+            <th mat-header-cell *matHeaderCellDef>Customer</th>
+            <td mat-cell *matCellDef="let appointment">
+              {{ appointment.customer?.fullname }}
+            </td>
+          </ng-container>
+
+          <!-- Date column -->
+          <ng-container matColumnDef="appointmentDate">
+            <th mat-header-cell *matHeaderCellDef>Date</th>
+            <td mat-cell *matCellDef="let appointment">
+              {{ appointment.appointmentDate | date:'yyyy-MM-dd' }}
+            </td>
+          </ng-container>
+
+          <!-- Time column -->
+          <ng-container matColumnDef="appointmentTime">
+            <th mat-header-cell *matHeaderCellDef>Time</th>
+            <td mat-cell *matCellDef="let appointment">
+              {{ appointment.appointmentTime }}
+            </td>
+          </ng-container>
+
+          <!-- Status column -->
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Status</th>
+            <td mat-cell *matCellDef="let appointment">
+              {{ appointment.appointmentstatus?.name }}
+            </td>
+          </ng-container>
+
+          <!-- Actions column -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Actions</th>
+
+            <td mat-cell *matCellDef="let appointment">
+              <button
+                mat-icon-button
+                color="primary"
+                type="button"
+                matTooltip="Edit appointment"
+                (click)="editAppointment(appointment)">
+                <mat-icon>edit</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+
+          <tr
+            mat-row
+            *matRowDef="let row; columns: displayedColumns">
+          </tr>
+
+          <!-- Displayed when the list is empty -->
+          <tr class="mat-row" *matNoDataRow>
+            <td
+              class="mat-cell no-data"
+              [attr.colspan]="displayedColumns.length">
+              No appointments found
+            </td>
+          </tr>
+
+        </table>
+      </div>
+
+    </mat-card-content>
+  </mat-card>
+</section>

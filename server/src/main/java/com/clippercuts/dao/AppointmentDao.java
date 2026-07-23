@@ -4,6 +4,9 @@ import com.clippercuts.entity.Appointment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.data.jpa.repository.EntityGraph;
+
+import java.util.Optional;
 
 import java.sql.Date;
 import java.sql.Time;
@@ -44,5 +47,16 @@ public interface AppointmentDao extends JpaRepository<Appointment,Integer> {
                                             @Param("time") Time time);
 
 
+
+    @Override
+    @EntityGraph(
+            type = EntityGraph.EntityGraphType.LOAD,
+            attributePaths = {
+            "appointmentservices",
+            "appointmentservices.service",
+            "appointmentservices.employee",
+            "appointmentservices.appointmentservicestatus"
+    })
+    Optional<Appointment> findById(Integer id);
 }
 
