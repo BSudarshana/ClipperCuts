@@ -55,6 +55,27 @@ export class AppointmentService {
     return firstValueFrom(this.http.post<ApiResponse>(this.baseUrl, request));
   }
 
+  async update(
+    id: number,
+    request: AppointmentCreateRequest
+  ): Promise<ApiResponse> {
+
+    const response = await this.http
+      .put<ApiResponse>(
+        `${this.baseUrl}/${id}`,
+        request
+      )
+      .toPromise();
+
+    if (response === undefined) {
+      return {
+        errors: 'No response received from the server.'
+      };
+    }
+
+    return response;
+  }
+
   async getAvailableEmployees(
     serviceId: number,
     date: string,

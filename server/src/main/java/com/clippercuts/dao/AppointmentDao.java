@@ -58,5 +58,18 @@ public interface AppointmentDao extends JpaRepository<Appointment,Integer> {
             "appointmentservices.appointmentservicestatus"
     })
     Optional<Appointment> findById(Integer id);
+
+
+    @Query("SELECT a FROM Appointment a " +
+            "WHERE a.customer.id = :customerId " +
+            "AND a.appointmentDate = :date " +
+            "AND a.appointmentTime = :time " +
+            "AND a.id <> :appointmentId")
+    List<Appointment> checkCustomerConflictForUpdate(
+            @Param("customerId") Integer customerId,
+            @Param("date") Date date,
+            @Param("time") Time time,
+            @Param("appointmentId") Integer appointmentId
+    );
 }
 

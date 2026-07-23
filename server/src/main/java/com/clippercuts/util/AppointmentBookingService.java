@@ -11,6 +11,7 @@ import java.sql.Time;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
 
 @Service
 public class AppointmentBookingService {
@@ -102,6 +103,158 @@ public class AppointmentBookingService {
 
         appointment.setAppointmentservices(savedLines);
         return appointment;
+    }
+
+    @Transactional
+    public HashMap<String, String> updateAppointment(
+            Integer appointmentId,
+            AppointmentCreateRequest request) {
+
+        Appointment appointment = appointmentDao.findById(appointmentId)
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Appointment not found"));
+
+        Customer customer = customerDao.findById(request.getCustomerId())
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Invalid customer"));
+
+        /*
+         * Only Pending and Assigned services can be edited.
+         * This prevents an In Progress or Completed service from being reset.
+         */
+        if (appointment.getAppointmentservices() != null) {
+            for (Appointmentservice existingLine :
+                    appointment.getAppointmentservices()) {
+
+                Integer statusId =
+                        existingLine.getAppointmentservicestatus().getId();
+
+                if (!statusId.equals(PENDING_STATUS_ID) &&
+                        !statusId.equals(ASSIGNED_STATUS_ID)) {
+
+                    throw new IllegalArgumentException(
+                            "This appointment cannot be changed because " +
+                                    "one or more services have already started."
+                    );
+                }
+            }
+        }
+
+        /*
+         * Exclude the current appointment when checking whether the
+         * customer already has another appointment at the new time.
+         */
+        if (!appointmentDao.checkCustomerConflictForUpdate(
+                customer.getId(),
+                request.getAppointmentDate(),
+                request.getAppointmentTime(),
+                appointmentId
+        ).isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Customer already has another appointment at this time"
+            );
+        }
+
+        /*
+         * Delete existing lines first. This also prevents the employee
+         * availability check from detecting the old lines as conflicts.
+         */
+
+
+        List<Appointmentservice> existingLines = new ArrayList<>();
+
+        if (appointment.getAppointmentservices() != null) {
+            existingLines.addAll(appointment.getAppointmentservices());
+        }
+
+        // Remove old references from the managed Appointment first
+            appointment.setAppointmentservices(new ArrayList<>());
+
+        // Then delete the old database records
+            if (!existingLines.isEmpty()) {
+                lineDao.deleteAll(existingLines);
+                lineDao.flush();
+            }
+
+        // Update the existing appointment, not a new Appointment object
+        appointment.setAppointmentDate(request.getAppointmentDate());
+        appointment.setAppointmentTime(request.getAppointmentTime());
+        appointment.setDescription(request.getDescription());
+        appointment.setCustomer(customer);
+
+
+        LocalTime cursor = request.getAppointmentTime().toLocalTime();
+        List<Appointmentservice> updatedLines = new ArrayList<>();
+
+        for (AppointmentLineRequest requestedLine : request.getServices()) {
+
+            com.clippercuts.entity.Service salonService =
+                    serviceDao.findById(requestedLine.getServiceId())
+                            .orElseThrow(() ->
+                                    new IllegalArgumentException(
+                                            "Invalid service"
+                                    ));
+
+            LocalTime end =
+                    cursor.plusMinutes(salonService.getDuration());
+
+            Time startTime = Time.valueOf(cursor);
+            Time endTime = Time.valueOf(end);
+
+            Employee employee = null;
+            int lineStatusId = PENDING_STATUS_ID;
+
+            if (requestedLine.getEmployeeId() != null) {
+                employee = employeeDao
+                        .findById(requestedLine.getEmployeeId())
+                        .orElseThrow(() ->
+                                new IllegalArgumentException(
+                                        "Invalid employee"
+                                ));
+
+                validateAssignment(
+                        salonService.getId(),
+                        employee.getId(),
+                        request.getAppointmentDate(),
+                        startTime,
+                        endTime
+                );
+
+                lineStatusId = ASSIGNED_STATUS_ID;
+            }
+
+            Appointmentservicestatus lineStatus = lineStatusDao.findById(lineStatusId)
+                            .orElseThrow(() -> new IllegalStateException(
+                                            "Appointment service status is missing"
+                                    ));
+
+            Appointmentservice line = new Appointmentservice();
+
+            line.setAppointment(appointment);
+            line.setService(salonService);
+            line.setEmployee(employee);
+            line.setStartTime(startTime);
+            line.setEndTime(endTime);
+            line.setAgreedPrice(salonService.getPrice());
+            line.setAppointmentservicestatus(lineStatus);
+
+            updatedLines.add(lineDao.save(line));
+
+            cursor = end;
+        }
+
+        appointment.setAppointmentservices(updatedLines);
+
+        HashMap<String, String> response = new HashMap<>();
+
+        response.put("id", String.valueOf(appointment.getId()));
+        response.put(
+                "url",
+                "/appointments/" + appointment.getId()
+        );
+        response.put("errors", "");
+
+        return response;
     }
 
     @Transactional(readOnly = true)
