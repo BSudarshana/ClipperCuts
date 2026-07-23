@@ -56,6 +56,7 @@ import { CountByServiceCategoryComponent } from './report/view/count-by-service-
 import { RevenueByMonthComponent } from './report/view/revenue-by-month/revenue-by-month.component';
 import { RevenueByPaymentMethodComponent } from './report/view/revenue-by-payment-method/revenue-by-payment-method.component';
 import { TotalByPoSupplierComponent } from './report/view/total-by-po-supplier/total-by-po-supplier.component';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 
 @NgModule({
@@ -114,6 +115,7 @@ import { TotalByPoSupplierComponent } from './report/view/total-by-po-supplier/t
     MatSlideToggleModule,
     MatCheckboxModule,
     MatRadioModule,
+    MatProgressSpinnerModule,
   ],
   providers: [
     OperationComponent,

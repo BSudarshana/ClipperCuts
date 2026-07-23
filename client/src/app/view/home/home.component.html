@@ -1,71 +1,95 @@
-<mat-grid-list gutterSize="7" [cols]="4" rowHeight="4rem">
+<mat-card class="welcome-banner">
+  <div class="welcome-text">
+    <h1>Welcome back</h1>
+    <p>Here's what's happening at your salon today.</p>
+  </div>
+</mat-card>
 
-  <mat-grid-tile [colspan]="4" [rowspan]="2" >
-    <mat-card style="background-image: url('assets/harvest/headerrow-2.png')"><img id="headImg" src="assets/harvest/headerimg.png"></mat-card>
-  </mat-grid-tile>
+<div class="dashboard-loading" *ngIf="reportsLoading">
+  <mat-spinner diameter="40"></mat-spinner>
+  <p>Loading reports...</p>
+</div>
 
+<!-- KPI row — derived totals, not separate data -->
+<div class="kpi-row" *ngIf="!reportsLoading">
+  <div class="kpi-card">
+    <span class="kpi-dot" style="background: var(--plum)"></span>
+    <div class="kpi-value">{{ totalEmployees }}</div>
+    <div class="kpi-label">Total Employees</div>
+  </div>
+  <div class="kpi-card">
+    <span class="kpi-dot" style="background: var(--slate)"></span>
+    <div class="kpi-value">{{ totalCustomers }}</div>
+    <div class="kpi-label">Total Customers</div>
+  </div>
+  <div class="kpi-card">
+    <span class="kpi-dot" style="background: var(--gold)"></span>
+    <div class="kpi-value">{{ totalAppointments }}</div>
+    <div class="kpi-label">Total Appointments</div>
+  </div>
+  <div class="kpi-card">
+    <span class="kpi-dot" style="background: var(--teal)"></span>
+    <div class="kpi-value">{{ totalServices }}</div>
+    <div class="kpi-label">Total Services</div>
+  </div>
+</div>
 
-  <mat-grid-tile [colspan]="4" [rowspan]="4" id="quicklinks">
+<mat-grid-list gutterSize="16" [cols]="4" rowHeight="18rem" *ngIf="!reportsLoading" class="report-grid">
+
+  <mat-grid-tile [colspan]="2" [rowspan]="1">
     <mat-card>
-      <mat-card-content><img  src="assets/payment.png"></mat-card-content>
-      <mat-card-footer ><a routerLink="payments">Payments</a></mat-card-footer>
-    </mat-card>
-
-    <mat-card>
-      <mat-card-content><img  src="assets/register.png"></mat-card-content>
-      <mat-card-footer ><a routerLink="batchregistration" >Register</a></mat-card-footer>
-    </mat-card>
-
-    <mat-card>
-      <mat-card-content><img  src="assets/studnet.png"></mat-card-content>
-      <mat-card-footer ><a routerLink="students">Student</a></mat-card-footer>
-    </mat-card>
-
-    <mat-card>
-      <mat-card-content><img  src="assets/classshedule.png"></mat-card-content>
-      <mat-card-footer ><a routerLink="classes">Classes</a></mat-card-footer>
-    </mat-card>
-
-    <mat-card>
-      <mat-card-content><img  src="assets/tutes.png"></mat-card-content>
-      <mat-card-footer ><a routerLink="books">Books</a></mat-card-footer>
-    </mat-card>
-
-    <mat-card>
-      <mat-card-content><img  src="assets/attendence.png"></mat-card-content>
-      <mat-card-footer ><a routerLink="attendance">Attendance</a></mat-card-footer>
-    </mat-card>
-  </mat-grid-tile>
-
-  <mat-grid-tile [colspan]="2" [rowspan]="4" >
-    <mat-card>
-      <mat-card-title style="background-image: url('assets/harvest/headerrow-2.png')">User Specific Messages</mat-card-title>
-      <mat-card-content >
-        <mat-list>
-          <mat-list-item *ngFor="let message of userspecmessages">
-            <mat-icon matListItemIcon> email</mat-icon>
-            <div matListItemTitle >{{message.name}}</div>
-            <div matListItemLine>{{message.updated | date}}</div>
-          </mat-list-item>
-        </mat-list>
-      </mat-card-content>
+      <mat-card-title><span class="title-dot" [style.background]="accent.designation"></span>Employees by Designation</mat-card-title>
+      <mat-card-content class="chart-box"><canvas #designationChart></canvas></mat-card-content>
     </mat-card>
   </mat-grid-tile>
 
+  <mat-grid-tile [colspan]="2" [rowspan]="1">
+    <mat-card>
+      <mat-card-title><span class="title-dot" [style.background]="accent.empStatus"></span>Employees by Status</mat-card-title>
+      <mat-card-content class="chart-box"><canvas #empStatusChart></canvas></mat-card-content>
+    </mat-card>
+  </mat-grid-tile>
 
-  <mat-grid-tile [colspan]="2" [rowspan]="4" >
-      <mat-card>
-        <mat-card-title style="background-image: url('assets/harvest/headerrow-2.png')">General Messages</mat-card-title>
-        <mat-card-content >
-          <mat-list>
-            <mat-list-item *ngFor="let message of generalmessages">
-              <mat-icon matListItemIcon> email</mat-icon>
-              <div matListItemTitle >{{message.name}}</div>
-              <div matListItemLine>{{message.updated | date}}</div>
-            </mat-list-item>
-          </mat-list>
-        </mat-card-content>
-      </mat-card>
+  <mat-grid-tile [colspan]="2" [rowspan]="1">
+    <mat-card>
+      <mat-card-title><span class="title-dot" style="background: var(--plum)"></span>Customers by Type</mat-card-title>
+      <mat-card-content class="chart-box"><canvas #customerTypeChart></canvas></mat-card-content>
+    </mat-card>
+  </mat-grid-tile>
+
+  <mat-grid-tile [colspan]="2" [rowspan]="1">
+    <mat-card>
+      <mat-card-title><span class="title-dot" style="background: var(--rose)"></span>Customers by Gender</mat-card-title>
+      <mat-card-content class="chart-box"><canvas #genderChart></canvas></mat-card-content>
+    </mat-card>
+  </mat-grid-tile>
+
+  <mat-grid-tile [colspan]="2" [rowspan]="1">
+    <mat-card>
+      <mat-card-title><span class="title-dot" [style.background]="accent.appointmentStatus"></span>Appointments by Status</mat-card-title>
+      <mat-card-content class="chart-box"><canvas #appointmentStatusChart></canvas></mat-card-content>
+    </mat-card>
+  </mat-grid-tile>
+
+  <mat-grid-tile [colspan]="2" [rowspan]="1">
+    <mat-card>
+      <mat-card-title><span class="title-dot" style="background: var(--slate)"></span>Revenue by Payment Method</mat-card-title>
+      <mat-card-content class="chart-box"><canvas #paymentMethodChart></canvas></mat-card-content>
+    </mat-card>
+  </mat-grid-tile>
+
+  <mat-grid-tile [colspan]="2" [rowspan]="1">
+    <mat-card>
+      <mat-card-title><span class="title-dot" [style.background]="accent.itemCategory"></span>Items by Category</mat-card-title>
+      <mat-card-content class="chart-box"><canvas #itemCategoryChart></canvas></mat-card-content>
+    </mat-card>
+  </mat-grid-tile>
+
+  <mat-grid-tile [colspan]="2" [rowspan]="1">
+    <mat-card>
+      <mat-card-title><span class="title-dot" [style.background]="accent.serviceCategory"></span>Services by Category</mat-card-title>
+      <mat-card-content class="chart-box"><canvas #serviceCategoryChart></canvas></mat-card-content>
+    </mat-card>
   </mat-grid-tile>
 
 </mat-grid-list>
