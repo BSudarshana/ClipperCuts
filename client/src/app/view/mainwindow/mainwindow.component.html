@@ -23,9 +23,7 @@
 
     <mat-nav-list>
 
-      <mat-list-item  routerLink="home"><mat-icon>home</mat-icon> <span class="menu-text">Home</span></mat-list-item>
-
-      <mat-list-item routerLink="dashboard"><mat-icon>widgets</mat-icon><span class="menu-text">Dashboard</span></mat-list-item>
+      <mat-list-item routerLink="home"><mat-icon>widgets</mat-icon><span class="menu-text">Dashboard</span></mat-list-item>
 
       <ng-container *ngFor="let menuItem of menuGroup">
         <mat-expansion-panel *ngIf="isMenuVisible(menuItem.Menu)">
