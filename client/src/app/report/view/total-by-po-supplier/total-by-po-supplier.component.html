@@ -1,0 +1,25 @@
+<div class="report-card">
+  <h2>Purchase Order Total by Supplier</h2>
+
+  <div *ngIf="loading" class="loading">Loading report...</div>
+
+  <table *ngIf="!loading" class="report-table">
+    <thead>
+      <tr>
+          <th>Supplier</th>
+          <th>Total Amount (Rs.)</th>
+          <th>Percentage (%)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let row of data">
+          <td>{{ row.supplier }}</td>
+          <td>{{ row.totalAmount | number:'1.2-2' }}</td>
+          <td>{{ row.percentage }}</td>
+      </tr>
+      <tr *ngIf="data.length === 0">
+        <td colspan="3" class="empty">No data available</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

@@ -1,18 +1,18 @@
 package com.clippercuts.report.entity;
 
-public class CountByDesignation {
+public class CountByGender {
 
-    private String designation;
+    private String gender;
     private Long count;
     private Double percentage;
 
-    public CountByDesignation(String designation, Long count) {
-        this.designation = designation;
+    public CountByGender(String gender, Long count) {
+        this.gender = gender;
         this.count = count;
     }
 
-    public String getDesignation() { return designation; }
-    public void setDesignation(String designation) { this.designation = designation; }
+    public String getGender() { return gender; }
+    public void setGender(String gender) { this.gender = gender; }
 
     public Long getCount() { return count; }
     public void setCount(Long count) { this.count = count; }

@@ -1,6 +1,6 @@
-import {Component, OnInit} from '@angular/core';
-import {Router} from "@angular/router";
-import {AuthorizationManager} from "../../service/authorizationmanager";
+import { Component, OnInit } from '@angular/core';
+import { Router } from "@angular/router";
+import { AuthorizationManager } from "../../service/authorizationmanager";
 
 @Component({
   selector: 'app-mainwindow',
@@ -12,18 +12,57 @@ export class MainwindowComponent {
   opened: boolean = true;
 
   menuGroup: any[] = [];
-  repGroup:any[] = [
-    {name:"Count BY Designation",routerlink:"reports/countbydesignation"},
+  repGroup: any[] = [
+    {
+      name: "Count By Designation",
+      routerlink: "reports/countbydesignation"
+    },
+    {
+      name: "Count By Appointment Status",
+      routerlink: "reports/countbyappointmentstatus"
+    },
+    {
+      name: "Count By Customer Type",
+      routerlink: "reports/countbycustomertype"
+    },
+    {
+      name: "Count By Employee Status",
+      routerlink: "reports/countbyempstatus"
+    },
+    {
+      name: "Count By Gender",
+      routerlink: "reports/countbygender"
+    },
+    {
+      name: "Count By Item Category",
+      routerlink: "reports/countbyitemcategory"
+    },
+    {
+      name: "Count By Service Category",
+      routerlink: "reports/countbyservicecategory"
+    },
+    {
+      name: "Revenue By Month",
+      routerlink: "reports/revenuebymonth"
+    },
+    {
+      name: "Revenue By Payment Method",
+      routerlink: "reports/revenuebypaymentmethod"
+    },
+    {
+      name: "Total By PO Supplier",
+      routerlink: "reports/totalbyposupplier"
+    }
   ];
 
   // Set Mat icons you need to add to Menus
-  matIcons : any = {
+  matIcons: any = {
     'Admin': 'person',
     'Sales': 'AttachMoney'
   };
 
   userImage: string = 'assets/default.png'
-  constructor(private router: Router,public authService: AuthorizationManager) {
+  constructor(private router: Router, public authService: AuthorizationManager) {
   }
 
   logout(): void {

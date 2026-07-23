@@ -1,0 +1,25 @@
+<div class="report-card">
+  <h2>Revenue by Month</h2>
+
+  <div *ngIf="loading" class="loading">Loading report...</div>
+
+  <table *ngIf="!loading" class="report-table">
+    <thead>
+      <tr>
+          <th>Year</th>
+          <th>Month</th>
+          <th>Total Revenue (Rs.)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let row of data">
+          <td>{{ row.year }}</td>
+          <td>{{ row.month }}</td>
+          <td>{{ row.totalAmount | number:'1.2-2' }}</td>
+      </tr>
+      <tr *ngIf="data.length === 0">
+        <td colspan="3" class="empty">No data available</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

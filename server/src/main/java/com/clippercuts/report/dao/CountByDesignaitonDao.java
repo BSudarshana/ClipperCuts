@@ -1,15 +1,24 @@
 package com.clippercuts.report.dao;
 
 import com.clippercuts.report.entity.CountByDesignation;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 
-public interface CountByDesignaitonDao extends JpaRepository<CountByDesignation,Integer> {
+@Repository
+public class CountByDesignaitonDao {
 
-    @Query(value = "SELECT NEW CountByDesignation(d.name, COUNT(e.fullname)) FROM Employee e, Designation d WHERE e.designation.id = d.id GROUP BY d.id")
-    List<CountByDesignation> countByDesignation();
+    @PersistenceContext
+    private EntityManager entityManager;
 
+    public List<CountByDesignation> countByDesignation() {
+        return entityManager.createQuery(
+                "SELECT NEW com.clippercuts.report.entity.CountByDesignation(d.name, COUNT(e.fullname)) " +
+                "FROM Employee e JOIN e.designation d " +
+                "GROUP BY d.name",
+                CountByDesignation.class
+        ).getResultList();
+    }
 }
-

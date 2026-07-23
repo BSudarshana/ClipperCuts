@@ -1,0 +1,25 @@
+<div class="report-card">
+  <h2>Customers by Gender</h2>
+
+  <div *ngIf="loading" class="loading">Loading report...</div>
+
+  <table *ngIf="!loading" class="report-table">
+    <thead>
+      <tr>
+          <th>Gender</th>
+          <th>Count</th>
+          <th>Percentage (%)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let row of data">
+          <td>{{ row.gender }}</td>
+          <td>{{ row.count }}</td>
+          <td>{{ row.percentage }}</td>
+      </tr>
+      <tr *ngIf="data.length === 0">
+        <td colspan="3" class="empty">No data available</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

@@ -33,7 +33,6 @@ import {ConfirmComponent} from "./util/dialog/confirm/confirm.component";
 import {MatDatepickerModule} from "@angular/material/datepicker";
 import {MatNativeDateModule} from "@angular/material/core";
 import {DatePipe} from "@angular/common";
-import {CountByDesignationComponent} from "./report/view/countbydesignation/countbydesignation.component";
 import {MatChipsModule} from "@angular/material/chips";
 import { PrivilageComponent } from './view/modules/privilage/privilage.component';
 import {JwtInterceptor} from "./service/JwtInterceptor";
@@ -47,6 +46,16 @@ import {PurchaseorderComponent} from "./view/modules/purchaseorder/purorder.comp
 import { AppointmentComponent } from './view/modules/appointment/appointment.component';
 import { ServiceComponent } from './view/modules/service/service.component';
 import { PromotionComponent } from './view/modules/promotion/promotion.component';
+import { CountByAppointmentStatusComponent } from './report/view/count-by-appointment-status/count-by-appointment-status.component';
+import { CountByCustomerTypeComponent } from './report/view/count-by-customer-type/count-by-customer-type.component';
+import { CountByDesignationComponent } from './report/view/count-by-designation/count-by-designation.component';
+import { CountByEmpStatusComponent } from './report/view/count-by-emp-status/count-by-emp-status.component';
+import { CountByGenderComponent } from './report/view/count-by-gender/count-by-gender.component';
+import { CountByItemCategoryComponent } from './report/view/count-by-item-category/count-by-item-category.component';
+import { CountByServiceCategoryComponent } from './report/view/count-by-service-category/count-by-service-category.component';
+import { RevenueByMonthComponent } from './report/view/revenue-by-month/revenue-by-month.component';
+import { RevenueByPaymentMethodComponent } from './report/view/revenue-by-payment-method/revenue-by-payment-method.component';
+import { TotalByPoSupplierComponent } from './report/view/total-by-po-supplier/total-by-po-supplier.component';
 
 
 @NgModule({
@@ -59,7 +68,6 @@ import { PromotionComponent } from './view/modules/promotion/promotion.component
     CustomerComponent,
     UserComponent,
     ConfirmComponent,
-    CountByDesignationComponent,
     MessageComponent,
     PrivilageComponent,
     OperationComponent,
@@ -67,7 +75,17 @@ import { PromotionComponent } from './view/modules/promotion/promotion.component
     PurchaseorderComponent,
     AppointmentComponent,
     ServiceComponent,
-    PromotionComponent
+    PromotionComponent,
+    CountByDesignationComponent,
+    CountByAppointmentStatusComponent,
+    CountByCustomerTypeComponent,
+    CountByEmpStatusComponent,
+    CountByGenderComponent,
+    CountByItemCategoryComponent,
+    CountByServiceCategoryComponent,
+    RevenueByMonthComponent,
+    RevenueByPaymentMethodComponent,
+    TotalByPoSupplierComponent
   ],
   imports: [
     MatDatepickerModule,
