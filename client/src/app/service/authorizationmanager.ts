@@ -29,7 +29,8 @@ export class AuthorizationManager {
 
   // Sales menu items
   Sales = [
-    { name: 'Customer', isVisible: false, routerLink: 'customer' }
+    { name: 'Customer', isVisible: false, routerLink: 'customer' },
+    { name: 'Promotion', isVisible: false, routerLink: 'promotion' }
   ];
 
   // Purchase menu items
