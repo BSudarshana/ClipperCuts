@@ -2,11 +2,18 @@ package com.clippercuts.dao;
 
 import com.clippercuts.entity.Service;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface ServiceDao extends JpaRepository<Service,Integer> {
 
+//    @Override
+//    @EntityGraph(attributePaths = {
+//            "serviceHasEmployees",
+//            "serviceHasEmployees.employee"
+//    })
+    java.util.List<Service> findAll();
 
     @Query("select s from Service s where s.id = :id")
     Service findByServiceId(@Param("id") Integer id);

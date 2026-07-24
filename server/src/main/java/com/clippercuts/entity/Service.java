@@ -49,7 +49,7 @@ public class Service {
     @JsonIgnore
     @OneToMany(mappedBy = "service")
     private Collection<Appointmentservice> appointmentservices;
-    
+
     @ManyToOne
     @JoinColumn(name = "servicestatus_id", referencedColumnName = "id", nullable = false)
     private Servicestatus servicestatus;
@@ -57,8 +57,11 @@ public class Service {
     @JoinColumn(name = "servicecategory_id", referencedColumnName = "id", nullable = false)
     private Servicecategory servicecategory;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "service")
+    @OneToMany(
+            mappedBy = "service",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
     private Collection<ServiceHasEmployee> serviceHasEmployees;
 
     @JsonIgnore

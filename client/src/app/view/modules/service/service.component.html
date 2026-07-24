@@ -51,12 +51,51 @@
             </mat-select>
           </mat-form-field>
 
+          <!--Add Employees for the service-->
+
+          <div id="innertable">
+
+            <div [formGroup]="innerform">
+
+              <mat-form-field appearance="outline">
+                <mat-label>Beautician</mat-label>
+                <mat-select formControlName="beautician">
+                  <mat-option [value]="null" selected>Not Selected</mat-option>
+                  <mat-option *ngFor="let employee of employees" [value]="employee">{{employee.fullname}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <button mat-raised-button type="button" id="btnAddEmp"
+                      (click)="btnAddEmps()" [disabled]="innerform.invalid">
+                Add
+              </button>
+            </div>
+
+            <mat-table [dataSource]="indata">
+              <ng-container *ngFor="let column of incolumns;let i = index;" [matColumnDef]="column">
+                <mat-header-cell *matHeaderCellDef> {{inheaders[i]}} </mat-header-cell>
+                <mat-cell *matCellDef="let element" >
+                  <div *ngIf="i < inbinders.length"
+                       [innerHTML]="uiassist.getProperty(element, inbinders[i])"></div>
+                  <div *ngIf="i >= inbinders.length">
+                    <button mat-raised-button type="button"
+                            (click)="deleteRaw(element)">Remove</button>
+                  </div>
+                </mat-cell>
+              </ng-container>
+
+              <mat-header-row *matHeaderRowDef="incolumns"></mat-header-row>
+              <mat-row *matRowDef="let row; columns: incolumns" ></mat-row>
+            </mat-table>
+
+          </div>
+
           <!-- Form Action Buttons -->
           <div id="butpanel">
-            <button mat-raised-button (click)="add()" [disabled]="!(enaadd && hasInsertAuthority)">Add</button>
-            <button mat-raised-button (click)="clear()">Clear</button>
-            <button mat-raised-button (click)="update()" [disabled]="!(enaupd && hasUpdateAuthority)">Update</button>
-            <button mat-raised-button (click)="delete()" [disabled]="!(enadel && hasDeleteAuthority)">Delete</button>
+            <button mat-raised-button type="button" (click)="add()" [disabled]="!(enaadd && hasInsertAuthority)">Add</button>
+            <button mat-raised-button type="button" (click)="clear()">Clear</button>
+            <button mat-raised-button type="button" (click)="update()" [disabled]="!(enaupd && hasUpdateAuthority)">Update</button>
+            <button mat-raised-button type="button" (click)="delete()" [disabled]="!(enadel && hasDeleteAuthority)">Delete</button>
           </div>
 
         </form>

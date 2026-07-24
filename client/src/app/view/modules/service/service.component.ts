@@ -8,7 +8,7 @@ import {AuthorizationManager} from "../../../service/authorizationmanager";
 import {ServiceStatusService} from "../../../service/serviceStatusService";
 import {ServiceCategoryService} from "../../../service/serviceCategoryService";
 import {ServiceService} from "../../../service/serviceService";
-import {Service} from "../../../entity/service";
+import {Service, ServiceHasEmployee} from "../../../entity/service";
 import {Servicestatus} from "../../../entity/servicestatus";
 import {Servicecategory} from "../../../entity/servicecategory";
 import {MessageComponent} from "../../../util/dialog/message/message.component";
@@ -17,24 +17,31 @@ import {ConfirmComponent} from "../../../util/dialog/confirm/confirm.component";
 import {MatTableDataSource} from "@angular/material/table";
 import {MatPaginator} from "@angular/material/paginator";
 import {UiAssist} from "../../../util/ui/ui.assist";
-import {Supplier} from "../../../entity/supplier";
+import {Employee} from "../../../entity/employee";
+import { EmployeeService } from 'src/app/service/employeeservice';
 
 @Component({
   selector: 'app-service',
   templateUrl: './service.component.html',
   styleUrls: ['./service.component.css']
 })
+
 export class ServiceComponent {
   public form !: FormGroup;
   public serviceSearchForm !: FormGroup;
   public serviceFilterForm !: FormGroup;
+  public innerform !: FormGroup;
 
   public service !: Service;
   public oldservice !: Service;
   selectedrow: any;
 
   services : Array<Service> = [];
+  employees: Array<Employee> = [];
+  assignedEmployees: Array<Employee> = [];
   data!: MatTableDataSource<Service>;
+  indata: MatTableDataSource<Employee> = new MatTableDataSource<Employee>([]);
+
   imageurl: string = '';
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
@@ -65,11 +72,16 @@ export class ServiceComponent {
   cscolumns: string[] = ['flcode', 'flname','flduration', 'flprice'];
   csprompts: string[] = ['Filter by Code', 'Filter by Name', 'Filter by Duration', 'Filter by Price'];
 
+  incolumns: string[] = ['id', 'fullname', 'remove'];
+  inheaders: string[] = ['Id', 'Beautician', 'Remove'];
+  inbinders: string[] = ['id', 'fullname'];
+
   constructor(
     private serviceStatusService : ServiceStatusService,
     private serviceCategoryService : ServiceCategoryService,
     private serviceService : ServiceService,
     private regexService: RegexService,
+    private emps: EmployeeService,
     private formbuilder: FormBuilder,
     private matdialog: MatDialog,
     private datepipe: DatePipe,
@@ -100,10 +112,9 @@ export class ServiceComponent {
       "flprice" : new FormControl()
     });
 
-
-    // this.form.markAsPristine();
-
-
+    this.innerform = this.formbuilder.group({
+      "beautician": new FormControl('', [Validators.required])
+    }, {updateOn: 'change'});
 
   }
 
@@ -129,6 +140,10 @@ export class ServiceComponent {
     // Fetch dropdown values for Service category
     this.serviceCategoryService .getAllList().then((categories: Servicecategory[]) => {
       this.serviceCategories = categories;
+    });
+
+    this.emps.getAll('').then((vsts: Employee[]) => {
+      this.employees = vsts;
     });
 
     // Load regex validations
@@ -174,7 +189,7 @@ export class ServiceComponent {
       });
     } else {
 
-      this.service = this.form.getRawValue();
+      this.service = this.buildServicePayload();
 
       let servicedata: string = "";
 
@@ -213,6 +228,8 @@ export class ServiceComponent {
             if (addstatus) {
               addmessage = "Successfully Saved";
               this.form.reset();
+              this.innerform.reset();
+              this.resetAssignedEmployees();
               //this.clearImage();
               Object.values(this.form.controls).forEach(control => {
                 control.markAsTouched();
@@ -253,7 +270,18 @@ export class ServiceComponent {
       return;
     }
 
-    const updates = this.getUpdates();
+    let updates = this.getUpdates();
+
+    const oldEmployeeIds = (this.oldservice.serviceHasEmployees ?? [])
+      .map(link => link.employee.id)
+      .sort((first, second) => first - second);
+    const currentEmployeeIds = this.assignedEmployees
+      .map(employee => employee.id)
+      .sort((first, second) => first - second);
+
+    if (JSON.stringify(oldEmployeeIds) !== JSON.stringify(currentEmployeeIds)) {
+      updates += "<br>Beauticians Changed";
+    }
 
     if (updates === "") {
       this.matdialog.open(MessageComponent, {
@@ -284,7 +312,7 @@ export class ServiceComponent {
     }
 
     try {
-      const updatedService: Service = this.form.getRawValue();
+      const updatedService: Service = this.buildServicePayload();
       updatedService.id = this.oldservice.id;
 
       const response: any =
@@ -310,6 +338,8 @@ export class ServiceComponent {
         });
 
         this.form.reset();
+        this.innerform.reset();
+        this.resetAssignedEmployees();
         this.selectedrow = null;
 
         Object.values(this.form.controls).forEach(control => {
@@ -380,6 +410,8 @@ export class ServiceComponent {
             if (delstatus) {
               delmessage = "Successfully Deleted";
               this.form.reset();
+              this.innerform.reset();
+              this.resetAssignedEmployees();
               // this.clearImage();
               Object.values(this.form.controls).forEach(control => { control.markAsTouched(); });
               this.loadTable("");
@@ -409,7 +441,9 @@ export class ServiceComponent {
     confirm.afterClosed().subscribe(async result => {
       if (result) {
         this.form.reset();
-          Object.keys(this.form.controls).forEach(key => {
+        this.innerform.reset();
+        this.resetAssignedEmployees();
+        Object.keys(this.form.controls).forEach(key => {
           this.form.controls[key].clearValidators();
           this.form.controls[key].updateValueAndValidity();
         });
@@ -423,6 +457,7 @@ export class ServiceComponent {
     });
 
   }
+
 
   // Assign regex validations dynamically and detect field changes
   createForm() {
@@ -471,7 +506,7 @@ export class ServiceComponent {
 
     // Refresh validation status after dynamic validators
     Object.keys(this.form.controls).forEach(controlName => {
-      // this.form.controls[controlName].updateValueAndValidity();
+      this.form.controls[controlName].updateValueAndValidity();
     });
 
 
@@ -492,9 +527,60 @@ export class ServiceComponent {
       control.markAsTouched();
     });
 
-
+    this.form.reset();
     this.enableButtons(true, false, false);
 
+  }
+
+  btnAddEmps(): void {
+    if (this.innerform.invalid) {
+      this.innerform.markAllAsTouched();
+      return;
+    }
+
+    const employee = this.innerform.controls['beautician'].value as Employee;
+    const alreadyAssigned = this.assignedEmployees.some(
+      assigned => assigned.id === employee.id
+    );
+
+    if (alreadyAssigned) {
+      this.matdialog.open(MessageComponent, {
+        width: '500px',
+        data: {
+          heading: 'Employee Assignment',
+          message: employee.fullname + ' is already assigned to this service.'
+        }
+      });
+      return;
+    }
+
+    this.assignedEmployees = [...this.assignedEmployees, employee];
+    this.indata.data = this.assignedEmployees;
+    this.innerform.reset();
+    this.form.markAsDirty();
+  }
+
+  deleteRaw(employee: Employee): void {
+    this.assignedEmployees = this.assignedEmployees.filter(
+      assigned => assigned.id !== employee.id
+    );
+    this.indata.data = this.assignedEmployees;
+    this.form.markAsDirty();
+  }
+
+  private buildServicePayload(): Service {
+    const service = this.form.getRawValue() as Service;
+
+    service.serviceHasEmployees = this.assignedEmployees.map(employee => ({
+      employee: {id: employee.id} as Employee
+    } as ServiceHasEmployee));
+
+    return service;
+  }
+
+  private resetAssignedEmployees(): void {
+    this.assignedEmployees = [];
+    this.indata.data = [];
   }
 
   // Return form errors for display
@@ -550,6 +636,15 @@ export class ServiceComponent {
       )!;
 
     this.form.patchValue(this.service);
+    const serviceEmployees = (this.service.serviceHasEmployees ?? [])
+      .map(link => link.employee);
+
+    this.assignedEmployees = serviceEmployees.map(serviceEmployee =>
+      this.employees.find(employee => employee.id === serviceEmployee.id) ??
+      serviceEmployee
+    );
+    this.indata.data = [...this.assignedEmployees];
+    this.innerform.reset();
     this.form.markAsPristine();
 
     this.enableButtons(false, true, true);

@@ -5,9 +5,12 @@ import com.clippercuts.entity.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -53,9 +56,12 @@ public class ServiceController {
         if(serviceDao.findByServiceName(service.getName())!=null)
             errors = errors+"<br> Existing Service Name";
 
-        if(errors=="")
+        if(errors.isEmpty()) {
+            prepareEmployeeLinks(service);
             serviceDao.save(service);
-        else errors = "Server Validation Errors : <br> "+errors;
+        } else {
+            errors = "Server Validation Errors : <br> "+errors;
+        }
 
         responce.put("id",String.valueOf(service.getId()));
         responce.put("url","/services/"+service.getId());
@@ -66,6 +72,7 @@ public class ServiceController {
 
     @PutMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @Transactional
 //    @PreAuthorize("hasAuthority('Customer-Update')")
     public HashMap<String,String> update(@RequestBody Service service){
 
@@ -75,17 +82,46 @@ public class ServiceController {
         Service service1 = serviceDao.findByServiceCode(service.getCode());
         Service service2 = serviceDao.findByServiceName(service.getName());
 
-        if(service1!=null && service.getId()!=service1.getId())
+        if(service1 != null && !Objects.equals(service.getId(), service1.getId()))
             errors = errors+"<br> Existing Code";
-        if(service2!=null && service.getId()!=service2.getId())
+        if(service2 != null && !Objects.equals(service.getId(), service2.getId()))
             errors = errors+"<br> Existing Service Name";
 
-        if(errors=="") serviceDao.save(service);
-        else errors = "Server Validation Errors : <br> "+errors;
+        if(errors.isEmpty()) {
+            Service existingService = serviceDao.findById(service.getId())
+                    .orElseThrow(() -> new IllegalArgumentException(
+                            "Service not found with id " + service.getId()
+                    ));
 
-        responce.put("id ",String.valueOf(service.getId()));
-        responce.put("url ","/services/"+service.getId());
-        responce.put("error ",errors);
+            existingService.setCode(service.getCode());
+            existingService.setName(service.getName());
+            existingService.setDuration(service.getDuration());
+            existingService.setPrice(service.getPrice());
+            existingService.setServicestatus(service.getServicestatus());
+            existingService.setServicecategory(service.getServicecategory());
+
+            if (existingService.getServiceHasEmployees() == null) {
+                existingService.setServiceHasEmployees(new ArrayList<>());
+            } else {
+                existingService.getServiceHasEmployees().clear();
+            }
+
+            if (service.getServiceHasEmployees() != null) {
+                service.getServiceHasEmployees().forEach(link -> {
+                    link.setId(null);
+                    link.setService(existingService);
+                    existingService.getServiceHasEmployees().add(link);
+                });
+            }
+
+            serviceDao.save(existingService);
+        } else {
+            errors = "Server Validation Errors : <br> "+errors;
+        }
+
+        responce.put("id",String.valueOf(service.getId()));
+        responce.put("url","/services/"+service.getId());
+        responce.put("errors",errors);
 
         return responce;
     }
@@ -105,7 +141,7 @@ public class ServiceController {
         if(service==null)
             errors = errors+"<br> The Service Does Not Existed";
 
-        if(errors=="") serviceDao.delete(service);
+        if(errors.isEmpty()) serviceDao.delete(service);
         else errors = "Server Validation Errors : <br> "+errors;
 
         responce.put("id",String.valueOf(id));
@@ -115,8 +151,18 @@ public class ServiceController {
         return responce;
     }
 
-}
+    private void prepareEmployeeLinks(Service service) {
+        if (service.getServiceHasEmployees() == null) {
+            return;
+        }
 
+        service.getServiceHasEmployees().forEach(link -> {
+            link.setId(null);
+            link.setService(service);
+        });
+    }
+
+}
 
 
 
