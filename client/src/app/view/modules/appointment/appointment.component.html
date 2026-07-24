@@ -114,6 +114,9 @@
                       {{employee.callingname}}
                     </mat-option>
                   </mat-select>
+                  <mat-hint *ngIf="line.loading">
+                    Loading assigned beauticians...
+                  </mat-hint>
                   <mat-hint *ngIf="!line.loading && line.availableEmployees.length === 0">No available beautician; leave pending</mat-hint>
                 </mat-form-field>
               </div>

@@ -6,6 +6,9 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.clippercuts.entity.Employee;
+import java.util.List;
+
 public interface ServiceDao extends JpaRepository<Service,Integer> {
 
 //    @Override
@@ -13,6 +16,7 @@ public interface ServiceDao extends JpaRepository<Service,Integer> {
 //            "serviceHasEmployees",
 //            "serviceHasEmployees.employee"
 //    })
+
     java.util.List<Service> findAll();
 
     @Query("select s from Service s where s.id = :id")
@@ -23,6 +27,14 @@ public interface ServiceDao extends JpaRepository<Service,Integer> {
 
     @Query("select s from Service s where s.code = :code")
     Service findByServiceCode(String code);
+
+    @Query("select distinct she.employee " +
+            "from ServiceHasEmployee she " +
+            "where she.service.id = :serviceId " +
+            "order by she.employee.callingname")
+    List<Employee> findEmployeesByServiceId(
+            @Param("serviceId") Integer serviceId
+    );
 
 }
 

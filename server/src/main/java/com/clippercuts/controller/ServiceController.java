@@ -2,6 +2,7 @@ package com.clippercuts.controller;
 
 import com.clippercuts.dao.ServiceDao;
 import com.clippercuts.entity.Service;
+import com.clippercuts.entity.Employee;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -160,6 +161,23 @@ public class ServiceController {
             link.setId(null);
             link.setService(service);
         });
+    }
+
+    @GetMapping(
+            path = "/{serviceId}/employees",
+            produces = "application/json"
+    )
+    @Transactional(readOnly = true)
+    public List<Employee> getEmployeesByService(
+            @PathVariable Integer serviceId
+    ) {
+        return serviceDao.findEmployeesByServiceId(serviceId)
+                .stream()
+                .map(employee -> new Employee(
+                        employee.getId(),
+                        employee.getCallingname()
+                ))
+                .collect(Collectors.toList());
     }
 
 }

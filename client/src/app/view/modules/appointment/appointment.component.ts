@@ -196,12 +196,11 @@ export class AppointmentComponent implements OnInit {
       cursor = endTime;
 
       try {
-        line.availableEmployees = await this.appointmentService.getAvailableEmployees(
-          service.id,
-          this.dateValue,
-          startTime
-        );
+        // line.availableEmployees = await this.appointmentService.getAvailableEmployees( service.id,this.dateValue, startTime );
+        line.availableEmployees = await this.appointmentService.getEmployeesByService(service.id);
+
       } catch (error) {
+        console.error(`Unable to load employees for service ${service.id}:`,  error );
         line.availableEmployees = [];
       } finally {
         line.loading = false;

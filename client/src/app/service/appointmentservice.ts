@@ -91,6 +91,14 @@ export class AppointmentService {
     )) ?? [];
   }
 
+  async getEmployeesByService(serviceId: number): Promise<Employee[]> {
+    return (await firstValueFrom(
+      this.http.get<Employee[]>(
+        `http://localhost:8080/services/${serviceId}/employees`
+      )
+    )) ?? [];
+  }
+
   async assignToMe(lineId: number): Promise<ApiResponse> {
     return firstValueFrom(
       this.http.put<ApiResponse>(`${this.lineUrl}/${lineId}/assign-to-me`, {})
