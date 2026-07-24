@@ -58,15 +58,15 @@ public class NumberServiceImp implements NumberService {
     @Override
     public String getLastInvoiceByYear() {
 //        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
-        int currentYear = Year.now().getValue();
+        int currentYear = java.time.Year.now().getValue();
         String lastInvoice = invoicedao.getLastInvoiceByYear(currentYear);
 
         int nextNumber = 1;
-        if(lastInvoice != null) {
-            String[] invoiceParts = lastInvoice.split("-");
-            nextNumber = Integer.parseInt(invoiceParts[2]) + 1;
+        if (lastInvoice != null) {
+            String[] parts = lastInvoice.split("-");
+            nextNumber = Integer.parseInt(parts[2]) + 1;
         }
 
-        return toString().format("INV-%d-%6d",currentYear,nextNumber );
+        return String.format("INV-%d-%06d", currentYear, nextNumber);
     }
 }

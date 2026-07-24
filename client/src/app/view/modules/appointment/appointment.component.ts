@@ -12,7 +12,7 @@ import {Appointment, AppointmentCreateRequest} from '../../../entity/appointment
 import {MessageComponent} from '../../../util/dialog/message/message.component';
 import {ConfirmComponent} from '../../../util/dialog/confirm/confirm.component';
 import {AuthorizationManager} from '../../../service/authorizationmanager';
-
+import {Appointmentstatus} from '../../../entity/appointmentstatus';
 
 interface BookingLine {
   id?: number;
@@ -36,6 +36,7 @@ export class AppointmentComponent implements OnInit {
 
   customers: Customer[] = [];
   services: Service[] = [];
+  appointmentStatuses: Appointmentstatus[] = [];
   selectedCustomer: Customer | null = null;
   selectedServices: Service[] = [];
   bookingLines: BookingLine[] = [];
@@ -47,6 +48,8 @@ export class AppointmentComponent implements OnInit {
   saving = false;
   customerSearchPerformed = false;
   hasInsertAuthority = false;
+  hasUpdateAuthority = false;
+  changingStatusAppointmentId: number | null = null;
   minDate = new Date();
   selectedAppointmentId: number | null = null;
 
@@ -94,9 +97,26 @@ export class AppointmentComponent implements OnInit {
         (a: {module: string; operation: string}) =>
           a.module.toLowerCase() === 'appointment' && a.operation.toLowerCase() === 'insert'
       );
+      this.hasUpdateAuthority = authorities.some(
+        (a: {module: string; operation: string}) =>
+          a.module.toLowerCase() === 'appointment' && a.operation.toLowerCase() === 'update'
+      );
     }
-    await this.loadServices();
-    await this.loadAppointments();
+    await Promise.all([
+      this.loadServices(),
+      this.loadAppointmentStatuses(),
+      this.loadAppointments()
+    ]);
+  }
+
+  async loadAppointmentStatuses(): Promise<void> {
+    try {
+      this.appointmentStatuses = await this.appointmentService.getStatuses();
+    } catch (error) {
+      console.error('Failed to load appointment statuses:', error);
+      this.appointmentStatuses = [];
+      this.showMessage('Appointment', 'Unable to load appointment statuses.');
+    }
   }
 
   async loadServices(): Promise<void> {
@@ -117,6 +137,52 @@ export class AppointmentComponent implements OnInit {
     }catch (error) {
       console.error('Failed to load appointments:', error);
       this.appointments.data = [];
+    }
+  }
+
+  async changeAppointmentStatus(
+    appointment: Appointment,
+    statusId: number
+  ): Promise<void> {
+    if (!appointment.id || appointment.appointmentstatus?.id === statusId) {
+      return;
+    }
+
+    const selectedStatus = this.appointmentStatuses.find(
+      status => status.id === statusId
+    );
+
+    if (!selectedStatus) {
+      this.showMessage('Appointment Status', 'The selected status is invalid.');
+      return;
+    }
+
+    this.changingStatusAppointmentId = appointment.id;
+
+    try {
+      const response = await this.appointmentService.updateStatus(
+        appointment.id,
+        statusId
+      );
+
+      if (response.errors) {
+        this.showMessage('Status Not Updated', response.errors);
+        return;
+      }
+
+      appointment.appointmentstatus = selectedStatus;
+      this.appointments.data = [...this.appointments.data];
+      this.showMessage(
+        'Appointment Status',
+        `Status successfully changed to ${selectedStatus.name}.`
+      );
+    } catch (error) {
+      this.showMessage(
+        'Status Not Updated',
+        'The server could not update the appointment status.'
+      );
+    } finally {
+      this.changingStatusAppointmentId = null;
     }
   }
 

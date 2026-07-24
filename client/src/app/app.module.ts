@@ -57,6 +57,8 @@ import { RevenueByMonthComponent } from './report/view/revenue-by-month/revenue-
 import { RevenueByPaymentMethodComponent } from './report/view/revenue-by-payment-method/revenue-by-payment-method.component';
 import { TotalByPoSupplierComponent } from './report/view/total-by-po-supplier/total-by-po-supplier.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { InvoiceComponent } from './view/modules/invoice/invoice.component';
+import { PaymentComponent } from './view/modules/payment/payment.component';
 
 
 @NgModule({
@@ -86,7 +88,9 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     CountByServiceCategoryComponent,
     RevenueByMonthComponent,
     RevenueByPaymentMethodComponent,
-    TotalByPoSupplierComponent
+    TotalByPoSupplierComponent,
+    InvoiceComponent,
+    PaymentComponent
   ],
   imports: [
     MatDatepickerModule,

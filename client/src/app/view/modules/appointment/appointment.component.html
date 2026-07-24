@@ -148,7 +148,8 @@
               <div>
                 <button mat-button type="button" (click)="reset()">Clear</button>
                 <button mat-raised-button color="primary" type="button"
-                        [disabled]="saving || !hasInsertAuthority" (click)="save()">
+                        [disabled]="saving || (isEditMode ? !hasUpdateAuthority : !hasInsertAuthority)"
+                        (click)="save()">
                   {{saving ? 'Saving...' : 'Confirm Appointment'}}
                 </button>
               </div>
@@ -199,7 +200,19 @@
           <ng-container matColumnDef="status">
             <th mat-header-cell *matHeaderCellDef>Status</th>
             <td mat-cell *matCellDef="let appointment">
-              {{ appointment.appointmentstatus?.name }}
+              <mat-form-field appearance="outline">
+                <mat-label>Status</mat-label>
+                <mat-select
+                  [value]="appointment.appointmentstatus?.id"
+                  [disabled]="!hasUpdateAuthority || changingStatusAppointmentId === appointment.id"
+                  (selectionChange)="changeAppointmentStatus(appointment, $event.value)">
+                  <mat-option
+                    *ngFor="let status of appointmentStatuses"
+                    [value]="status.id">
+                    {{status.name}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
             </td>
           </ng-container>
 

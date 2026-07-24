@@ -1,27 +1,43 @@
 package com.clippercuts.dao;
 
 import com.clippercuts.entity.Invoice;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface InvoiceDao extends JpaRepository<Invoice,Integer> {
+import java.util.List;
 
+public interface InvoiceDao extends JpaRepository<Invoice, Integer> {
 
-    @Query("select i from Invoice i where i.id = :id")
-    Invoice findInvoiceById(@Param("id") Integer id);
+    Invoice findByInvoicenumber(String invoicenumber);
 
-    @Query("select i from Invoice i where i.invoicenumber = :invoicenumber")
-    Invoice findByInvoiceNumber(String invoicenumber);
+    boolean existsByAppointment_Id(Integer appointmentId);
+
+//    @EntityGraph(attributePaths = {"appointment", "appointment.customer", "paymentstatus", "promotion"})
+//    List<Invoice> findAll();
+
+    @Override
+    @EntityGraph(
+            type = EntityGraph.EntityGraphType.LOAD,
+            attributePaths = {
+                    "appointment",
+                    "appointment.customer",
+                    "appointment.appointmentstatus",
+                    "paymentstatus",
+                    "promotion"
+            }
+    )
+    List<Invoice> findAll();
 
     @Query(value =
-            "SELECT invoice_no " +
-                    "FROM invoice " +
-                    "WHERE invoice_no LIKE CONCAT('INV-', :year, '-%') " +
-                    "ORDER BY invoice_id DESC " +
-                    "LIMIT 1",
+            "SELECT invoicenumber FROM invoice " +
+                    "WHERE invoicenumber LIKE CONCAT('INV-', :year, '-%') " +
+                    "ORDER BY id DESC LIMIT 1",
             nativeQuery = true)
     String getLastInvoiceByYear(@Param("year") int year);
+
+
 
 }
 

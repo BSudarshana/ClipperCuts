@@ -27,6 +27,7 @@ import {firstValueFrom} from 'rxjs';
 import {Appointment, AppointmentCreateRequest} from '../entity/appointment';
 import {ApiResponse}  from './apiresponse';
 import {Employee} from '../entity/employee';
+import {Appointmentstatus} from '../entity/appointmentstatus';
 
 @Injectable({providedIn: 'root'})
 export class AppointmentService {
@@ -76,6 +77,26 @@ export class AppointmentService {
     return response;
   }
 
+  async getStatuses(): Promise<Appointmentstatus[]> {
+    return (await firstValueFrom(
+      this.http.get<Appointmentstatus[]>(
+        'http://localhost:8080/appointmentstatuses/list'
+      )
+    )) ?? [];
+  }
+
+  async updateStatus(
+    appointmentId: number,
+    statusId: number
+  ): Promise<ApiResponse> {
+    return firstValueFrom(
+      this.http.put<ApiResponse>(
+        `${this.baseUrl}/${appointmentId}/status`,
+        {statusId}
+      )
+    );
+  }
+
   async getAvailableEmployees(
     serviceId: number,
     date: string,
@@ -115,4 +136,3 @@ export class AppointmentService {
     return time.length === 5 ? `${time}:00` : time;
   }
 }
-

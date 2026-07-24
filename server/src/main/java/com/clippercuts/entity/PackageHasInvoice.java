@@ -11,8 +11,8 @@ public class PackageHasInvoice {
     @Column(name = "id")
     private Integer id;
     @Basic
-    @Column(name = "prpice")
-    private String prpice;
+    @Column(name = "price")
+    private String price;
     @ManyToOne
     @JoinColumn(name = "invoice_id", referencedColumnName = "id", nullable = false)
     private Invoice invoice;
@@ -28,12 +28,12 @@ public class PackageHasInvoice {
         this.id = id;
     }
 
-    public String getPrpice() {
-        return prpice;
+    public String getPrice() {
+        return price;
     }
 
-    public void setPrpice(String prpice) {
-        this.prpice = prpice;
+    public void setPrice(String prpice) {
+        this.price = prpice;
     }
 
     @Override
@@ -41,12 +41,12 @@ public class PackageHasInvoice {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PackageHasInvoice that = (PackageHasInvoice) o;
-        return Objects.equals(id, that.id) && Objects.equals(prpice, that.prpice);
+        return Objects.equals(id, that.id) && Objects.equals(price, that.price);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, prpice);
+        return Objects.hash(id, price);
     }
 
     public Invoice getInvoice() {

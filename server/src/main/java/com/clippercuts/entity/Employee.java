@@ -2,6 +2,7 @@ package com.clippercuts.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.clippercuts.util.RegexPattern;
+import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
 import javax.validation.constraints.Pattern;
@@ -17,7 +18,7 @@ public class Employee {
     private Integer id;
     @Basic
     @Column(name = "number")
-    @Pattern(regexp = "^\\d{4}$", message = "Invalid Number")
+    @Pattern(regexp = "^EN\\d{4}$", message = "Invalid Number")
     private String number;
     @Basic
     @Column(name = "fullname")
@@ -48,6 +49,7 @@ public class Employee {
     private String mobile;
     @Basic
     @Column(name = "land")
+    @Nullable
     @Pattern(regexp = "^\\d{0,10}$", message = "Invalid Land phone Number")
     private String land;
     @Basic

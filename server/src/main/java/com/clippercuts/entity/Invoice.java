@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class Invoice {
@@ -30,6 +31,8 @@ public class Invoice {
     @Basic
     @Column(name = "final_amount")
     private BigDecimal finalAmount;
+
+    @JsonIgnore
     @OneToMany(mappedBy = "invoice")
     private Collection<PackageHasInvoice> packageHasInvoices;
     @ManyToOne
@@ -39,12 +42,17 @@ public class Invoice {
     @JoinColumn(name = "appointment_id", referencedColumnName = "id", nullable = false)
     private Appointment appointment;
     @ManyToOne
-    @JoinColumn(name = "promotion_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "promotion_id", referencedColumnName = "id")
     private Promotion promotion;
+
+    @JsonIgnore
     @OneToMany(mappedBy = "invoice")
     private Collection<InvoiceItem> invoiceItems;
+
+    @JsonIgnore
     @OneToMany(mappedBy = "invoice")
     private Collection<Payment> payments;
+
 
     public Integer getId() {
         return id;

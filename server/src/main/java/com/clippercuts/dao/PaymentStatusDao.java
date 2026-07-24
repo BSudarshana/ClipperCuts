@@ -5,5 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PaymentStatusDao extends JpaRepository<Paymentstatus,Integer> {
 
+    Paymentstatus findByNameIgnoreCase(String name);
 }
 

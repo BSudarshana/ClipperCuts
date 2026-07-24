@@ -71,5 +71,51 @@ public interface AppointmentDao extends JpaRepository<Appointment,Integer> {
             @Param("time") Time time,
             @Param("appointmentId") Integer appointmentId
     );
+
+    @EntityGraph(attributePaths = {
+            "customer",
+            "appointmentstatus",
+            "appointmentservices",
+            "appointmentservices.service",
+            "appointmentservices.employee",
+            "appointmentservices.appointmentservicestatus"
+    })
+    List<Appointment> findByAppointmentstatus_NameIgnoreCase(String statusName);
+
+    @EntityGraph(attributePaths = {
+            "customer",
+            "appointmentstatus",
+            "appointmentservices",
+            "appointmentservices.service",
+            "appointmentservices.employee",
+            "appointmentservices.appointmentservicestatus"
+    })
+    @Query("SELECT DISTINCT a FROM Appointment a " +
+            "WHERE LOWER(a.appointmentstatus.name) = LOWER(:statusName)")
+    List<Appointment> findByStatusName(
+            @Param("statusName") String statusName
+    );
+
+    @EntityGraph(
+            type = EntityGraph.EntityGraphType.LOAD,
+            attributePaths = {
+                    "customer",
+                    "appointmentstatus",
+                    "appointmentservices",
+                    "appointmentservices.service",
+                    "appointmentservices.employee",
+                    "appointmentservices.appointmentservicestatus"
+            }
+    )
+    @Query("SELECT DISTINCT a FROM Appointment a " +
+            "WHERE LOWER(a.appointmentstatus.name) = LOWER(:statusName) " +
+            "AND NOT EXISTS (" +
+            "    SELECT i.id FROM Invoice i " +
+            "    WHERE i.appointment.id = a.id" +
+            ")")
+    List<Appointment> findEligibleForInvoice(
+            @Param("statusName") String statusName
+    );
+
 }
 

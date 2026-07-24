@@ -168,13 +168,13 @@ public class AppointmentBookingService {
         }
 
         // Remove old references from the managed Appointment first
-            appointment.setAppointmentservices(new ArrayList<>());
+        appointment.setAppointmentservices(new ArrayList<>());
 
         // Then delete the old database records
-            if (!existingLines.isEmpty()) {
-                lineDao.deleteAll(existingLines);
-                lineDao.flush();
-            }
+        if (!existingLines.isEmpty()) {
+            lineDao.deleteAll(existingLines);
+            lineDao.flush();
+        }
 
         // Update the existing appointment, not a new Appointment object
         appointment.setAppointmentDate(request.getAppointmentDate());
@@ -224,9 +224,9 @@ public class AppointmentBookingService {
             }
 
             Appointmentservicestatus lineStatus = lineStatusDao.findById(lineStatusId)
-                            .orElseThrow(() -> new IllegalStateException(
-                                            "Appointment service status is missing"
-                                    ));
+                    .orElseThrow(() -> new IllegalStateException(
+                            "Appointment service status is missing"
+                    ));
 
             Appointmentservice line = new Appointmentservice();
 
@@ -254,6 +254,29 @@ public class AppointmentBookingService {
         );
         response.put("errors", "");
 
+        return response;
+    }
+
+    @Transactional
+    public HashMap<String, String> updateAppointmentStatus(
+            Integer appointmentId,
+            Integer statusId) {
+
+        Appointment appointment = appointmentDao.findById(appointmentId)
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Appointment not found"));
+
+        Appointmentstatus status = appointmentstatusDao.findById(statusId)
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Invalid appointment status"));
+
+        appointment.setAppointmentstatus(status);
+        appointmentDao.save(appointment);
+
+        HashMap<String, String> response = new HashMap<>();
+        response.put("id", String.valueOf(appointment.getId()));
+        response.put("url", "/appointments/" + appointment.getId());
+        response.put("errors", "");
         return response;
     }
 

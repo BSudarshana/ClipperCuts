@@ -1,0 +1,92 @@
+.invoice-page {
+  display: flex;
+  gap: 20px;
+  padding: 10px;
+  align-items: flex-start;
+}
+
+.invoice-form-card {
+  flex: 0 0 38%;
+}
+
+.invoice-list {
+  flex: 1;
+  min-width: 0;
+}
+
+.invoice-list mat-card {
+  margin-bottom: 20px;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+.amount-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 12px;
+}
+
+.customer-summary {
+  padding: 12px;
+  margin-bottom: 16px;
+  border-radius: 4px;
+  background: #f3f6f8;
+}
+
+.service-table {
+  margin-bottom: 16px;
+  overflow-x: auto;
+}
+
+.service-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.service-table th,
+.service-table td {
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+}
+
+.service-table .amount {
+  text-align: right;
+}
+
+.button-panel,
+.search-form {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.button-panel button,
+.search-form button {
+  background-color: #c9cd03;
+  color: #141414;
+}
+
+.search-form mat-form-field {
+  width: 220px;
+}
+
+.selected-row {
+  background-color: #c9e6ff;
+}
+
+button:disabled {
+  opacity: .5;
+}
+
+@media (max-width: 1000px) {
+  .invoice-page {
+    flex-direction: column;
+  }
+  .invoice-form-card,
+  .invoice-list {
+    width: 100%;
+  }
+}

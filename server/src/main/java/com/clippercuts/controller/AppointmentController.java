@@ -11,6 +11,7 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin
 @RestController
@@ -78,6 +79,31 @@ public class AppointmentController {
             response.put("url", "/appointments/" + id);
             response.put("errors", e.getMessage());
 
+            return response;
+        }
+    }
+
+    @PutMapping("/{id}/status")
+    public HashMap<String, String> updateStatus(
+            @PathVariable Integer id,
+            @RequestBody Map<String, Integer> request) {
+
+        HashMap<String, String> response = new HashMap<>();
+
+        try {
+            Integer statusId = request.get("statusId");
+
+            if (statusId == null) {
+                throw new IllegalArgumentException(
+                        "Appointment status is required"
+                );
+            }
+
+            return bookingService.updateAppointmentStatus(id, statusId);
+        } catch (Exception e) {
+            response.put("id", String.valueOf(id));
+            response.put("url", "/appointments/" + id);
+            response.put("errors", e.getMessage());
             return response;
         }
     }
