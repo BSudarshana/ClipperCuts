@@ -15,5 +15,14 @@ public interface CustomerfeedbackDao extends JpaRepository<Customerfeedback,Inte
     @Query("select cf from Customerfeedback cf where cf.customer.id = :id")
     List<Customerfeedback> customerfeedbackByCusId(@Param("id") Integer id);
 
+    Customerfeedback findByAppointment_Id(Integer appointmentId);
+
+    boolean existsByAppointment_Id(Integer appointmentId);
+
+    boolean existsByAppointment_IdAndIdNot(
+            Integer appointmentId,
+            Integer feedbackId
+    );
+
 }
 

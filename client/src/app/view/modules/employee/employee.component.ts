@@ -29,13 +29,21 @@ import {Emptypeservice} from "../../../service/emptypeservice";
 
 export class EmployeeComponent {
 
-  columns: string[] = ['number', 'callingname', 'gender', 'designation', 'fullname', 'modi'];
-  headers: string[] = ['Number', 'Calling Name', 'Gender', 'Designation', 'Full Name', 'Modification'];
-  binders: string[] = ['number', 'callingname', 'gender.name', 'designation.name', 'fullname', 'getModi()'];
+  // columns: string[] = ['number', 'callingname', 'gender', 'designation', 'fullname', 'modi'];
+  // headers: string[] = ['Number', 'Calling Name', 'Gender', 'Designation', 'Full Name', 'Modification'];
+  // binders: string[] = ['number', 'callingname', 'gender.name', 'designation.name', 'fullname', 'getModi()'];
 
-  cscolumns: string[] = ['csnumber', 'cscallingname', 'csgender', 'csdesignation', 'csname', 'csmodi'];
+  columns: string[] = ['number', 'callingname', 'gender', 'designation', 'fullname'];
+  headers: string[] = ['Number', 'Calling Name', 'Gender', 'Designation', 'Full Name'];
+  binders: string[] = ['number', 'callingname', 'gender.name', 'designation.name', 'fullname'];
+
+  // cscolumns: string[] = ['csnumber', 'cscallingname', 'csgender', 'csdesignation', 'csname', 'csmodi'];
+  // csprompts: string[] = ['Search by Number', 'Search by Name', 'Search by Gender',
+  //   'Search by Designation', 'Search by Full Name', 'Search by Modi'];
+
+  cscolumns: string[] = ['csnumber', 'cscallingname', 'csgender', 'csdesignation', 'csname'];
   csprompts: string[] = ['Search by Number', 'Search by Name', 'Search by Gender',
-    'Search by Designation', 'Search by Full Name', 'Search by Modi'];
+    'Search by Designation', 'Search by Full Name'];
 
   public csearch!: FormGroup;
   public ssearch!: FormGroup;
@@ -111,7 +119,7 @@ export class EmployeeComponent {
       "gender": new FormControl('', [Validators.required]),
       "nic": new FormControl('', [Validators.required]),
       "dobirth": new FormControl('', [Validators.required]),
-      "photo": new FormControl('', [Validators.required]),
+      // "photo": new FormControl('', [Validators.required]),
       "address": new FormControl('', [Validators.required]),
       "mobile": new FormControl('', [Validators.required]),
       "land": new FormControl('', ),
@@ -161,6 +169,12 @@ export class EmployeeComponent {
       this.createForm();
     });
 
+    // this.controllerMakePristine();
+
+  }
+
+  controllerMakePristine(){
+    Object.values(this.form.controls).forEach( control => { control.markAsPristine(); });
   }
 
   buttonStates(authorities: { module: string; operation: string }[]): void {
@@ -184,10 +198,10 @@ export class EmployeeComponent {
     this.form.controls['gender'].setValidators([Validators.required]);
     this.form.controls['nic'].setValidators([Validators.required, Validators.pattern(this.regexes['nic']['regex'])]);
     this.form.controls['dobirth'].setValidators([Validators.required]);
-    this.form.controls['photo'].setValidators([Validators.required]);
+    // this.form.controls['photo'].setValidators([Validators.nullValidator]);
     this.form.controls['address'].setValidators([Validators.required, Validators.pattern(this.regexes['address']['regex'])]);
     this.form.controls['mobile'].setValidators([Validators.required, Validators.pattern(this.regexes['mobile']['regex'])]);
-    this.form.controls['land'].setValidators([Validators.required,Validators.pattern(this.regexes['land']['regex'])]);
+    this.form.controls['land'].setValidators([Validators.nullValidator,Validators.pattern(this.regexes['land']['regex'])]);
     this.form.controls['email'].setValidators([Validators.required,Validators.pattern(this.regexes['email']['regex'])]);
     this.form.controls['designation'].setValidators([Validators.required]);
     this.form.controls['doassignment'].setValidators([Validators.required]);
@@ -195,7 +209,7 @@ export class EmployeeComponent {
     this.form.controls['emptype'].setValidators([Validators.required]);
     this.form.controls['empstatus'].setValidators([Validators.required]);
 
-    Object.values(this.form.controls).forEach( control => { control.markAsTouched(); } );
+    // Object.values(this.form.controls).forEach( control => { control.markAsTouched(); } );
 
     for (const controlName in this.form.controls) {
       const control = this.form.controls[controlName];
@@ -324,7 +338,7 @@ export class EmployeeComponent {
 
   clearImage(): void {
     this.imageempurl = 'assets/default.png';
-    this.form.controls['photo'].setErrors({'required': true});
+    // this.form.controls['photo'].setErrors({'required': true});
   }
 
 
@@ -345,7 +359,7 @@ export class EmployeeComponent {
     } else {
 
       this.employee = this.form.getRawValue();
-      this.employee.photo = btoa(this.imageempurl);
+      // this.employee.photo = btoa(this.imageempurl);
 
       let empdata: string = "";
 
@@ -385,10 +399,10 @@ export class EmployeeComponent {
             if (addstatus) {
               addmessage = "Successfully Saved";
               this.form.reset();
-              this.clearImage();
-              Object.values(this.form.controls).forEach(control => {
-                control.markAsTouched();
-              });
+              // this.clearImage();
+              // Object.values(this.form.controls).forEach(control => {
+              //   control.markAsTouched();
+              // });
               this.loadTable("");
             }
 
@@ -436,13 +450,13 @@ export class EmployeeComponent {
     this.employee = JSON.parse(JSON.stringify(employee));
     this.oldemployee = JSON.parse(JSON.stringify(employee));
 
-    if (this.employee.photo != null) {
-      this.imageempurl = atob(this.employee.photo);
-      this.form.controls['photo'].clearValidators();
-    } else {
-      this.clearImage();
-    }
-    this.employee.photo = "";
+    // if (this.employee.photo != null) {
+    //   this.imageempurl = atob(this.employee.photo);
+    //   this.form.controls['photo'].clearValidators();
+    // } else {
+    //   this.clearImage();
+    // }
+    // this.employee.photo = "";
 
     //@ts-ignore
     this.employee.gender = this.genders.find(g => g.id === this.employee.gender.id);
@@ -505,8 +519,8 @@ export class EmployeeComponent {
           if (result) {
             //console.log("EmployeeService.update()");
             this.employee = this.form.getRawValue();
-            if (this.form.controls['photo'].dirty) this.employee.photo = btoa(this.imageempurl);
-            else this.employee.photo = this.oldemployee.photo;
+            // if (this.form.controls['photo'].dirty) this.employee.photo = btoa(this.imageempurl);
+            // else this.employee.photo = this.oldemployee.photo;
             this.employee.id = this.oldemployee.id;
 
             this.es.update(this.employee).then((responce: [] | undefined) => {
@@ -524,8 +538,8 @@ export class EmployeeComponent {
               if (updstatus) {
                 updmessage = "Successfully Updated";
                 this.form.reset();
-                this.clearImage();
-                 Object.values(this.form.controls).forEach(control => { control.markAsTouched(); });
+                // this.clearImage();
+                //  Object.values(this.form.controls).forEach(control => { control.markAsTouched(); });
                 this.loadTable("");
               }
 
@@ -583,8 +597,8 @@ export class EmployeeComponent {
               if (delstatus) {
                 delmessage = "Successfully Deleted";
                 this.form.reset();
-                this.clearImage();
-                Object.values(this.form.controls).forEach(control => { control.markAsTouched(); });
+                // this.clearImage();
+                // Object.values(this.form.controls).forEach(control => { control.markAsTouched(); });
                 this.loadTable("");
               }
 
@@ -611,7 +625,7 @@ export class EmployeeComponent {
     confirm.afterClosed().subscribe(async result => {
       if (result) {
         this.form.reset();
-        this.clearImage();
+        // this.clearImage();
          this.createForm();
       }
     });

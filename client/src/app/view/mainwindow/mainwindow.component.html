@@ -26,7 +26,7 @@
       <mat-list-item routerLink="home"><mat-icon>widgets</mat-icon><span class="menu-text">Dashboard</span></mat-list-item>
 
       <ng-container *ngFor="let menuItem of menuGroup">
-        <mat-expansion-panel *ngIf="isMenuVisible(menuItem.Menu)">
+        <mat-expansion-panel *ngIf="isMenuVisible(menuItem.Menu)" class="left-nav-menu-group">
           <mat-expansion-panel-header class="panel-body-bs">
             <mat-list-item>
               <mat-icon>{{ matIcons[menuItem.Menu] }}</mat-icon><span class="menu-text">{{ menuItem.Menu }}</span>

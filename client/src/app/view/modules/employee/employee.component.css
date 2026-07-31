@@ -12,7 +12,13 @@ mat-card-content { overflow: auto; height: 100%; }
 
 #ssearch mat-form-field { padding-left: 15px; width: 200px; }
 
-#ssearch button{ width: 195px; margin-left:10px; margin-top: 5px; background-color: #2B775F;   }
+#ssearch button{
+  width: 195px;
+  margin-left:10px;
+  margin-top: 5px;
+  color: #141414;
+  background-color: #C9CD03;
+}
 
 
 
@@ -38,8 +44,8 @@ mat-card-content { overflow: auto; height: 100%; }
   display: block;
   margin-left: 150px;
   margin-bottom: 5px;
-  background-color: #2B775F;
-  color: white;
+  background-color: #C9CD03;
+  color: #141414;
   padding: 8px;
   border-radius: 5px;
   text-align: center;
@@ -58,8 +64,8 @@ mat-card-content { overflow: auto; height: 100%; }
 #butpanel button{
   width: 82px;
   margin:3px;
-  background-color: #2B775F;
-  color: white;
+  color: #141414;
+  background-color: #C9CD03;
 }
 
 

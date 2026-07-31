@@ -31,7 +31,8 @@ export class AuthorizationManager {
   Sales = [
     { name: 'Appointment', isVisible: false, routerLink: 'appointment' },
     { name: 'Customer', isVisible: false, routerLink: 'customer' },
-    { name: 'Promotion', isVisible: false, routerLink: 'promotion' }
+    { name: 'Promotion', isVisible: false, routerLink: 'promotion' },
+    { name: 'Invoice', isVisible: false, routerLink: 'invoice' }
   ];
 
   // Purchase menu items

@@ -30,11 +30,11 @@ export class PrivilageComponent {
   form!:FormGroup;
   ssearch!:FormGroup;
 
-  roles!:Array<Role>;
-  modules!:Array<Module>;
-  operations!:Array<Operation>;
-  opetypes!:Array<Opetype>;
-  privilages!:Array<Privilege>;
+  roles: Role[] = [];
+  modules: Module[] = [];
+  operations: Operation[] = [];
+  opetypes: Opetype[] = [];
+  privilages: Privilege[] = [];
 
   privilage!:Privilege;
   oldprivilage!:Privilege;
@@ -72,7 +72,7 @@ export class PrivilageComponent {
   ) {
 
     this.uiassist = new UiAssist(this);
-    this.privilages = new Array<Privilege>();
+    // this.privilages = new Array<Privilege>();
 
     this.form = this.fb.group({
       "role":new FormControl('',Validators.required),
@@ -88,7 +88,6 @@ export class PrivilageComponent {
     });
 
   }
-
 
 
   ngOnInit() {
@@ -372,30 +371,53 @@ export class PrivilageComponent {
   }
 
 
-  fillForm(privilege: Privilege) {
+  async fillForm(privilege: Privilege): Promise<void> {
 
-    this.enableButtons(false,true,true);
-
-    this.selectedrow= privilege;
+    this.enableButtons(false, true, true);
+    this.selectedrow = privilege;
 
     this.privilage = JSON.parse(JSON.stringify(privilege));
     this.oldprivilage = JSON.parse(JSON.stringify(privilege));
 
+    const moduleId = this.privilage.module?.id;
 
-    //@ts-ignore
-    this.privilage.role = this.roles.find(r => r.id === this.privilage.role.id);
+    if (!moduleId) {
+      console.error('The selected privilege does not contain a module.');
+      return;
+    }
 
-    //@ts-ignore
-    this.privilage.module = this.modules.find(m => m.id === this.privilage.module.id);
+    try {
+      // Load operations belonging to the selected module
+      this.operations = await this.os.getAllListByModule(moduleId);
 
-    //@ts-ignore
-    this.privilage.operation = this.operations.find(o => o.id === this.privilage.operation.id);
+      this.privilage.role =
+        this.roles?.find(role => role.id === this.privilage.role?.id)
+        ?? this.privilage.role;
 
-    this.form.patchValue(this.privilage);
-    this.form.markAsPristine();
+      this.privilage.module =
+        this.modules?.find(module => module.id === this.privilage.module?.id)
+        ?? this.privilage.module;
 
+      this.privilage.operation =
+        this.operations?.find(
+          operation => operation.id === this.privilage.operation?.id
+        ) ?? this.privilage.operation;
+
+      this.form.patchValue(this.privilage);
+      this.form.markAsPristine();
+
+    } catch (error) {
+      console.error('Unable to load operations for the selected privilege:', error);
+
+      this.dg.open(MessageComponent, {
+        width: '500px',
+        data: {
+          heading: 'Privilege',
+          message: 'Unable to load the selected privilege details.'
+        }
+      });
+    }
   }
-
 
 
   getUpdates(): string {

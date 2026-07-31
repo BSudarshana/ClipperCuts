@@ -1,24 +1,22 @@
-import {Gender} from "./gender";
-import {Customerstatus} from "./customerstatus";
-import {Customertype} from "./customertype";
+import {Itemstatus} from "./itemstatus";
+import {Unittype} from "./unittype";
+import {Itembrand} from "./itembrand";
+import {Subcategory} from "./subcategory";
 
-export class Item{
-
-  public id !: number;
-  public name !: string;
-
-
-  constructor(id:number,
-              name : string
-               ) {
-
-    this.id=id;
-    this.name = name;
-
-  }
-
+export interface Item{
+  id:number;
+  name:string;
+  itemnumber:string;
+  dointroduced : string;
+  quantity : number;
+  sprice : number;
+  pprice : number;
+  rop: number;
+  itemstatus : Itemstatus;
+  unittype : Unittype;
+  itembrand : Itembrand;
+  subcategory : Subcategory;
 }
-
 
 
 

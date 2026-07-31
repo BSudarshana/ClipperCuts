@@ -161,3 +161,12 @@ mat-card-title {
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+@media print {
+
+  #left-menu{
+    display: none !important;
+  }
+
+
+}

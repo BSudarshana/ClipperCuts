@@ -119,8 +119,8 @@ public class CustomerController {
 //        if(customer.getId().intValue() == customerdao.findByMyId() )
         if(cus1!=null && customer.getId()!=cus1.getId())
             errors = errors+"<br> Existing Code";
-        if(cus2!=null && customer.getId()!=cus2.getId())
-            errors = errors+"<br> Existing Mobile Number";
+//        if(cus2!=null && customer.getId()!=cus2.getId())
+//            errors = errors+"<br> Existing Mobile Number";
 
         if(errors=="") customerdao.save(customer);
         else errors = "Server Validation Errors : <br> "+errors;

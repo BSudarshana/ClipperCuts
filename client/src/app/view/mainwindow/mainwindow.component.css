@@ -117,7 +117,8 @@ mat-nav-list mat-expansion-panel .mat-expansion-panel-header{
   background-color: #4E4E4E;
 }
 
- mat-expansion-panel.mat-expanded .mat-expansion-panel-content .mat-expansion-panel-body{
+/*#left-menu .mat-expansion-panel.mat-expanded .mat-expansion-panel-content .mat-expansion-panel-body{*/
+ .left-nav-menu-group .mat-expansion-panel-content .mat-expansion-panel-body{
   padding: 10px 15px 15px !important;
 }
 

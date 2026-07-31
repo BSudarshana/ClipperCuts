@@ -59,6 +59,7 @@ import { TotalByPoSupplierComponent } from './report/view/total-by-po-supplier/t
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { InvoiceComponent } from './view/modules/invoice/invoice.component';
 import { PaymentComponent } from './view/modules/payment/payment.component';
+import { CustomerfeedbackComponent } from './view/modules/customerfeedback/customerfeedback.component';
 
 
 @NgModule({
@@ -90,7 +91,8 @@ import { PaymentComponent } from './view/modules/payment/payment.component';
     RevenueByPaymentMethodComponent,
     TotalByPoSupplierComponent,
     InvoiceComponent,
-    PaymentComponent
+    PaymentComponent,
+    CustomerfeedbackComponent
   ],
   imports: [
     MatDatepickerModule,

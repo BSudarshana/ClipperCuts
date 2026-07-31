@@ -291,7 +291,7 @@ export class AppointmentComponent implements OnInit {
     if (!this.selectedCustomer || this.bookingLines.length === 0 || this.saving) return;
 
     const pending = this.bookingLines.filter(line => !line.employee).length;
-    const summary = `${this.selectedCustomer.callingname}<br>` +
+    const summary = `${this.selectedCustomer.fullname}<br>` +
       `${this.dateValue} at ${this.timeValue}<br>` +
       `${this.selectedServices.length} service(s), ${pending} pending assignment(s)<br>` +
       `Estimated cost: ${this.estimatedCost.toFixed(2)}`;

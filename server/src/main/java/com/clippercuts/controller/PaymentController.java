@@ -1,11 +1,24 @@
 package com.clippercuts.controller;
 
+import com.clippercuts.dao.InvoiceDao;
 import com.clippercuts.dao.PaymentDao;
+import com.clippercuts.dao.PaymentStatusDao;
+import com.clippercuts.dao.PaymentmethodDao;
+import com.clippercuts.dto.PaymentCreateRequest;
+import com.clippercuts.entity.Invoice;
 import com.clippercuts.entity.Payment;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.clippercuts.entity.Paymentmethod;
+import com.clippercuts.entity.Paymentstatus;
 import org.springframework.http.HttpStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
+import javax.validation.Valid;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.Year;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,99 +26,134 @@ import java.util.stream.Stream;
 
 @CrossOrigin
 @RestController
-@RequestMapping(value = "/payments")
+@RequestMapping("/payments")
 public class PaymentController {
 
-    @Autowired
-    private PaymentDao paymentDao;
+    private final PaymentDao paymentDao;
+    private final InvoiceDao invoiceDao;
+    private final PaymentmethodDao paymentmethodDao;
+    private final PaymentStatusDao paymentStatusDao;
 
-    @GetMapping(produces = "application/json")
-//    @PreAuthorize("hasAuthority('customer-select')")p
-    public List<Payment> get(@RequestParam HashMap<String, String> params) {
-
-        List<Payment> payments = this.paymentDao.findAll();
-
-        if(params.isEmpty())  return payments;
-
-        String receiptnumber = params.get("receiptnumber");
-
-        Stream<Payment> paymentStream = payments.stream();
-
-        if(receiptnumber!=null) paymentStream = paymentStream.filter(p -> p.getReceiptnumber().contains(receiptnumber));
-
-        return paymentStream.collect(Collectors.toList());
-
+    public PaymentController(PaymentDao paymentDao,
+                             InvoiceDao invoiceDao,
+                             PaymentmethodDao paymentmethodDao,
+                             PaymentStatusDao paymentStatusDao) {
+        this.paymentDao = paymentDao;
+        this.invoiceDao = invoiceDao;
+        this.paymentmethodDao = paymentmethodDao;
+        this.paymentStatusDao = paymentStatusDao;
     }
 
+    @GetMapping(produces = "application/json")
+    public List<Payment> get(@RequestParam HashMap<String, String> params) {
+        Stream<Payment> stream = paymentDao.findAll().stream();
+        String receiptNumber = params.get("receiptnumber");
+
+        if (receiptNumber != null && !receiptNumber.trim().isEmpty()) {
+            String search = receiptNumber.trim().toLowerCase();
+            stream = stream.filter(payment ->
+                    payment.getReceiptnumber() != null &&
+                            payment.getReceiptnumber().toLowerCase().contains(search));
+        }
+        return stream.collect(Collectors.toList());
+    }
+
+    @GetMapping("/{id}")
+    public Payment getById(@PathVariable Integer id) {
+        return paymentDao.findDetailedById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Payment does not exist"));
+    }
+
+    @GetMapping("/unpaid-invoices")
+    public List<Invoice> getUnpaidInvoices() {
+        return invoiceDao.findByPaymentstatus_NameIgnoreCase("Unpaid")
+                .stream()
+                .filter(invoice -> !paymentDao.existsByInvoice_Id(invoice.getId()))
+                .collect(Collectors.toList());
+    }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-//    @PreAuthorize("hasAuthority('Customer-Insert')")
-    public HashMap<String,String> add(@RequestBody Payment payment){
+    @Transactional
+    public HashMap<String, String> add(@Valid @RequestBody PaymentCreateRequest request) {
+        Invoice invoice = invoiceDao.findDetailedById(request.getInvoiceId())
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Invoice does not exist"));
 
-        HashMap<String,String> responce = new HashMap<>();
-        String errors="";
+        if (invoice.getPaymentstatus() == null ||
+                !"Unpaid".equalsIgnoreCase(invoice.getPaymentstatus().getName())) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT, "Only Unpaid invoices can be paid");
+        }
 
-        if(paymentDao.findByReceiptnumber(payment.getReceiptnumber())!=null)
-            errors = errors+"<br> Existing Receipt Number: "+payment.getReceiptnumber();
+        if (paymentDao.existsByInvoice_Id(invoice.getId())) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT, "This invoice already has a payment");
+        }
 
-        if(errors=="")
-            paymentDao.save(payment);
-        else errors = "Server Validation Errors : <br> "+errors;
+        BigDecimal amount = request.getAmount().setScale(2);
+        BigDecimal invoiceAmount = invoice.getFinalAmount().setScale(2);
+        if (amount.compareTo(invoiceAmount) != 0) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Payment amount must equal the invoice final amount");
+        }
 
-        responce.put("id",String.valueOf(payment.getId()));
-        responce.put("url","/payments/"+payment.getId());
-        responce.put("errors",errors);
+        Paymentmethod method = paymentmethodDao.findById(request.getPaymentmethodId())
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Payment method does not exist"));
 
-        return responce;
+        Paymentstatus paid = paymentStatusDao.findByNameIgnoreCase("Paid");
+        if (paid == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT, "Payment status 'Paid' is not configured");
+        }
+
+        Payment payment = new Payment();
+        payment.setReceiptnumber(nextReceiptNumber());
+        payment.setPaymentDate(Timestamp.from(Instant.now()));
+        payment.setAmount(invoiceAmount);
+        payment.setRemarks(cleanRemarks(request.getRemarks()));
+        payment.setInvoice(invoice);
+        payment.setPaymentmethod(method);
+        paymentDao.save(payment);
+
+        invoice.setPaymentstatus(paid);
+        invoiceDao.save(invoice);
+
+        HashMap<String, String> response = new HashMap<>();
+        response.put("id", String.valueOf(payment.getId()));
+        response.put("url", "/payments/" + payment.getId());
+        response.put("errors", "");
+        return response;
     }
 
-    @PutMapping
-    @ResponseStatus(HttpStatus.CREATED)
-//    @PreAuthorize("hasAuthority('Customer-Update')")
-    public HashMap<String,String> update(@RequestBody Payment payment){
+    private String nextReceiptNumber() {
+        int year = Year.now().getValue();
+        String lastNumber = paymentDao.getLastReceiptByYear(year);
+        int sequence = 1;
 
-        HashMap<String,String> responce = new HashMap<>();
-        String errors="";
-
-        Payment payment1 = paymentDao.findByReceiptnumber(payment.getReceiptnumber());
-
-        if(payment1!=null && payment.getId()!=payment1.getId())
-            errors = errors+"<br> Existing Receipt Number : "+payment.getReceiptnumber();
-
-        if(errors=="") paymentDao.save(payment);
-        else errors = "Server Validation Errors : <br> "+errors;
-
-        responce.put("id ",String.valueOf(payment.getId()));
-        responce.put("url ","/payments/"+payment.getId());
-        responce.put("error ",errors);
-
-        return responce;
+        if (lastNumber != null) {
+            String[] parts = lastNumber.split("-");
+            if (parts.length == 3) {
+                try {
+                    sequence = Integer.parseInt(parts[2]) + 1;
+                } catch (NumberFormatException ignored) {
+                    sequence = 1;
+                }
+            }
+        }
+        return String.format("REC-%d-%06d", year, sequence);
     }
 
-
-    @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.CREATED)
-    public HashMap<String,String> delete(@PathVariable Integer id){
-
-        HashMap<String,String> responce = new HashMap<>();
-        String errors="";
-
-        Payment payment = paymentDao.findPaymentById(id);
-
-        if(payment==null)
-            errors = errors+"<br> The Payment Receipt  Does Not Existed";
-
-        if(errors=="") paymentDao.delete(payment);
-        else errors = "Server Validation Errors : <br> "+errors;
-
-        responce.put("id",String.valueOf(id));
-        responce.put("url","/payments/"+id);
-        responce.put("errors",errors);
-
-        return responce;
+    private String cleanRemarks(String remarks) {
+        if (remarks == null) {
+            return null;
+        }
+        String cleaned = remarks.trim();
+        return cleaned.isEmpty() ? null : cleaned;
     }
-
 }
 
 

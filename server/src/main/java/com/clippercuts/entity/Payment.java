@@ -1,6 +1,9 @@
 package com.clippercuts.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Objects;
@@ -12,10 +15,13 @@ public class Payment {
     @Column(name = "id")
     private Integer id;
     @Basic
-    @Column(name = "payment_date")
+    @Column(name = "payment_date", nullable = false)
     private Timestamp paymentDate;
     @Basic
-    @Column(name = "amount")
+    @NotNull
+    @DecimalMin(value = "0.01")
+    @Digits(integer = 10, fraction = 2)
+    @Column(name = "amount", nullable = false)
     private BigDecimal amount;
     @Basic
     @Column(name = "remarks")
@@ -26,8 +32,9 @@ public class Payment {
     @ManyToOne
     @JoinColumn(name = "paymentmethod_id", referencedColumnName = "id", nullable = false)
     private Paymentmethod paymentmethod;
+
     @Basic
-    @Column(name = "receiptnumber")
+    @Column(name = "receiptnumber", nullable = false, unique = true)
     private String receiptnumber;
 
     public Integer getId() {

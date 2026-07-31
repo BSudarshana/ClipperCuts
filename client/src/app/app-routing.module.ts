@@ -14,6 +14,9 @@ import {ServiceComponent} from "./view/modules/service/service.component";
 import {InvoiceComponent} from "./view/modules/invoice/invoice.component";
 import {AppointmentComponent} from "./view/modules/appointment/appointment.component";
 import {PromotionComponent} from "./view/modules/promotion/promotion.component";
+import {PaymentComponent} from "./view/modules/payment/payment.component";
+import {CustomerfeedbackComponent} from "./view/modules/customerfeedback/customerfeedback.component";
+
 import { CountByDesignationComponent } from './report/view/count-by-designation/count-by-designation.component';
 import { CountByAppointmentStatusComponent } from './report/view/count-by-appointment-status/count-by-appointment-status.component';
 import { CountByCustomerTypeComponent } from './report/view/count-by-customer-type/count-by-customer-type.component';
@@ -43,7 +46,9 @@ const routes: Routes = [
       {path: "promotion", component: PromotionComponent},
       {path: "appointment", component: AppointmentComponent},
       {path: "invoice", component: InvoiceComponent},
+      {path: "payment", component: PaymentComponent},
       {path: "purchaseorder", component: PurchaseorderComponent},
+      {path: "customerfeedback", component: CustomerfeedbackComponent},
       {path:"reports/countbydesignation", component: CountByDesignationComponent},
       {path:"reports/countbyappointmentstatus", component: CountByAppointmentStatusComponent},
       {path:"reports/countbycustomertype", component: CountByCustomerTypeComponent},

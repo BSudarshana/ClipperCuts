@@ -22,15 +22,15 @@ public class Employee {
     private String number;
     @Basic
     @Column(name = "fullname")
-    @Pattern(regexp = "^[A-Z][a-zA-Z.'\\-\\s]*[A-Za-z]$", message = "Invalid Full Name")
+    @Pattern(regexp = "^[A-Za-z]+(['\\-\\s][A-Za-z]+)*$", message = "Invalid Full Name")
     private String fullname;
     @Basic
     @Column(name = "callingname")
     @Pattern(regexp = "^([A-Z][a-z]+)$", message = "Invalid Calligname")
     private String callingname;
-    @Basic
-    @Column(name = "photo")
-    private byte[] photo;
+//    @Basic
+//    @Column(name = "photo")
+//    private byte[] photo;
     @Basic
     @Column(name = "dobirth")
     @RegexPattern(reg = "^\\d{2}-\\d{2}-\\d{2}$", msg = "Invalid Date Format")
@@ -41,7 +41,7 @@ public class Employee {
     private String nic;
     @Basic
     @Column(name = "address")
-    @Pattern(regexp = "^([\\w\\/\\-,\\s]{2,})$", message = "Invalid Address")
+    @Pattern(regexp = "^([\\w\\/\\-,\\.\\s]{2,})$", message = "Invalid Address")
     private String address;
     @Basic
     @Column(name = "mobile")
@@ -139,13 +139,13 @@ public class Employee {
         this.callingname = callingname;
     }
 
-    public byte[] getPhoto() {
-        return photo;
-    }
+//    public byte[] getPhoto() {
+//        return photo;
+//    }
 
-    public void setPhoto(byte[] photo) {
-        this.photo = photo;
-    }
+//    public void setPhoto(byte[] photo) {
+//        this.photo = photo;
+//    }
 
     public Date getDobirth() {
         return dobirth;
@@ -223,7 +223,7 @@ public class Employee {
         if (fullname != null ? !fullname.equals(employee.fullname) : employee.fullname != null) return false;
         if (callingname != null ? !callingname.equals(employee.callingname) : employee.callingname != null)
             return false;
-        if (!Arrays.equals(photo, employee.photo)) return false;
+//        if (!Arrays.equals(photo, employee.photo)) return false;
         if (dobirth != null ? !dobirth.equals(employee.dobirth) : employee.dobirth != null) return false;
         if (nic != null ? !nic.equals(employee.nic) : employee.nic != null) return false;
         if (address != null ? !address.equals(employee.address) : employee.address != null) return false;
@@ -244,7 +244,7 @@ public class Employee {
         result = 31 * result + (number != null ? number.hashCode() : 0);
         result = 31 * result + (fullname != null ? fullname.hashCode() : 0);
         result = 31 * result + (callingname != null ? callingname.hashCode() : 0);
-        result = 31 * result + Arrays.hashCode(photo);
+//        result = 31 * result + Arrays.hashCode(photo);
         result = 31 * result + (dobirth != null ? dobirth.hashCode() : 0);
         result = 31 * result + (nic != null ? nic.hashCode() : 0);
         result = 31 * result + (address != null ? address.hashCode() : 0);

@@ -30,7 +30,7 @@ public class UserService implements UserDetailsService {
 
         User user = new User();
 
-        if ("AdminEUC".equals(username)){
+        if ("Admin".equals(username)){
 
             user.setUsername(username);
 
@@ -48,7 +48,7 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        if (username.equals("AdminEUC")) {
+        if (username.equals("Admin")) {
 
             Set<SimpleGrantedAuthority> authorities = new HashSet<>();
             authorities.add(new SimpleGrantedAuthority("user-select"));
@@ -106,9 +106,19 @@ public class UserService implements UserDetailsService {
             authorities.add(new SimpleGrantedAuthority("appointment-update"));
             authorities.add(new SimpleGrantedAuthority("appointment-insert"));
 
+            authorities.add(new SimpleGrantedAuthority("invoice-select"));
+            authorities.add(new SimpleGrantedAuthority("invoice-delete"));
+            authorities.add(new SimpleGrantedAuthority("invoice-update"));
+            authorities.add(new SimpleGrantedAuthority("invoice-insert"));
+
+            authorities.add(new SimpleGrantedAuthority("customerfeedback-select"));
+            authorities.add(new SimpleGrantedAuthority("customerfeedback-delete"));
+            authorities.add(new SimpleGrantedAuthority("customerfeedback-update"));
+            authorities.add(new SimpleGrantedAuthority("customerfeedback-insert"));
+
 
             return org.springframework.security.core.userdetails.User
-                    .withUsername("AdminEUC")
+                    .withUsername("Admin")
                     .password(new BCryptPasswordEncoder().encode("Admin1234"))
                     .authorities(authorities)
                     .accountExpired(false)

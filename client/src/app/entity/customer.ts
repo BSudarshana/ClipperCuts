@@ -6,12 +6,12 @@ export class Customer{
 
   public id !: number;
   public fullname !: string;
-  public callingname !: string;
+  // public callingname !: string;
   public code !: string;
   public address !: string;
   public mobile !: string;
   public email !: string;
-  public photo !: string;
+  // public photo !: string;
   public doassignment !: string;
   public gender !: Gender;
   public cusstatus !: Customerstatus;
@@ -20,8 +20,8 @@ export class Customer{
   constructor(id:number,
               fullname:string,
               code:string,
-              callingname:string,
-              photo:string,
+              // callingname:string,
+              // photo:string,
               address:string,
               mobile:string,
               email:string,
@@ -34,8 +34,8 @@ export class Customer{
     this.id=id;
     this.fullname=fullname;
     this.code=code;
-    this.callingname=callingname;
-    this.photo=photo;
+    // this.callingname=callingname;
+    // this.photo=photo;
     this.address=address;
     this.mobile=mobile;
     this.email=email;

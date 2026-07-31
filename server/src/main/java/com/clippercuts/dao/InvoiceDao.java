@@ -7,12 +7,40 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface InvoiceDao extends JpaRepository<Invoice, Integer> {
 
     Invoice findByInvoicenumber(String invoicenumber);
 
     boolean existsByAppointment_Id(Integer appointmentId);
+
+    @EntityGraph(
+            type = EntityGraph.EntityGraphType.LOAD,
+            attributePaths = {
+                    "appointment",
+                    "appointment.customer",
+                    "appointment.appointmentstatus",
+                    "appointment.appointmentservices",
+                    "appointment.appointmentservices.service",
+                    "appointment.appointmentservices.employee",
+                    "paymentstatus",
+                    "promotion"
+            }
+    )
+    @Query("select i from Invoice i where i.id = :id")
+    Optional<Invoice> findDetailedById(@Param("id") Integer id);
+
+    @EntityGraph(
+            type = EntityGraph.EntityGraphType.LOAD,
+            attributePaths = {
+                    "appointment",
+                    "appointment.customer",
+                    "paymentstatus",
+                    "promotion"
+            }
+    )
+    List<Invoice> findByPaymentstatus_NameIgnoreCase(String status);
 
 //    @EntityGraph(attributePaths = {"appointment", "appointment.customer", "paymentstatus", "promotion"})
 //    List<Invoice> findAll();

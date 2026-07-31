@@ -1,0 +1,177 @@
+.customer-feedback-page {
+  display: grid;
+  grid-template-columns: minmax(340px, 38%) minmax(0, 1fr);
+  gap: 20px;
+  padding: 10px;
+  align-items: start;
+}
+
+.customer-feedback-page > mat-card:first-child {
+  grid-row: span 2;
+}
+
+mat-card {
+  min-width: 0;
+}
+
+mat-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+mat-card-header mat-progress-spinner {
+  margin-left: auto;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+.appointment-summary {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  padding: 12px;
+  margin-bottom: 16px;
+  border-radius: 4px;
+  background: #f3f6f8;
+}
+
+.appointment-summary div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.appointment-summary span {
+  color: #555;
+}
+
+.appointment-summary strong {
+  text-align: right;
+}
+
+.button-panel,
+.search-form {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.button-panel button,
+.search-form button {
+  background-color: #c9cd03;
+  color: #141414;
+}
+
+.button-panel button:disabled {
+  background-color: rgba(0, 0, 0, 0.12);
+  color: rgba(0, 0, 0, 0.38);
+}
+
+.search-form mat-form-field {
+  width: 240px;
+}
+
+mat-table {
+  width: 100%;
+  min-width: 760px;
+}
+
+mat-card-content {
+  overflow-x: auto;
+}
+
+mat-header-cell {
+  font-weight: 600;
+}
+
+mat-cell,
+mat-header-cell {
+  padding-right: 12px;
+}
+
+.mat-column-date {
+  flex: 0 0 105px;
+}
+
+.mat-column-customer {
+  flex: 1 1 160px;
+}
+
+.mat-column-appointment {
+  flex: 1 1 180px;
+}
+
+.mat-column-rating {
+  flex: 0 0 100px;
+}
+
+.mat-column-comment {
+  flex: 2 1 220px;
+  overflow-wrap: anywhere;
+}
+
+.mat-column-actions {
+  flex: 0 0 135px;
+  justify-content: flex-end;
+}
+
+mat-row {
+  cursor: pointer;
+  transition: background-color 120ms ease-in-out;
+}
+
+mat-row:hover {
+  background-color: #f3f6f8;
+}
+
+.selected-row {
+  background-color: #c9e6ff;
+}
+
+.selected-row:hover {
+  background-color: #b8dcfb;
+}
+
+mat-paginator {
+  margin-top: 8px;
+}
+
+@media (max-width: 1000px) {
+  .customer-feedback-page {
+    grid-template-columns: 1fr;
+  }
+
+  .customer-feedback-page > mat-card:first-child {
+    grid-row: auto;
+  }
+}
+
+@media (max-width: 600px) {
+  .customer-feedback-page {
+    gap: 14px;
+    padding: 6px;
+  }
+
+  .appointment-summary div {
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .appointment-summary strong {
+    text-align: left;
+  }
+
+  .search-form mat-form-field {
+    width: 100%;
+  }
+
+  .button-panel button,
+  .search-form button {
+    flex: 1 1 140px;
+  }
+}

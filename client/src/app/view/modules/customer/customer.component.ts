@@ -109,7 +109,7 @@ export class CustomerComponent {
     this.form = this.fb.group({
       "code": new FormControl('', [Validators.required]),
       "fullname": new FormControl('', [Validators.required]),
-      "callingname": new FormControl('', [Validators.required]),
+      // "callingname": new FormControl('', [Validators.required]),
       "gender": new FormControl('', [Validators.required]),
       "mobile": new FormControl('', [Validators.required]),
       "email": new FormControl('', [Validators.required]),
@@ -177,7 +177,7 @@ export class CustomerComponent {
   createForm() {
     this.form.controls['code'].setValidators([Validators.required]);
     this.form.controls['fullname'].setValidators([Validators.required, Validators.pattern(this.regexes['fullname']['regex'])]);
-    this.form.controls['callingname'].setValidators([Validators.required, Validators.pattern(this.regexes['callingname']['regex'])]);
+    // this.form.controls['callingname'].setValidators([Validators.required, Validators.pattern(this.regexes['callingname']['regex'])]);
     this.form.controls['gender'].setValidators([Validators.required]);
     // this.form.controls['photo'].setValidators([Validators.required]);
     this.form.controls['mobile'].setValidators([Validators.required, Validators.pattern(this.regexes['mobile']['regex'])]);
@@ -243,7 +243,7 @@ export class CustomerComponent {
   }
 
   getModi(element: Customer) {
-    return element.code + '(' + element.callingname + ')';
+    return element.code + '(' + element.fullname + ')';
   }
 
 
@@ -349,7 +349,6 @@ export class CustomerComponent {
 
       cusdata = cusdata + "<br>Number is : " + this.customer.code;
       cusdata = cusdata + "<br>Fullname is : " + this.customer.fullname;
-      cusdata = cusdata + "<br>Callingname is : " + this.customer.callingname;
 
       const confirm = this.dg.open(ConfirmComponent, {
         width: '500px',
@@ -491,10 +490,10 @@ export class CustomerComponent {
         });
         confirm.afterClosed().subscribe(async result => {
           if (result) {
-            //console.log("CustomerService.update()");
+            // console.log("CustomerService.update()");
             this.customer = this.form.getRawValue();
-            if (this.form.controls['photo'].dirty) this.customer.photo = btoa(this.imageempurl);
-            else this.customer.photo = this.oldcustomer.photo;
+            // if (this.form.controls['photo'].dirty) this.customer.photo = btoa(this.imageempurl);
+            // else this.customer.photo = this.oldcustomer.photo;
             this.customer.id = this.oldcustomer.id;
 
             this.es.update(this.customer).then((responce: [] | undefined) => {
@@ -547,7 +546,7 @@ export class CustomerComponent {
           width: '500px',
           data: {
             heading: "Confirmation - Customer Delete",
-            message: "Are you sure to Delete following Customer? <br> <br>" + this.customer.callingname
+            message: "Are you sure to Delete following Customer? <br> <br>" + this.customer.fullname
           }
         });
 

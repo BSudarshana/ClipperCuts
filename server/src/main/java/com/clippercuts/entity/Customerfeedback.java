@@ -2,8 +2,10 @@ package com.clippercuts.entity;
 
 import javax.persistence.*;
 import java.sql.Date;
-import java.util.Collection;
 import java.util.Objects;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Entity
 public class Customerfeedback {
@@ -23,8 +25,18 @@ public class Customerfeedback {
     @ManyToOne
     @JoinColumn(name = "appointment_id", referencedColumnName = "id", nullable = false)
     private Appointment appointment;
-    @OneToMany(mappedBy = "customerfeedback")
-    private Collection<Response> responses;
+
+    @ManyToOne
+    @JoinColumn(name = "rating_id", referencedColumnName = "id", nullable = false)
+    private Rating rating;
+
+    public Rating getRating() {
+        return rating;
+    }
+
+    public void setRating(Rating rating) {
+        this.rating = rating;
+    }
 
     public Integer getId() {
         return id;
@@ -49,6 +61,7 @@ public class Customerfeedback {
     public void setComment(String comment) {
         this.comment = comment;
     }
+
 
     @Override
     public boolean equals(Object o) {
@@ -79,11 +92,5 @@ public class Customerfeedback {
         this.appointment = appointment;
     }
 
-    public Collection<Response> getResponses() {
-        return responses;
-    }
 
-    public void setResponses(Collection<Response> responses) {
-        this.responses = responses;
-    }
 }

@@ -9,7 +9,7 @@ export class Employee{
   public fullname !: string;
   public number !: string;
   public callingname !: string;
-  public photo !: string;
+  // public photo !: string;
   public dobirth !: string;
   public nic !: string;
   public address !: string;
@@ -25,7 +25,9 @@ export class Employee{
 
 
   constructor(id:number, fullname:string, number:string,
-              callingname:string, photo:string, dobirth:string,
+              callingname:string,
+              // photo:string,
+              dobirth:string,
               nic:string, address:string, mobile:string,
               land:string,email:string, doassignment:string, description:string,
               gender:Gender, designation:Designation,
@@ -36,7 +38,7 @@ export class Employee{
     this.fullname=fullname;
     this.number=number;
     this.callingname=callingname;
-    this.photo=photo;
+    // this.photo=photo;
     this.dobirth=dobirth;
     this.nic=nic;
     this.address=address;
