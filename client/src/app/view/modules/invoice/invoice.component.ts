@@ -28,7 +28,7 @@ export class InvoiceComponent implements OnInit {
 
   displayedColumns = [
     'invoicenumber', 'invoicedate', 'customer',
-    'totalamount', 'discount', 'tax', 'finalAmount', 'paymentstatus'
+    'totalamount', 'discount', 'finalAmount', 'paymentstatus'
   ];
 
   dataSource = new MatTableDataSource<Invoice>([]);
@@ -46,7 +46,7 @@ export class InvoiceComponent implements OnInit {
       promotion: new FormControl<Promotion | null>(null),
       totalamount: new FormControl({value: 0, disabled: true}),
       discount: new FormControl(0, [Validators.required, Validators.min(0)]),
-      tax: new FormControl(0, [Validators.required, Validators.min(0)]),
+      // tax: new FormControl(0, [Validators.required, Validators.min(0)]),
       finalAmount: new FormControl({value: 0, disabled: true})
     });
 
@@ -61,7 +61,7 @@ export class InvoiceComponent implements OnInit {
       appointment => this.onAppointmentChanged(appointment)
     );
     this.form.controls['discount'].valueChanges.subscribe(() => this.calculateFinalAmount());
-    this.form.controls['tax'].valueChanges.subscribe(() => this.calculateFinalAmount());
+    // this.form.controls['tax'].valueChanges.subscribe(() => this.calculateFinalAmount());
     await this.loadInitialData();
   }
 
@@ -101,9 +101,9 @@ export class InvoiceComponent implements OnInit {
   calculateFinalAmount(): void {
     const total = Number(this.form.controls['totalamount'].value ?? 0);
     const discount = Number(this.form.controls['discount'].value ?? 0);
-    const tax = Number(this.form.controls['tax'].value ?? 0);
+    // const tax = Number(this.form.controls['tax'].value ?? 0);
     this.form.controls['finalAmount'].setValue(
-      Math.max(0, total - discount + tax)
+      Math.max(0, total - discount )
     );
   }
 
@@ -135,7 +135,6 @@ export class InvoiceComponent implements OnInit {
       const request: InvoiceCreateRequest = {
         appointmentId: appointment.id!,
         discount: Number(this.form.controls['discount'].value ?? 0),
-        tax: Number(this.form.controls['tax'].value ?? 0),
         promotionId: promotion?.id ?? null
       };
 
@@ -173,10 +172,11 @@ export class InvoiceComponent implements OnInit {
 
   selectInvoice(invoice: Invoice): void {
     this.selectedInvoice = invoice;
+    this.form.reset();
   }
 
   clear(): void {
-    this.form.reset({appointment: null, promotion: null, discount: 0, tax: 0});
+    this.form.reset({appointment: null, promotion: null, discount: 0});
     this.selectedServices = [];
     this.selectedInvoice = null;
   }

@@ -1,16 +1,13 @@
 package com.clippercuts.controller;
 
-import com.clippercuts.dao.AppointmentDao;
-import com.clippercuts.dao.InvoiceDao;
-import com.clippercuts.dao.PaymentStatusDao;
-import com.clippercuts.dao.PromotionDao;
+import com.clippercuts.dao.*;
 import com.clippercuts.dto.InvoiceCreateRequest;
-import com.clippercuts.entity.Appointment;
-import com.clippercuts.entity.Invoice;
-import com.clippercuts.entity.Paymentstatus;
-import com.clippercuts.entity.Promotion;
+import com.clippercuts.dto.InvoiceResponse;
+import com.clippercuts.entity.*;
 import com.clippercuts.util.NumberService;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -33,21 +30,23 @@ public class InvoiceController {
     private final PaymentStatusDao paymentStatusDao;
     private final PromotionDao promotionDao;
     private final NumberService numberService;
+    private final UserDao userDao;
 
     public InvoiceController(InvoiceDao invoiceDao,
                              AppointmentDao appointmentDao,
                              PaymentStatusDao paymentStatusDao,
                              PromotionDao promotionDao,
-                             NumberService numberService) {
+                             NumberService numberService, UserDao userDao) {
         this.invoiceDao = invoiceDao;
         this.appointmentDao = appointmentDao;
         this.paymentStatusDao = paymentStatusDao;
         this.promotionDao = promotionDao;
         this.numberService = numberService;
+        this.userDao = userDao;
     }
 
     @GetMapping(produces = "application/json")
-    public List<Invoice> get(@RequestParam HashMap<String, String> params) {
+    public List<InvoiceResponse> get(@RequestParam HashMap<String, String> params) {
         Stream<Invoice> stream = invoiceDao.findAll().stream();
         String number = params.get("invoicenumber");
         String date = params.get("invoicedate");
@@ -60,7 +59,8 @@ public class InvoiceController {
             stream = stream.filter(i -> i.getInvoicedate() != null &&
                     i.getInvoicedate().toString().startsWith(date.trim()));
         }
-        return stream.collect(Collectors.toList());
+        return stream.map(InvoiceResponse::fromEntity)
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/eligible-appointments")
@@ -70,6 +70,28 @@ public class InvoiceController {
 //                .filter(a -> !invoiceDao.existsByAppointment_Id(a.getId()))
 //                .collect(Collectors.toList());
         return appointmentDao.findEligibleForInvoice("Completed");
+    }
+
+    @GetMapping("/by-user")
+    public List<InvoiceResponse> getByUser(@RequestParam Integer userId) {
+        return invoiceDao.findByCreatedByUser_Id(userId).stream()
+                .map(InvoiceResponse::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    @GetMapping("/my")
+    public List<InvoiceResponse> getMyInvoices(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED,
+                    "User is not authenticated"
+            );
+        }
+
+        return invoiceDao.findByCreatedByUser_Username(authentication.getName())
+                .stream()
+                .map(InvoiceResponse::fromEntity)
+                .collect(Collectors.toList());
     }
 
     @PostMapping
@@ -102,9 +124,6 @@ public class InvoiceController {
 
         BigDecimal discount = request.getDiscount() == null
                 ? BigDecimal.ZERO : request.getDiscount();
-        BigDecimal tax = request.getTax() == null
-                ? BigDecimal.ZERO : request.getTax();
-
         if (discount.compareTo(total) > 0) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "Discount cannot exceed the total amount");
@@ -123,16 +142,45 @@ public class InvoiceController {
                             HttpStatus.NOT_FOUND, "Promotion does not exist"));
         }
 
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null ||
+                !authentication.isAuthenticated() ||
+                "anonymousUser".equals(authentication.getPrincipal())) {
+            throw new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED,
+                    "User is not authenticated"
+            );
+        }
+
+        String invoiceType = "SERVICE";
+
+        String username = authentication.getName();
+        User loggedUser = userDao.findByUsername(username);
+
+        if (loggedUser == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED,
+                    "Logged-in user was not found"
+            );
+        }
+
+
+
         Invoice invoice = new Invoice();
         invoice.setInvoicenumber(numberService.getLastInvoiceByYear());
         invoice.setInvoicedate(Timestamp.from(Instant.now()));
         invoice.setTotalamount(total);
         invoice.setDiscount(discount);
-        invoice.setTax(tax);
-        invoice.setFinalAmount(total.subtract(discount).add(tax));
+        invoice.setFinalAmount(total.subtract(discount));
         invoice.setPaymentstatus(unpaid);
         invoice.setAppointment(appointment);
         invoice.setPromotion(promotion);
+        invoice.setInvoicetype(invoiceType);
+        invoice.setCreatedByUser(loggedUser);
+//        invoice.setInvoicedate(Timestamp.valueOf(LocalDateTime.now()));
+
         invoiceDao.save(invoice);
 
         HashMap<String, String> response = new HashMap<>();
@@ -156,7 +204,3 @@ public class InvoiceController {
         return response;
     }
 }
-
-
-
-

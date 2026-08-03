@@ -53,20 +53,24 @@
             <mat-label>Total Amount</mat-label>
             <input matInput type="number" formControlName="totalamount">
           </mat-form-field>
+
           <mat-form-field appearance="outline">
             <mat-label>Discount</mat-label>
             <input matInput type="number" formControlName="discount">
             <mat-error>Enter zero or a positive amount</mat-error>
           </mat-form-field>
-          <mat-form-field appearance="outline">
-            <mat-label>Tax</mat-label>
-            <input matInput type="number" formControlName="tax">
-            <mat-error>Enter zero or a positive amount</mat-error>
-          </mat-form-field>
+
+<!--          <mat-form-field appearance="outline">-->
+<!--            <mat-label>Tax</mat-label>-->
+<!--            <input matInput type="number" formControlName="tax">-->
+<!--            <mat-error>Enter zero or a positive amount</mat-error>-->
+<!--          </mat-form-field>-->
+
           <mat-form-field appearance="outline">
             <mat-label>Final Amount</mat-label>
             <input matInput type="number" formControlName="finalAmount">
           </mat-form-field>
+
         </div>
 
         <div class="button-panel">
@@ -129,10 +133,10 @@
             <mat-cell *matCellDef="let invoice">{{invoice.discount | number:'1.2-2'}}</mat-cell>
           </ng-container>
 
-          <ng-container matColumnDef="tax">
-            <mat-header-cell *matHeaderCellDef>Tax</mat-header-cell>
-            <mat-cell *matCellDef="let invoice">{{invoice.tax | number:'1.2-2'}}</mat-cell>
-          </ng-container>
+<!--          <ng-container matColumnDef="tax">-->
+<!--            <mat-header-cell *matHeaderCellDef>Tax</mat-header-cell>-->
+<!--            <mat-cell *matCellDef="let invoice">{{invoice.tax | number:'1.2-2'}}</mat-cell>-->
+<!--          </ng-container>-->
 
           <ng-container matColumnDef="finalAmount">
             <mat-header-cell *matHeaderCellDef>Final</mat-header-cell>

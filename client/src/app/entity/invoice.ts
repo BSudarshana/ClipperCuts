@@ -12,7 +12,6 @@ export interface Invoice {
   invoicedate: string;
   totalamount: number;
   discount: number;
-  tax: number;
   finalAmount: number;
   paymentstatus: Paymentstatus;
   appointment: Appointment;
@@ -22,6 +21,5 @@ export interface Invoice {
 export interface InvoiceCreateRequest {
   appointmentId: number;
   discount: number;
-  tax: number;
   promotionId?: number | null;
 }

@@ -1,10 +1,15 @@
 package com.clippercuts.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Objects;
+import java.util.Set;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
@@ -26,21 +31,21 @@ public class Invoice {
     @Column(name = "discount")
     private BigDecimal discount;
     @Basic
-    @Column(name = "tax")
-    private BigDecimal tax;
-    @Basic
     @Column(name = "final_amount")
     private BigDecimal finalAmount;
 
     @JsonIgnore
     @OneToMany(mappedBy = "invoice")
     private Collection<PackageHasInvoice> packageHasInvoices;
+
     @ManyToOne
     @JoinColumn(name = "paymentstatus_id", referencedColumnName = "id", nullable = false)
     private Paymentstatus paymentstatus;
+
     @ManyToOne
-    @JoinColumn(name = "appointment_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "appointment_id", referencedColumnName = "id")
     private Appointment appointment;
+
     @ManyToOne
     @JoinColumn(name = "promotion_id", referencedColumnName = "id")
     private Promotion promotion;
@@ -52,6 +57,44 @@ public class Invoice {
     @JsonIgnore
     @OneToMany(mappedBy = "invoice")
     private Collection<Payment> payments;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customer_id")
+    private Customer customer;
+
+    @Size(max = 20)
+    @NotNull
+    @Column(name = "invoicetype", nullable = false, length = 20)
+    private String invoicetype;
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "created_by_user_id")
+    private User createdByUser;
+
+    public User getCreatedByUser() {
+        return createdByUser;
+    }
+
+    public void setCreatedByUser(User createdByUser) {
+        this.createdByUser = createdByUser;
+    }
+
+    public String getInvoicetype() {
+        return invoicetype;
+    }
+
+    public void setInvoicetype(String invoicetype) {
+        this.invoicetype = invoicetype;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
 
 
     public Integer getId() {
@@ -86,14 +129,6 @@ public class Invoice {
         this.discount = discount;
     }
 
-    public BigDecimal getTax() {
-        return tax;
-    }
-
-    public void setTax(BigDecimal tax) {
-        this.tax = tax;
-    }
-
     public BigDecimal getFinalAmount() {
         return finalAmount;
     }
@@ -107,12 +142,12 @@ public class Invoice {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Invoice invoice = (Invoice) o;
-        return Objects.equals(id, invoice.id) && Objects.equals(invoicedate, invoice.invoicedate) && Objects.equals(totalamount, invoice.totalamount) && Objects.equals(discount, invoice.discount) && Objects.equals(tax, invoice.tax) && Objects.equals(finalAmount, invoice.finalAmount);
+        return Objects.equals(id, invoice.id) && Objects.equals(invoicedate, invoice.invoicedate) && Objects.equals(totalamount, invoice.totalamount) && Objects.equals(discount, invoice.discount) && Objects.equals(finalAmount, invoice.finalAmount);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, invoicedate, totalamount, discount, tax, finalAmount);
+        return Objects.hash(id, invoicedate, totalamount, discount, finalAmount);
     }
 
     public Collection<PackageHasInvoice> getPackageHasInvoices() {

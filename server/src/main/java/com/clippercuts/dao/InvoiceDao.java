@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,7 +54,8 @@ public interface InvoiceDao extends JpaRepository<Invoice, Integer> {
                     "appointment.customer",
                     "appointment.appointmentstatus",
                     "paymentstatus",
-                    "promotion"
+                    "promotion",
+                    "createdByUser"
             }
     )
     List<Invoice> findAll();
@@ -65,7 +67,18 @@ public interface InvoiceDao extends JpaRepository<Invoice, Integer> {
             nativeQuery = true)
     String getLastInvoiceByYear(@Param("year") int year);
 
+    @EntityGraph(attributePaths = {"createdByUser", "appointment", "appointment.customer", "paymentstatus", "promotion"})
+    List<Invoice> findByCreatedByUser_Id(Integer userId);
 
+    @EntityGraph(attributePaths = {"createdByUser", "appointment", "appointment.customer", "paymentstatus", "promotion"})
+    List<Invoice> findByCreatedByUser_Username(String username);
+
+    List<Invoice>
+    findByCreatedByUser_IdAndInvoicedateBetween(
+            Integer userId,
+            Timestamp start,
+            Timestamp end
+    );
 
 }
 
