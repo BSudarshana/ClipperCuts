@@ -1,0 +1,111 @@
+.inventory-page {
+  padding: 10px;
+}
+
+.search-card,
+.table-card {
+  margin-bottom: 16px;
+}
+
+.search-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  padding-top: 18px;
+}
+
+.search-form mat-form-field {
+  width: 210px;
+}
+
+.search-actions {
+  display: flex;
+  gap: 8px;
+  padding-bottom: 18px;
+}
+
+.search-actions button {
+  min-width: 120px;
+  color: #141414;
+  background-color: #C9CD03;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(150px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.summary-grid mat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 16px;
+  border-left: 5px solid #C9CD03;
+}
+
+.summary-grid span {
+  color: #666;
+}
+
+.summary-grid strong {
+  font-size: 24px;
+}
+
+.summary-grid .low-card {
+  border-left-color: #e65100;
+}
+
+.table-card mat-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+mat-table {
+  min-width: 1250px;
+}
+
+.stock-badge {
+  display: inline-block;
+  padding: 4px 9px;
+  border-radius: 12px;
+  color: #1b5e20;
+  background: #e8f5e9;
+  white-space: nowrap;
+}
+
+.stock-badge.low-stock {
+  color: #b71c1c;
+  background: #ffebee;
+}
+
+.low-stock-row {
+  background: #fff8f6;
+}
+
+.error-message {
+  margin: 12px 0;
+  padding: 12px;
+  color: #b71c1c;
+  background: #ffebee;
+  border-radius: 4px;
+}
+
+.empty-message {
+  padding: 25px;
+  text-align: center;
+  color: #666;
+}
+
+@media (max-width: 900px) {
+  .summary-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

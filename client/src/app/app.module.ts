@@ -60,6 +60,10 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { InvoiceComponent } from './view/modules/invoice/invoice.component';
 import { PaymentComponent } from './view/modules/payment/payment.component';
 import { CustomerfeedbackComponent } from './view/modules/customerfeedback/customerfeedback.component';
+import { ProductComponent } from './view/modules/product/product.component';
+import { InventoryComponent } from './view/modules/inventory/inventory.component';
+import { StocktransferComponent } from './view/modules/stocktransfer/stocktransfer.component';
+import {MatProgressBarModule} from "@angular/material/progress-bar";
 
 
 @NgModule({
@@ -92,7 +96,10 @@ import { CustomerfeedbackComponent } from './view/modules/customerfeedback/custo
     TotalByPoSupplierComponent,
     InvoiceComponent,
     PaymentComponent,
-    CustomerfeedbackComponent
+    CustomerfeedbackComponent,
+    ProductComponent,
+    InventoryComponent,
+    StocktransferComponent
   ],
   imports: [
     MatDatepickerModule,
@@ -122,6 +129,7 @@ import { CustomerfeedbackComponent } from './view/modules/customerfeedback/custo
     MatCheckboxModule,
     MatRadioModule,
     MatProgressSpinnerModule,
+    MatProgressBarModule
   ],
   providers: [
     OperationComponent,

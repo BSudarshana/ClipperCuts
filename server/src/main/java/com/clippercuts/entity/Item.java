@@ -23,9 +23,7 @@ public class Item {
     @Basic
     @Column(name = "dointroduced")
     private Date dointroduced;
-    @Basic
-    @Column(name = "quantity")
-    private BigDecimal quantity;
+
     @Basic
     @Column(name = "sprice")
     private BigDecimal sprice;
@@ -96,13 +94,6 @@ public class Item {
         this.dointroduced = dointroduced;
     }
 
-    public BigDecimal getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(BigDecimal quantity) {
-        this.quantity = quantity;
-    }
 
     public BigDecimal getSprice() {
         return sprice;
@@ -133,12 +124,12 @@ public class Item {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Item item = (Item) o;
-        return id == item.id && Objects.equals(itemnumber, item.itemnumber) && Objects.equals(name, item.name) && Objects.equals(dointroduced, item.dointroduced) && Objects.equals(quantity, item.quantity) && Objects.equals(sprice, item.sprice) && Objects.equals(pprice, item.pprice) && Objects.equals(rop, item.rop);
+        return id == item.id && Objects.equals(itemnumber, item.itemnumber) && Objects.equals(name, item.name) && Objects.equals(dointroduced, item.dointroduced) && Objects.equals(sprice, item.sprice) && Objects.equals(pprice, item.pprice) && Objects.equals(rop, item.rop);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, itemnumber, name, dointroduced, quantity, sprice, pprice, rop);
+        return Objects.hash(id, itemnumber, name, dointroduced, sprice, pprice, rop);
     }
 
     public Collection<GrnItem> getGrnItems() {

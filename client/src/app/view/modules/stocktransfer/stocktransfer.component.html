@@ -1,0 +1,200 @@
+<div class="stock-transfer-page">
+  <mat-card class="transfer-card">
+    <mat-card-header>
+      <mat-card-title>Stock Transfer</mat-card-title>
+      <mat-card-subtitle>Move products between salon inventory locations</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-progress-bar *ngIf="loadingLookups || saving" mode="indeterminate"></mat-progress-bar>
+
+    <mat-card-content>
+      <form [formGroup]="transferForm" class="transfer-form">
+        <mat-form-field appearance="outline">
+          <mat-label>Source Location</mat-label>
+          <mat-select formControlName="fromLocationId" (selectionChange)="onSourceLocationChange()">
+            <mat-option *ngFor="let location of locations" [value]="location.id">
+              {{location.name}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="transferForm.get('fromLocationId')?.hasError('required')">Source location is required.</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Destination Location</mat-label>
+          <mat-select formControlName="toLocationId">
+            <mat-option *ngFor="let location of destinationLocations" [value]="location.id">
+              {{location.name}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="transferForm.get('toLocationId')?.hasError('required')">Destination location is required.</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Responsible Employee</mat-label>
+          <mat-select formControlName="employeeId">
+            <mat-option *ngFor="let employee of employees" [value]="employee.id">
+              {{employee.name}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="transferForm.get('employeeId')?.hasError('required')">Responsible employee is required.</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="note-field">
+          <mat-label>Note</mat-label>
+          <textarea matInput rows="2" formControlName="note" maxlength="500"></textarea>
+          <mat-hint align="end">{{transferForm.get('note')?.value?.length || 0}} / 500</mat-hint>
+        </mat-form-field>
+      </form>
+
+      <mat-divider></mat-divider>
+
+      <section class="items-section">
+        <h3>Add Products</h3>
+        <p *ngIf="!transferForm.get('fromLocationId')?.value" class="section-help">
+          Select a source location to load its available products.
+        </p>
+        <mat-progress-bar *ngIf="loadingItems" mode="indeterminate"></mat-progress-bar>
+
+        <form [formGroup]="itemForm" class="item-form">
+          <mat-form-field appearance="outline" class="product-field">
+            <mat-label>Product</mat-label>
+            <mat-select formControlName="item" [disabled]="!availableItems.length" (selectionChange)="onItemChange()">
+              <mat-option *ngFor="let item of availableItems" [value]="item">
+                {{item.itemnumber}} - {{item.name}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="itemForm.get('item')?.hasError('required')">Product is required.</mat-error>
+          </mat-form-field>
+
+          <div class="available-box">
+            <span>Available Quantity</span>
+            <strong>{{(selectedAvailableItem?.availableQuantity || 0) | number:'1.0-2'}}</strong>
+            <small>{{selectedAvailableItem?.unitType || ''}}</small>
+          </div>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Transfer Quantity</mat-label>
+            <input matInput type="number" min="0.01" step="0.01" formControlName="quantity">
+            <mat-error *ngIf="itemForm.get('quantity')?.hasError('required')">Quantity is required.</mat-error>
+            <mat-error *ngIf="itemForm.get('quantity')?.hasError('min')">Quantity must be greater than zero.</mat-error>
+            <mat-error *ngIf="itemForm.get('quantity')?.hasError('exceedsAvailable')">Quantity exceeds available stock.</mat-error>
+          </mat-form-field>
+
+          <button mat-raised-button type="button" (click)="addItem()" [disabled]="loadingItems">
+            <mat-icon>add</mat-icon> Add Product
+          </button>
+        </form>
+
+        <div class="table-container">
+          <table mat-table [dataSource]="transferItems" class="full-width-table">
+            <ng-container matColumnDef="itemnumber">
+              <th mat-header-cell *matHeaderCellDef>Item No.</th>
+              <td mat-cell *matCellDef="let item">{{item.itemnumber}}</td>
+            </ng-container>
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef>Product</th>
+              <td mat-cell *matCellDef="let item">{{item.name}}</td>
+            </ng-container>
+            <ng-container matColumnDef="availableQuantity">
+              <th mat-header-cell *matHeaderCellDef>Available</th>
+              <td mat-cell *matCellDef="let item">{{item.availableQuantity | number:'1.0-2'}}</td>
+            </ng-container>
+            <ng-container matColumnDef="quantity">
+              <th mat-header-cell *matHeaderCellDef>Transfer Qty.</th>
+              <td mat-cell *matCellDef="let item">{{item.quantity | number:'1.0-2'}}</td>
+            </ng-container>
+            <ng-container matColumnDef="unitType">
+              <th mat-header-cell *matHeaderCellDef>Unit</th>
+              <td mat-cell *matCellDef="let item">{{item.unitType}}</td>
+            </ng-container>
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>Action</th>
+              <td mat-cell *matCellDef="let item">
+                <button mat-icon-button type="button" aria-label="Remove product" (click)="removeItem(item.itemId)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="itemColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: itemColumns"></tr>
+          </table>
+          <div *ngIf="transferItems.length === 0" class="empty-state">No products have been added.</div>
+        </div>
+      </section>
+    </mat-card-content>
+
+    <mat-card-actions align="end">
+      <button mat-stroked-button type="button" (click)="clearTransfer()" [disabled]="saving">Clear</button>
+      <button mat-raised-button type="button" (click)="submitTransfer()"
+              [disabled]="saving || transferItems.length === 0 || !hasInsertAuthority">
+        <mat-icon>swap_horiz</mat-icon> Confirm Transfer
+      </button>
+    </mat-card-actions>
+  </mat-card>
+
+  <mat-card class="history-card">
+    <mat-card-header>
+      <mat-card-title>Transfer History</mat-card-title>
+      <span class="header-spacer"></span>
+      <button mat-icon-button type="button" aria-label="Refresh history" (click)="loadHistory()" [disabled]="loadingHistory">
+        <mat-icon>refresh</mat-icon>
+      </button>
+    </mat-card-header>
+    <mat-progress-bar *ngIf="loadingHistory" mode="indeterminate"></mat-progress-bar>
+    <mat-card-content>
+      <div class="table-container">
+        <table mat-table [dataSource]="historyData" class="full-width-table">
+          <ng-container matColumnDef="id"><th mat-header-cell *matHeaderCellDef>ID</th><td mat-cell *matCellDef="let row">{{row.id}}</td></ng-container>
+          <ng-container matColumnDef="transferdate"><th mat-header-cell *matHeaderCellDef>Date</th><td mat-cell *matCellDef="let row">{{row.transferdate | date:'yyyy-MM-dd'}}</td></ng-container>
+          <ng-container matColumnDef="from"><th mat-header-cell *matHeaderCellDef>From</th><td mat-cell *matCellDef="let row">{{row.fromLocationName}}</td></ng-container>
+          <ng-container matColumnDef="to"><th mat-header-cell *matHeaderCellDef>To</th><td mat-cell *matCellDef="let row">{{row.toLocationName}}</td></ng-container>
+          <ng-container matColumnDef="employee"><th mat-header-cell *matHeaderCellDef>Employee</th><td mat-cell *matCellDef="let row">{{row.employeeName}}</td></ng-container>
+          <ng-container matColumnDef="createdBy"><th mat-header-cell *matHeaderCellDef>Created By</th><td mat-cell *matCellDef="let row">{{row.createdByUsername}}</td></ng-container>
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Action</th>
+            <td mat-cell *matCellDef="let row">
+              <button mat-icon-button type="button" aria-label="View transfer details" (click)="viewTransfer(row.id)">
+                <mat-icon>visibility</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="historyColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: historyColumns"
+              [ngClass]="{'selected-row': row === selectedHistoryRow}"></tr>
+        </table>
+        <div *ngIf="!loadingHistory && transfers.length === 0" class="empty-state">No stock transfers found.</div>
+      </div>
+      <mat-paginator [pageSize]="5" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card *ngIf="loadingDetail || selectedTransfer" class="detail-card">
+    <mat-progress-bar *ngIf="loadingDetail" mode="indeterminate"></mat-progress-bar>
+    <ng-container *ngIf="selectedTransfer as transfer">
+      <mat-card-header>
+        <mat-card-title>Transfer #{{transfer.id}}</mat-card-title>
+        <span class="header-spacer"></span>
+        <button mat-icon-button type="button" aria-label="Close details" (click)="closeDetail()"><mat-icon>close</mat-icon></button>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="detail-grid">
+          <div><span>Date</span><strong>{{transfer.transferdate | date:'yyyy-MM-dd'}}</strong></div>
+          <div><span>Source</span><strong>{{transfer.fromLocationName}}</strong></div>
+          <div><span>Destination</span><strong>{{transfer.toLocationName}}</strong></div>
+          <div><span>Responsible Employee</span><strong>{{transfer.employeeName}}</strong></div>
+          <div><span>Created By</span><strong>{{transfer.createdByUsername}}</strong></div>
+          <div class="detail-note"><span>Note</span><strong>{{transfer.note || '-'}}</strong></div>
+        </div>
+        <div class="table-container">
+          <table mat-table [dataSource]="transfer.items" class="full-width-table">
+            <ng-container matColumnDef="itemnumber"><th mat-header-cell *matHeaderCellDef>Item No.</th><td mat-cell *matCellDef="let item">{{item.itemnumber}}</td></ng-container>
+            <ng-container matColumnDef="itemName"><th mat-header-cell *matHeaderCellDef>Product</th><td mat-cell *matCellDef="let item">{{item.itemName}}</td></ng-container>
+            <ng-container matColumnDef="quantity"><th mat-header-cell *matHeaderCellDef>Quantity</th><td mat-cell *matCellDef="let item">{{item.quantity | number:'1.0-2'}}</td></ng-container>
+            <tr mat-header-row *matHeaderRowDef="detailColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: detailColumns"></tr>
+          </table>
+        </div>
+      </mat-card-content>
+    </ng-container>
+  </mat-card>
+</div>

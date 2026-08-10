@@ -16,6 +16,9 @@ import {AppointmentComponent} from "./view/modules/appointment/appointment.compo
 import {PromotionComponent} from "./view/modules/promotion/promotion.component";
 import {PaymentComponent} from "./view/modules/payment/payment.component";
 import {CustomerfeedbackComponent} from "./view/modules/customerfeedback/customerfeedback.component";
+import {ProductComponent} from "./view/modules/product/product.component";
+import {InventoryComponent} from "./view/modules/inventory/inventory.component";
+import {StocktransferComponent} from "./view/modules/stocktransfer/stocktransfer.component";
 
 import { CountByDesignationComponent } from './report/view/count-by-designation/count-by-designation.component';
 import { CountByAppointmentStatusComponent } from './report/view/count-by-appointment-status/count-by-appointment-status.component';
@@ -47,8 +50,13 @@ const routes: Routes = [
       {path: "appointment", component: AppointmentComponent},
       {path: "invoice", component: InvoiceComponent},
       {path: "payment", component: PaymentComponent},
+      {path: "payment", component: PaymentComponent},
       {path: "purchaseorder", component: PurchaseorderComponent},
       {path: "customerfeedback", component: CustomerfeedbackComponent},
+      {path: "product", component: ProductComponent},
+      {path: "Inventory", component: InventoryComponent},
+      {path: "stocktransfer", component: StocktransferComponent},
+
       {path:"reports/countbydesignation", component: CountByDesignationComponent},
       {path:"reports/countbyappointmentstatus", component: CountByAppointmentStatusComponent},
       {path:"reports/countbycustomertype", component: CountByCustomerTypeComponent},

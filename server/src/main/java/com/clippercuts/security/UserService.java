@@ -96,6 +96,11 @@ public class UserService implements UserDetailsService {
             authorities.add(new SimpleGrantedAuthority("promotion-update"));
             authorities.add(new SimpleGrantedAuthority("promotion-insert"));
 
+            authorities.add(new SimpleGrantedAuthority("purchaseorder-select"));
+            authorities.add(new SimpleGrantedAuthority("purchaseorder-delete"));
+            authorities.add(new SimpleGrantedAuthority("purchaseorder-update"));
+            authorities.add(new SimpleGrantedAuthority("purchaseorder-insert"));
+
             authorities.add(new SimpleGrantedAuthority("discount-select"));
             authorities.add(new SimpleGrantedAuthority("discount-delete"));
             authorities.add(new SimpleGrantedAuthority("discount-update"));
@@ -115,6 +120,16 @@ public class UserService implements UserDetailsService {
             authorities.add(new SimpleGrantedAuthority("customerfeedback-delete"));
             authorities.add(new SimpleGrantedAuthority("customerfeedback-update"));
             authorities.add(new SimpleGrantedAuthority("customerfeedback-insert"));
+
+            authorities.add(new SimpleGrantedAuthority("product-select"));
+            authorities.add(new SimpleGrantedAuthority("product-delete"));
+            authorities.add(new SimpleGrantedAuthority("product-update"));
+            authorities.add(new SimpleGrantedAuthority("product-insert"));
+
+            authorities.add(new SimpleGrantedAuthority("stocktransfer-select"));
+            authorities.add(new SimpleGrantedAuthority("stocktransfer-delete"));
+            authorities.add(new SimpleGrantedAuthority("stocktransfer-update"));
+            authorities.add(new SimpleGrantedAuthority("stocktransfer-insert"));
 
 
             return org.springframework.security.core.userdetails.User

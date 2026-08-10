@@ -1,0 +1,57 @@
+.stock-transfer-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 16px;
+  box-sizing: border-box;
+}
+.transfer-card, .history-card, .detail-card { width: 100%; box-sizing: border-box; }
+mat-card-content { padding-top: 16px; }
+.transfer-form { display: grid; grid-template-columns: repeat(3, minmax(220px, 1fr)); gap: 16px; }
+.note-field { grid-column: 1 / -1; }
+.items-section { margin-top: 20px; }
+.items-section h3 { margin: 0 0 8px; }
+.section-help { color: rgba(0, 0, 0, .6); }
+.item-form { display: grid; grid-template-columns: minmax(260px, 2fr) minmax(150px, .7fr) minmax(180px, 1fr) auto; gap: 16px; align-items: start; margin-top: 16px; }
+.available-box { min-height: 56px; border: 1px solid rgba(0, 0, 0, .18); border-radius: 4px; padding: 7px 12px; box-sizing: border-box; display: grid; grid-template-columns: 1fr auto; }
+.available-box span { grid-column: 1 / -1; font-size: 12px; color: rgba(0, 0, 0, .6); }
+.available-box strong { font-size: 18px; }
+.available-box small { align-self: end; color: rgba(0, 0, 0, .6); }
+.item-form > button { height: 56px; }
+.table-container { overflow-x: auto; margin-top: 16px; border: 1px solid rgba(0, 0, 0, .08); border-radius: 4px; }
+.full-width-table { width: 100%; }
+.empty-state { padding: 28px; text-align: center; color: rgba(0, 0, 0, .55); }
+.header-spacer { flex: 1; }
+.detail-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 16px; }
+.detail-grid div { display: flex; flex-direction: column; gap: 4px; padding: 12px; background: #f7f7f7; border-radius: 4px; }
+.detail-grid span { font-size: 12px; color: rgba(0, 0, 0, .6); }
+.detail-note { grid-column: 1 / -1; }
+mat-card-actions { padding: 8px 16px 16px; gap: 8px; }
+.stock-transfer-page button.mat-button-base,
+.stock-transfer-page button.mat-mdc-button-base,
+.stock-transfer-page button[mat-raised-button],
+.stock-transfer-page button[mat-stroked-button],
+.stock-transfer-page button[mat-icon-button] {
+  color: #141414;
+  background-color: #C9CD03 !important;
+}
+.selected-row { background-color: #c9e6ff !important; }
+.mat-row:hover { background-color: inherit !important; }
+.stock-transfer-page button:disabled {
+  color: #141414 !important;
+  background-color: #C9CD03 !important;
+  opacity: .5;
+}
+
+@media (max-width: 1000px) {
+  .transfer-form { grid-template-columns: repeat(2, minmax(220px, 1fr)); }
+  .item-form { grid-template-columns: 1fr 1fr; }
+  .product-field { grid-column: 1 / -1; }
+  .detail-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 640px) {
+  .stock-transfer-page { padding: 8px; }
+  .transfer-form, .item-form, .detail-grid { grid-template-columns: 1fr; }
+  .note-field, .product-field, .detail-note { grid-column: auto; }
+}

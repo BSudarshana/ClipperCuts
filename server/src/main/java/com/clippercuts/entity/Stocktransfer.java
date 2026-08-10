@@ -30,6 +30,10 @@ public class Stocktransfer {
     @OneToMany(mappedBy = "stocktransfer")
     private Collection<Transferitem> transferitems;
 
+    @ManyToOne
+    @JoinColumn(name = "created_by_user_id", referencedColumnName = "id")
+    private User createdByUser;
+
     public Integer getId() {
         return id;
     }
@@ -97,5 +101,13 @@ public class Stocktransfer {
 
     public void setTransferitems(Collection<Transferitem> transferitems) {
         this.transferitems = transferitems;
+    }
+
+    public User getCreatedByUser() {
+        return createdByUser;
+    }
+
+    public void setCreatedByUser(User createdByUser) {
+        this.createdByUser = createdByUser;
     }
 }

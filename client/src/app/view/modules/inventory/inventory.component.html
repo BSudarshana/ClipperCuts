@@ -1,0 +1,140 @@
+<div class="inventory-page">
+  <mat-card class="search-card">
+    <mat-card-header>
+      <mat-card-title>Inventory</mat-card-title>
+      <mat-card-subtitle>Current product stock by location</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="searchForm" class="search-form">
+        <mat-form-field appearance="outline">
+          <mat-label>Product Number</mat-label>
+          <input matInput formControlName="itemnumber">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Product Name</mat-label>
+          <input matInput formControlName="name">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Location</mat-label>
+          <mat-select formControlName="locationId">
+            <mat-option [value]="null">All Locations</mat-option>
+            <mat-option *ngFor="let location of locations" [value]="location.id">
+              {{location.name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Stock Status</mat-label>
+          <mat-select formControlName="stockState">
+            <mat-option value="ALL">All</mat-option>
+            <mat-option value="LOW">Low Stock</mat-option>
+            <mat-option value="OK">Stock OK</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <div class="search-actions">
+          <button mat-raised-button color="primary" type="button" (click)="search()" [disabled]="loading">
+            <mat-icon>search</mat-icon> Search
+          </button>
+          <button mat-raised-button type="button" (click)="clearSearch()" [disabled]="loading">
+            <mat-icon>refresh</mat-icon> Clear
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <div class="summary-grid">
+    <mat-card><span>Products</span><strong>{{productCount}}</strong></mat-card>
+    <mat-card><span>Stock Records</span><strong>{{stockRecordCount}}</strong></mat-card>
+    <mat-card class="low-card"><span>Low Stock Products</span><strong>{{lowStockProductCount}}</strong></mat-card>
+    <mat-card><span>Locations</span><strong>{{locationCount}}</strong></mat-card>
+  </div>
+
+  <mat-card class="table-card">
+    <mat-card-header>
+      <mat-card-title>Inventory Stock</mat-card-title>
+      <mat-spinner *ngIf="loading" diameter="28"></mat-spinner>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div *ngIf="loadError" class="error-message">{{loadError}}</div>
+
+      <div class="table-wrap">
+        <mat-table [dataSource]="data">
+          <ng-container matColumnDef="itemnumber">
+            <mat-header-cell *matHeaderCellDef>Product No.</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.itemnumber}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="itemName">
+            <mat-header-cell *matHeaderCellDef>Product</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.itemName}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="brand">
+            <mat-header-cell *matHeaderCellDef>Brand</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.brand || '-'}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="locationName">
+            <mat-header-cell *matHeaderCellDef>Location</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.locationName || 'Not stocked'}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="locationType">
+            <mat-header-cell *matHeaderCellDef>Location Type</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.locationType || '-'}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="quantity">
+            <mat-header-cell *matHeaderCellDef>Location Qty.</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.quantity | number:'1.0-2'}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="unitType">
+            <mat-header-cell *matHeaderCellDef>Unit</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.unitType || '-'}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="rop">
+            <mat-header-cell *matHeaderCellDef>ROP</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.rop == null ? '-' : row.rop}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="totalStock">
+            <mat-header-cell *matHeaderCellDef>Total Stock</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.totalStock | number:'1.0-2'}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="lastupdate">
+            <mat-header-cell *matHeaderCellDef>Last Updated</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.lastupdate ? (row.lastupdate | date:'yyyy-MM-dd HH:mm') : '-'}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="status">
+            <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <span class="stock-badge" [class.low-stock]="row.lowStock">
+                {{row.lowStock ? 'Low Stock' : 'Stock OK'}}
+              </span>
+            </mat-cell>
+          </ng-container>
+
+          <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: columns" [class.low-stock-row]="row.lowStock"></mat-row>
+        </mat-table>
+      </div>
+
+      <div *ngIf="!loading && !loadError && data.data.length === 0" class="empty-message">
+        No inventory records found.
+      </div>
+
+      <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20, 50]"></mat-paginator>
+    </mat-card-content>
+  </mat-card>
+</div>

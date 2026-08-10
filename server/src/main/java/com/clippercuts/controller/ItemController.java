@@ -1,11 +1,15 @@
 package com.clippercuts.controller;
 
-import com.clippercuts.dao.ItemDao;
+import com.clippercuts.dao.*;
+import com.clippercuts.dto.ProductRequest;
+import com.clippercuts.dto.ProductResponse;
 import com.clippercuts.entity.Item;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.server.ResponseStatusException;
+import javax.validation.Valid;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,112 +17,85 @@ import java.util.stream.Stream;
 
 @CrossOrigin
 @RestController
-@RequestMapping(value = "/items")
+@RequestMapping("/items")
 public class ItemController {
+    private final ItemDao itemDao;
+    private final ItemstatusDao itemstatusDao;
+    private final UnittypeDao unittypeDao;
+    private final ItembrandDao itembrandDao;
+    private final SubcategoryDao subcategoryDao;
+    private final ItemstockLocationDao stockDao;
 
-    @Autowired
-    private ItemDao itemDao;
-
-    @GetMapping(produces = "application/json")
-//    @PreAuthorize("hasAuthority('customer-select')")p
-    public List<Item> get(@RequestParam HashMap<String, String> params) {
-
-        List<Item> items = this.itemDao.findAll();
-
-        if(params.isEmpty())  return items;
-
-        String itemnumber = params.get("itemnumber");
-        String itemname = params.get("name");
-
-
-        Stream<Item> itemStream = items.stream();
-
-        if(itemnumber!=null) itemStream = itemStream.filter(i -> i.getItemnumber().contains(itemnumber));
-        if(itemname!=null) itemStream = itemStream.filter(i -> i.getName().contains(itemname));
-
-        return itemStream.collect(Collectors.toList());
-
+    public ItemController(ItemDao itemDao, ItemstatusDao itemstatusDao, UnittypeDao unittypeDao,
+                          ItembrandDao itembrandDao, SubcategoryDao subcategoryDao,
+                          ItemstockLocationDao stockDao) {
+        this.itemDao = itemDao; this.itemstatusDao = itemstatusDao;
+        this.unittypeDao = unittypeDao; this.itembrandDao = itembrandDao;
+        this.subcategoryDao = subcategoryDao; this.stockDao = stockDao;
     }
 
+    @GetMapping
+    @Transactional(readOnly = true)
+    public List<ProductResponse> get(@RequestParam HashMap<String, String> params) {
+        Stream<Item> stream = itemDao.findAll().stream();
+        String number = params.get("itemnumber"); String name = params.get("name");
+        String statusId = params.get("statusId"); String categoryId = params.get("categoryId");
+        if (number != null && !number.trim().isEmpty()) stream = stream.filter(i -> i.getItemnumber().toLowerCase().contains(number.trim().toLowerCase()));
+        if (name != null && !name.trim().isEmpty()) stream = stream.filter(i -> i.getName().toLowerCase().contains(name.trim().toLowerCase()));
+        if (statusId != null && !statusId.isEmpty()) stream = stream.filter(i -> i.getItemstatus().getId() == Integer.parseInt(statusId));
+        if (categoryId != null && !categoryId.isEmpty()) stream = stream.filter(i -> i.getSubcategory().getCategory().getId() == Integer.parseInt(categoryId));
+        return stream.map(this::response).collect(Collectors.toList());
+    }
+
+    @GetMapping("/{id}")
+    @Transactional(readOnly = true)
+    public ProductResponse getOne(@PathVariable Integer id) { return response(find(id)); }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-//    @PreAuthorize("hasAuthority('Customer-Insert')")
-    public HashMap<String,String> add(@RequestBody Item item){
-
-        HashMap<String,String> responce = new HashMap<>();
-        String errors="";
-
-        if(itemDao.findByItemNumber(item.getItemnumber())!=null)
-            errors = errors+"<br> Existing Item Number";
-        if(itemDao.findItemByName(item.getName())!=null)
-            errors = errors+"<br> Existing Item ";
-
-        if(errors=="")
+    @Transactional
+    public HashMap<String, String> add(@Valid @RequestBody ProductRequest request) {
+        itemDao.findByItemnumberIgnoreCase(request.getItemnumber().trim()).ifPresent(i -> conflict("Existing item number"));
+        itemDao.findByNameIgnoreCase(request.getName().trim()).ifPresent(i -> conflict("Existing item name"));
+        Item item = new Item();
+        apply(item, request);
+//        item.setQuantity(BigDecimal.ZERO);
         itemDao.save(item);
-        else errors = "Server Validation Errors : <br> "+errors;
-
-        responce.put("id",String.valueOf(item.getId()));
-        responce.put("url","/items/"+item.getId());
-        responce.put("errors",errors);
-
-        return responce;
+        return success(item.getId());
     }
 
-    @PutMapping
-    @ResponseStatus(HttpStatus.CREATED)
-//    @PreAuthorize("hasAuthority('Customer-Update')")
-    public HashMap<String,String> update(@RequestBody Item item){
-
-        HashMap<String,String> responce = new HashMap<>();
-        String errors="";
-
-        Item item1 = itemDao.findByItemNumber(item.getItemnumber());
-        Item item2 = itemDao.findItemByName(item.getName());
-
-//        if(customer.getId().intValue() == customerdao.findByMyId() )
-        if(item1!=null && item.getId()!=item1.getId())
-            errors = errors+"<br> Existing Item Number";
-        if(item2!=null && item.getId()!=item2.getId())
-            errors = errors+"<br> Existing Item Name";
-
-        if(errors=="") itemDao.save(item);
-        else errors = "Server Validation Errors : <br> "+errors;
-
-        responce.put("id",String.valueOf(item.getId()));
-        responce.put("url","/items/"+item.getId());
-        responce.put("errors",errors);
-
-        return responce;
+    @PutMapping("/{id}")
+    @Transactional
+    public HashMap<String, String> update(@PathVariable Integer id, @Valid @RequestBody ProductRequest request) {
+        Item item = find(id);
+        if (itemDao.existsByItemnumberIgnoreCaseAndIdNot(request.getItemnumber().trim(), id)) conflict("Existing item number");
+        if (itemDao.existsByNameIgnoreCaseAndIdNot(request.getName().trim(), id)) conflict("Existing item name");
+        apply(item, request);
+        itemDao.save(item);
+        return success(id);
     }
-
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.CREATED)
-    public HashMap<String,String> delete(@PathVariable Integer id){
-
-        System.out.println(id);
-
-        HashMap<String,String> responce = new HashMap<>();
-        String errors="";
-
-        Item item = itemDao.findItemById(id);
-
-        if(item==null)
-            errors = errors+"<br> Item Does Not Existed";
-
-        if(errors=="") itemDao.delete(item);
-        else errors = "Server Validation Errors : <br> "+errors;
-
-        responce.put("id",String.valueOf(id));
-        responce.put("url","/items/"+id);
-        responce.put("errors",errors);
-
-        return responce;
+    @Transactional
+    public HashMap<String, String> delete(@PathVariable Integer id) {
+        Item item = find(id);
+        if (stockDao.existsByItem_Id(id))
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Products with stock records cannot be deleted; set the status to Inactive");
+        itemDao.delete(item);
+        return success(id);
     }
 
+    private Item find(Integer id) { return itemDao.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product does not exist")); }
+    private ProductResponse response(Item item) { return ProductResponse.fromEntity(item, stockDao.totalStock(item.getId())); }
+    private void apply(Item i, ProductRequest r) {
+        i.setItemnumber(r.getItemnumber().trim()); i.setName(r.getName().trim());
+        i.setDointroduced(r.getDointroduced()); i.setSprice(r.getSprice()); i.setPprice(r.getPprice()); i.setRop(r.getRop());
+        i.setItemstatus(itemstatusDao.findById(r.getItemstatusId()).orElseThrow(() -> missing("Item status")));
+        i.setUnittype(unittypeDao.findById(r.getUnittypeId()).orElseThrow(() -> missing("Unit type")));
+        i.setItembrand(itembrandDao.findById(r.getItembrandId()).orElseThrow(() -> missing("Item brand")));
+        i.setSubcategory(subcategoryDao.findById(r.getSubcategoryId()).orElseThrow(() -> missing("Subcategory")));
+    }
+    private ResponseStatusException missing(String value) { return new ResponseStatusException(HttpStatus.NOT_FOUND, value + " does not exist"); }
+    private void conflict(String message) { throw new ResponseStatusException(HttpStatus.CONFLICT, message); }
+    private HashMap<String, String> success(Integer id) { HashMap<String, String> r = new HashMap<>(); r.put("id", String.valueOf(id)); r.put("url", "/items/" + id); r.put("errors", ""); return r; }
 }
-
-
-
-
