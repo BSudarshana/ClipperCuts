@@ -1,17 +1,17 @@
-import { Item } from "./item";
+import {Item} from './item';
 
 export class Poitem {
+  id?: number;
+  quantity!: number;
+  unitprice!: number;
+  subTotal!: number;
+  item!: Item;
 
-  public id !: number;
-  public quantity !: number;
-  public sub_total !: number;
-  public item !: Item;
-
-  constructor(id: number, quantity: number, sub_total: number, item: Item) {
+  constructor(quantity: number, unitprice: number, subTotal: number, item: Item, id?: number) {
     this.id = id;
     this.quantity = quantity;
-    this.sub_total = sub_total;
+    this.unitprice = unitprice;
+    this.subTotal = subTotal;
     this.item = item;
   }
-
 }

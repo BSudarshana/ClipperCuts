@@ -14,15 +14,18 @@ public class Poitem {
     private int id;
     @Basic
     @Column(name = "quantity")
-    private Integer quantity;
+    private BigDecimal quantity;
+    @Basic
+    @Column(name = "unitprice", nullable = false)
+    private BigDecimal unitprice;
     @Basic
     @Column(name = "sub_total")
     private BigDecimal subTotal;
 
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "item_id", referencedColumnName = "id", nullable = false)
     private Item item;
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "purchaseorder_id", referencedColumnName = "id", nullable = false)
     private Purchaseorder purchaseorder;
@@ -35,12 +38,20 @@ public class Poitem {
         this.id = id;
     }
 
-    public Integer getQuantity() {
+    public BigDecimal getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(Integer quantity) {
+    public void setQuantity(BigDecimal quantity) {
         this.quantity = quantity;
+    }
+
+    public BigDecimal getUnitprice() {
+        return unitprice;
+    }
+
+    public void setUnitprice(BigDecimal unitprice) {
+        this.unitprice = unitprice;
     }
 
     public BigDecimal getSubTotal() {
@@ -56,12 +67,12 @@ public class Poitem {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Poitem poitem = (Poitem) o;
-        return id == poitem.id && Objects.equals(quantity, poitem.quantity) && Objects.equals(subTotal, poitem.subTotal);
+        return id == poitem.id && Objects.equals(quantity, poitem.quantity) && Objects.equals(unitprice, poitem.unitprice) && Objects.equals(subTotal, poitem.subTotal);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, quantity, subTotal);
+        return Objects.hash(id, quantity, unitprice, subTotal);
     }
 
     public Item getItem() {

@@ -42,7 +42,7 @@ mat-toolbar-row {
 
 .lbl-user {
   font-size: 14px;
-  color: white;
+  color: #a1a1a1;
   margin: 0px 5px 0px 0px;
 }
 
@@ -53,7 +53,7 @@ mat-toolbar-row {
 }
 
 .btn-logout {
-  color: white;
+  color: #a1a1a1;
   border-radius: 0px;
   margin: 0px 0px 0px -5px;
 }

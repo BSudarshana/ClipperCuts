@@ -72,7 +72,7 @@ mat-card-content { overflow: auto; height: 100%; }
 }
 
 #supplierrform mat-form-field .ng-dirty{
-  background-color: gold;
+  background-color: #fcfcfc !important;
 }
 
 /*Disabled button styles */

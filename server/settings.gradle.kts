@@ -1,1 +1,1 @@
-rootProject.name = "earthuniversity"
+rootProject.name = "clippercuts"

@@ -1,8 +1,11 @@
 package com.clippercuts.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.Collection;
@@ -17,22 +20,24 @@ public class Purchaseorder {
     @Basic
     @Column(name = "po_number")
     private String poNumber;
+
     @Basic
     @Column(name = "date")
     private Date date;
+
     @Basic
     @Column(name = "total_amount")
     private BigDecimal totalAmount;
     @Basic
     @Column(name = "description")
+    @Pattern(regexp = "^[a-zA-Z0-9\\s.,'\\-\\r\\n]{1,500}$", message = "Invalid description format")
     private String description;
 
     @JsonIgnore
     @OneToMany(mappedBy = "purchaseorder")
     private Collection<GoodReceiveNote> goodReceiveNotes;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "purchaseorder")
+    @OneToMany(mappedBy = "purchaseorder", cascade = CascadeType.ALL, orphanRemoval = true)
     private Collection<Poitem> poitems;
     @ManyToOne
     @JoinColumn(name = "postatus_id", referencedColumnName = "id", nullable = false)
@@ -43,6 +48,10 @@ public class Purchaseorder {
     @ManyToOne
     @JoinColumn(name = "employee_id", referencedColumnName = "id", nullable = false)
     private Employee employee;
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "created_by_user_id", referencedColumnName = "id")
+    private User createdByUser;
 
     public int getId() {
         return id;
@@ -135,5 +144,13 @@ public class Purchaseorder {
 
     public void setEmployee(Employee employee) {
         this.employee = employee;
+    }
+
+    public User getCreatedByUser() {
+        return createdByUser;
+    }
+
+    public void setCreatedByUser(User createdByUser) {
+        this.createdByUser = createdByUser;
     }
 }

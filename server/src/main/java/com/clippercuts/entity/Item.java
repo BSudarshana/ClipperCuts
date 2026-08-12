@@ -56,6 +56,8 @@ public class Item {
     @JsonIgnore
     @OneToMany(mappedBy = "item")
     private Collection<InvoiceItem> invoiceItems;
+
+    @JsonIgnore
     @OneToMany(mappedBy = "item")
     private Collection<ItemstockLocation> itemstockLocations;
     @JsonIgnore

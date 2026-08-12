@@ -2,15 +2,13 @@ package com.clippercuts.util;
 
 import com.clippercuts.dao.CustomerDao;
 import com.clippercuts.dao.InvoiceDao;
+import com.clippercuts.dao.PurchaseorderDao;
 import com.clippercuts.dao.SupplierDao;
 import com.clippercuts.entity.Customer;
 import com.clippercuts.entity.Invoice;
 import com.clippercuts.entity.Supplier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.time.Year;
-import java.util.Calendar;
 
 @Service
 public class NumberServiceImp implements NumberService {
@@ -23,6 +21,9 @@ public class NumberServiceImp implements NumberService {
 
     @Autowired
     private InvoiceDao invoicedao;
+
+    @Autowired
+    private PurchaseorderDao purchaseorderDao;
 
     @Override
     public String generateCustomerCode() {
@@ -57,7 +58,6 @@ public class NumberServiceImp implements NumberService {
 
     @Override
     public String getLastInvoiceByYear() {
-//        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
         int currentYear = java.time.Year.now().getValue();
         String lastInvoice = invoicedao.getLastInvoiceByYear(currentYear);
 
@@ -68,5 +68,21 @@ public class NumberServiceImp implements NumberService {
         }
 
         return String.format("INV-%d-%06d", currentYear, nextNumber);
+    }
+
+    @Override
+    public String generatePurchaseOrderNumber() {
+        int currentYear = java.time.Year.now().getValue();
+        String lastNumber = purchaseorderDao.getLastPurchaseOrderByYear(currentYear);
+
+        int nextNumber = 1;
+        if (lastNumber != null && !lastNumber.trim().isEmpty()) {
+            String[] parts = lastNumber.split("-");
+            if (parts.length == 3) {
+                nextNumber = Integer.parseInt(parts[2]) + 1;
+            }
+        }
+
+        return String.format("PO-%d-%06d", currentYear, nextNumber);
     }
 }

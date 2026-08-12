@@ -8,7 +8,7 @@ import {UserComponent} from "./view/modules/user/user.component";
 import {PrivilageComponent} from "./view/modules/privilage/privilage.component";
 import {OperationComponent} from "./view/modules/operation/operation.component";
 import {CustomerComponent} from "./view/modules/customer/customer.component";
-import {PurchaseorderComponent} from "./view/modules/purchaseorder/purorder.component";
+import {PurchaseorderComponent} from "./view/modules/purchaseorder/purchaseorder.component";
 import {SupplierComponent} from "./view/modules/supplier/supplier.component";
 import {ServiceComponent} from "./view/modules/service/service.component";
 import {InvoiceComponent} from "./view/modules/invoice/invoice.component";

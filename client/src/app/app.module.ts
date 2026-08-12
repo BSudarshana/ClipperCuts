@@ -42,7 +42,7 @@ import { OperationComponent } from './view/modules/operation/operation.component
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MatRadioModule} from "@angular/material/radio";
 import { SupplierComponent } from './view/modules/supplier/supplier.component';
-import {PurchaseorderComponent} from "./view/modules/purchaseorder/purorder.component";
+import {PurchaseorderComponent} from "./view/modules/purchaseorder/purchaseorder.component";
 import { AppointmentComponent } from './view/modules/appointment/appointment.component';
 import { ServiceComponent } from './view/modules/service/service.component';
 import { PromotionComponent } from './view/modules/promotion/promotion.component';
@@ -64,6 +64,7 @@ import { ProductComponent } from './view/modules/product/product.component';
 import { InventoryComponent } from './view/modules/inventory/inventory.component';
 import { StocktransferComponent } from './view/modules/stocktransfer/stocktransfer.component';
 import {MatProgressBarModule} from "@angular/material/progress-bar";
+import { GoodreceivednoteComponent } from './view/modules/goodreceivednote/goodreceivednote.component';
 
 
 @NgModule({
@@ -99,7 +100,8 @@ import {MatProgressBarModule} from "@angular/material/progress-bar";
     CustomerfeedbackComponent,
     ProductComponent,
     InventoryComponent,
-    StocktransferComponent
+    StocktransferComponent,
+    GoodreceivednoteComponent
   ],
   imports: [
     MatDatepickerModule,
