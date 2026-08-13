@@ -1,122 +1,39 @@
 package com.clippercuts.controller;
 
-import com.clippercuts.dao.GoodReceiveNoteDao;
-import com.clippercuts.entity.GoodReceiveNote;
-import com.clippercuts.entity.GrnItem;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import com.clippercuts.dao.*;
+import com.clippercuts.dto.*;
+import com.clippercuts.util.GoodReceiveNoteService;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
-import java.util.List;
+import org.springframework.web.server.ResponseStatusException;
+import javax.validation.Valid;
+import java.security.Principal;
+import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-@CrossOrigin
-@RestController
-@RequestMapping(value = "/grns")
+@CrossOrigin @RestController @RequestMapping("/grns")
 public class GoodReceiveNoteController {
+    private final GoodReceiveNoteDao dao;
+    private final GoodReceiveNoteService service;
+    private final InventoryLocationDao locationDao;
 
-    @Autowired
-    private GoodReceiveNoteDao goodReceiveNoteDao;
-
-    @GetMapping(produces = "application/json")
-//    @PreAuthorize("hasAuthority('customer-select')")p
-    public List<GoodReceiveNote> get(@RequestParam HashMap<String, String> params) {
-
-        List<GoodReceiveNote> goodReceiveNotes = this.goodReceiveNoteDao.findAll();
-
-        if(params.isEmpty())  return goodReceiveNotes;
-
-        String grnNumber = params.get("grn_number");
-
-        Stream<GoodReceiveNote> goodReceiveNoteStream = goodReceiveNotes.stream();
-
-        if(grnNumber!=null) goodReceiveNoteStream = goodReceiveNoteStream.filter(g -> g.getGrnNumber().contains(grnNumber));
-
-        return goodReceiveNoteStream.collect(Collectors.toList());
-
+    public GoodReceiveNoteController(
+            GoodReceiveNoteDao dao,
+            GoodReceiveNoteService service,
+            InventoryLocationDao locationDao)
+    {
+        this.dao=dao;this.service=service;
+        this.locationDao=locationDao;
     }
 
-
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-//    @PreAuthorize("hasAuthority('Customer-Insert')")
-    public HashMap<String,String> add(@RequestBody GoodReceiveNote goodReceiveNote){
-
-        HashMap<String,String> responce = new HashMap<>();
-        String errors="";
-
-        if(goodReceiveNoteDao.findByGrnNumber(goodReceiveNote.getGrnNumber())!=null)
-            errors = errors+"<br> Existing GRN Number";
-
-        for (GrnItem grnItem : goodReceiveNote.getGrnItems()) {
-            grnItem.setGoodReceiveNote(goodReceiveNote);
-        }
-
-        if(errors=="")
-            goodReceiveNoteDao.save(goodReceiveNote);
-        else errors = "Server Validation Errors : <br> "+errors;
-
-        responce.put("id",String.valueOf(goodReceiveNote.getId()));
-        responce.put("url","/grns/"+goodReceiveNote.getId());
-        responce.put("errors",errors);
-
-        return responce;
+    @GetMapping public List<GrnResponse> all(){return dao.findAll().stream().sorted(Comparator.comparing(com.clippercuts.entity.GoodReceiveNote::getId).reversed()).map(GrnResponse::new).collect(Collectors.toList());}
+    @GetMapping("/{id}") public GrnResponse one(@PathVariable Integer id){return new GrnResponse(dao.findDetailedById(id).orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"GRN not found")));}
+    @GetMapping("/eligible-purchaseorders") public List<GrnPurchaseOrderResponse> eligible(){return service.eligiblePurchaseOrders();}
+    @GetMapping("/locations") public List<LookupResponse> locations(){return locationDao.findAll().stream().map(x->new LookupResponse(x.getId(),x.getName())).collect(Collectors.toList());}
+    @PostMapping @ResponseStatus(HttpStatus.CREATED)
+    public Map<String,String> add(@Valid @RequestBody GrnCreateRequest request,Principal principal){
+        if(principal==null) throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"Authentication required");
+        com.clippercuts.entity.GoodReceiveNote grn=service.receive(request,principal.getName());
+        Map<String,String> response=new HashMap<>(); response.put("id",String.valueOf(grn.getId())); response.put("grnNumber",grn.getGrnNumber()); response.put("message","Goods receipt completed successfully"); return response;
     }
-
-    @PutMapping
-    @ResponseStatus(HttpStatus.CREATED)
-//    @PreAuthorize("hasAuthority('Customer-Update')")
-    public HashMap<String,String> update(@RequestBody GoodReceiveNote goodReceiveNote){
-
-        HashMap<String,String> responce = new HashMap<>();
-        String errors="";
-
-        GoodReceiveNote grn1 = goodReceiveNoteDao.findByGrnNumber(goodReceiveNote.getGrnNumber());
-
-        if(grn1!=null && goodReceiveNote.getId()!=grn1.getId())
-            errors = errors+"<br> Existing GRN Number";
-
-        for (GrnItem grnItem : goodReceiveNote.getGrnItems()) {
-            grnItem.setGoodReceiveNote(goodReceiveNote);
-        }
-
-        if(errors=="") goodReceiveNoteDao.save(goodReceiveNote);
-        else errors = "Server Validation Errors : <br> "+errors;
-
-        responce.put("id",String.valueOf(goodReceiveNote.getId()));
-        responce.put("url","/grns/"+goodReceiveNote.getId());
-        responce.put("errors",errors);
-
-        return responce;
-    }
-
-
-    @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.CREATED)
-    public HashMap<String,String> delete(@PathVariable Integer id){
-
-        HashMap<String,String> responce = new HashMap<>();
-        String errors="";
-
-        GoodReceiveNote goodReceiveNote = goodReceiveNoteDao.findByGrnId(id);
-
-        if(goodReceiveNote==null)
-            errors = errors+"<br> Item Does Not Existed";
-
-        if(errors=="") goodReceiveNoteDao.delete(goodReceiveNote);
-        else errors = "Server Validation Errors : <br> "+errors;
-
-        responce.put("id",String.valueOf(id));
-        responce.put("url","/grns/"+id);
-        responce.put("errors",errors);
-
-        return responce;
-    }
-
 }
-
-
-
-

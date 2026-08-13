@@ -1,9 +1,6 @@
 package com.clippercuts.util;
 
-import com.clippercuts.dao.CustomerDao;
-import com.clippercuts.dao.InvoiceDao;
-import com.clippercuts.dao.PurchaseorderDao;
-import com.clippercuts.dao.SupplierDao;
+import com.clippercuts.dao.*;
 import com.clippercuts.entity.Customer;
 import com.clippercuts.entity.Invoice;
 import com.clippercuts.entity.Supplier;
@@ -24,6 +21,9 @@ public class NumberServiceImp implements NumberService {
 
     @Autowired
     private PurchaseorderDao purchaseorderDao;
+
+    @Autowired
+    private GoodReceiveNoteDao goodreceivenotedao;
 
     @Override
     public String generateCustomerCode() {
@@ -84,5 +84,12 @@ public class NumberServiceImp implements NumberService {
         }
 
         return String.format("PO-%d-%06d", currentYear, nextNumber);
+    }
+
+    @Override public String generateGrnNumber(){
+        int year=java.time.Year.now().getValue();
+        String last=goodreceivenotedao.getLastGrnByYear(year);
+        int next=last==null||last.trim().isEmpty()?1:Integer.parseInt(last.split("-")[2])+1;
+        return String.format("GRN-%d-%04d",year,next);
     }
 }

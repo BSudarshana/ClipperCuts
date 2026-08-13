@@ -5,4 +5,5 @@ public interface NumberService {
     String generateSupplierCode();
     String getLastInvoiceByYear();
     String generatePurchaseOrderNumber();
+    String generateGrnNumber();
 }

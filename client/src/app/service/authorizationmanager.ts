@@ -136,10 +136,35 @@ export class AuthorizationManager {
   }
 
   // Extracts authorities (permission strings) from the JWT token
-  getAuthorities() {
-    // @ts-ignore
-    const jwtToken = localStorage.getItem("Authorization").split(' ')[1];
-    return jwtDecode(jwtToken).aud;
+  getAuthorities(): string[] {
+    const storedToken = localStorage.getItem('Authorization');
+
+    if (!storedToken) {
+      return [];
+    }
+
+    // Supports both the new raw-token format and any older value that still
+    // contains the "Bearer " prefix.
+    const rawToken = storedToken
+      .replace(/^Bearer\s+/i, '')
+      .trim();
+
+    if (!rawToken) {
+      return [];
+    }
+
+    try {
+      const payload = jwtDecode<{aud?: string[] | string}>(rawToken);
+
+      if (Array.isArray(payload.aud)) {
+        return payload.aud;
+      }
+
+      return typeof payload.aud === 'string' ? [payload.aud] : [];
+    } catch (error) {
+      console.error('Unable to decode the stored authorization token.', error);
+      return [];
+    }
   }
 
   // Returns the currently loaded profile image URL

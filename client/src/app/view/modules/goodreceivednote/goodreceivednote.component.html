@@ -1,1 +1,272 @@
-<p>goodreceivednote works!</p>
+<div class="grn-page">
+  <mat-card><mat-card-header><mat-card-title>Goods Received Note</mat-card-title><mat-card-subtitle>Receive products against an active purchase order</mat-card-subtitle></mat-card-header>
+    <mat-progress-bar *ngIf="loading || saving" mode="indeterminate"></mat-progress-bar><mat-card-content>
+
+      <form [formGroup]="form" class="grn-form">
+        <mat-form-field appearance="outline">
+          <mat-label>Purchase Order</mat-label>
+          <mat-select formControlName="purchaseOrderId" (selectionChange)="onPurchaseOrderChange()">
+            <mat-option *ngFor="let po of purchaseOrders" [value]="po.id">
+              {{po.poNumber}} - {{po.supplierName}} ({{po.status}})
+            </mat-option>
+          </mat-select>
+
+          <mat-error>Purchase order is required.</mat-error>
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Inventory Location</mat-label>
+          <mat-select formControlName="locationId">
+            <mat-option *ngFor="let location of locations" [value]="location.id">
+              {{location.name}}
+            </mat-option>
+          </mat-select><mat-error>Inventory location is required.</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="description">
+          <mat-label>Description</mat-label>
+          <textarea matInput rows="2" maxlength="500" formControlName="description"></textarea>
+          <mat-hint align="end">
+            {{form.get('description')?.value?.length||0}} / 500</mat-hint>
+        </mat-form-field>
+
+      </form>
+
+      <div *ngIf="selectedPo" class="po-summary">
+        <div>
+          <span>PO Number</span>
+          <strong>{{selectedPo.poNumber}}</strong>
+        </div>
+
+        <div>
+          <span>Supplier</span>
+          <strong>{{selectedPo.supplierName}}</strong>
+        </div>
+
+        <div>
+          <span>PO Date</span>
+          <strong>{{selectedPo.date|date:'yyyy-MM-dd'}}</strong>
+        </div>
+
+        <div>
+          <span>Status</span>
+          <strong>{{selectedPo.status}}</strong>
+        </div>
+
+        </div>
+
+      <div class="table-container">
+        <table mat-table [dataSource]="receiptLines" class="full-width-table">
+
+        <ng-container matColumnDef="itemnumber">
+          <th mat-header-cell *matHeaderCellDef>Item No.</th>
+          <td mat-cell *matCellDef="let x">{{x.itemnumber}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="itemName">
+          <th mat-header-cell *matHeaderCellDef>Product</th>
+          <td mat-cell *matCellDef="let x">{{x.itemName}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="ordered">
+          <th mat-header-cell *matHeaderCellDef>Ordered</th>
+          <td mat-cell *matCellDef="let x">{{x.orderedQuantity|number:'1.0-2'}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="previouslyReceived">
+          <th mat-header-cell *matHeaderCellDef>Previously Received</th>
+          <td mat-cell *matCellDef="let x">{{x.previouslyReceivedQuantity|number:'1.0-2'}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="remaining">
+          <th mat-header-cell *matHeaderCellDef>Remaining</th>
+          <td mat-cell *matCellDef="let x">{{x.remainingQuantity|number:'1.0-2'}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="received">
+          <th mat-header-cell *matHeaderCellDef>Receive Now</th>
+          <td mat-cell *matCellDef="let x;let i=index">
+            <mat-form-field appearance="outline" class="qty">
+              <input matInput type="number" min="0" [max]="x.remainingQuantity" step="0.01" [formControl]="$any(quantities.at(i))">
+              <mat-error *ngIf="quantities.at(i).hasError('max')">Exceeds remaining</mat-error>
+            </mat-form-field>
+            <button mat-icon-button type="button" aria-label="Receive all remaining quantity" (click)="useRemaining(i)">
+              <mat-icon>done_all</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="unitType">
+          <th mat-header-cell *matHeaderCellDef>Unit</th><td mat-cell *matCellDef="let x">{{x.unitType}}</td>
+        </ng-container>
+        <ng-container matColumnDef="unitCost">
+          <th mat-header-cell *matHeaderCellDef>Unit Cost</th>
+          <td mat-cell *matCellDef="let x">{{x.unitCost|number:'1.2-2'}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="subTotal">
+          <th mat-header-cell *matHeaderCellDef>Subtotal</th>
+          <td mat-cell *matCellDef="let x">{{x.subTotal|number:'1.2-2'}}</td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="lineColumns"></tr>
+          <tr mat-row *matRowDef="let row;columns:lineColumns"></tr>
+        </table>
+        <div *ngIf="!receiptLines.length" class="empty-state">Select an eligible purchase order to load products.</div></div>
+        <div class="total">
+          <span>GRN Total</span>
+          <strong>{{totalAmount|number:'1.2-2'}}
+          </strong>
+        </div>
+    </mat-card-content>
+
+    <mat-card-actions align="end">
+
+      <button mat-stroked-button type="button" (click)="clear()" [disabled]="saving">Clear</button>
+
+      <button mat-raised-button type="button" (click)="submit()" [disabled]="saving||!receiptLines.length||!hasInsertAuthority">
+        <mat-icon>inventory</mat-icon>
+        Confirm Receipt
+      </button>
+    </mat-card-actions></mat-card>
+
+  <mat-card>
+    <mat-card-header><mat-card-title>GRN History</mat-card-title>
+    <span class="spacer"></span>
+      <button mat-icon-button (click)="loadHistory()">
+        <mat-icon>refresh</mat-icon>
+      </button>
+    </mat-card-header>
+
+    <mat-progress-bar *ngIf="loadingHistory" mode="indeterminate"></mat-progress-bar>
+
+    <mat-card-content>
+      <div class="table-container">
+        <table mat-table [dataSource]="historyData" class="full-width-table">
+
+          <ng-container matColumnDef="grnNumber">
+            <th mat-header-cell *matHeaderCellDef>GRN Number</th>
+            <td mat-cell *matCellDef="let x">{{x.grnNumber}}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="date">
+            <th mat-header-cell *matHeaderCellDef>Date</th>
+            <td mat-cell *matCellDef="let x">{{x.date|date:'yyyy-MM-dd'}}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="poNumber">
+            <th mat-header-cell *matHeaderCellDef>PO Number</th>
+            <td mat-cell *matCellDef="let x">{{x.poNumber}}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="supplier">
+            <th mat-header-cell *matHeaderCellDef>Supplier</th>
+            <td mat-cell *matCellDef="let x">{{x.supplierName}}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="location">
+            <th mat-header-cell *matHeaderCellDef>Location</th>
+            <td mat-cell *matCellDef="let x">{{x.locationName}}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Status</th>
+            <td mat-cell *matCellDef="let x">{{x.status}}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="totalAmount">
+            <th mat-header-cell *matHeaderCellDef>Total</th>
+            <td mat-cell *matCellDef="let x">{{x.totalAmount|number:'1.2-2'}}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="receivedBy">
+            <th mat-header-cell *matHeaderCellDef>Received By</th>
+            <td mat-cell *matCellDef="let x">{{x.receivedByUsername}}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Action</th>
+            <td mat-cell *matCellDef="let x">
+              <button mat-icon-button (click)="view(x.id)">
+              <mat-icon>visibility</mat-icon></button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="historyColumns">  </tr>
+          <tr mat-row *matRowDef="let row;columns:historyColumns"></tr>
+        </table>
+
+      </div>
+      <mat-paginator [pageSize]="5" [pageSizeOptions]="[5,10,20]" showFirstLastButtons>
+
+    </mat-paginator>
+    </mat-card-content></mat-card>
+  <mat-card *ngIf="loadingDetail||selectedGrn">
+
+    <mat-progress-bar *ngIf="loadingDetail" mode="indeterminate"></mat-progress-bar>
+
+    <ng-container *ngIf="selectedGrn as g">
+      <mat-card-header>
+        <mat-card-title>{{g.grnNumber}}</mat-card-title>
+        <span class="spacer"></span>
+        <button mat-icon-button (click)="selectedGrn=null">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="po-summary">
+          <div>
+            <span>PO</span>
+            <strong>{{g.poNumber}}</strong>
+          </div>
+          <div>
+            <span>Location</span>
+            <strong>{{g.locationName}}</strong>
+          </div>
+          <div>
+            <span>Received By</span>
+            <strong>{{g.receivedByUsername}}</strong>
+          </div>
+          <div>
+            <span>Total</span>
+            <strong>{{g.totalAmount|number:'1.2-2'}}</strong>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <table mat-table [dataSource]="g.items" class="full-width-table">
+            <ng-container matColumnDef="itemnumber">
+              <th mat-header-cell *matHeaderCellDef>Item No.</th>
+              <td mat-cell *matCellDef="let x">{{x.itemnumber}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="itemName"><th mat-header-cell *matHeaderCellDef>Product</th>
+              <td mat-cell *matCellDef="let x">{{x.itemName}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="quantity">
+              <th mat-header-cell *matHeaderCellDef>Quantity</th>
+              <td mat-cell *matCellDef="let x">{{x.quantity|number:'1.0-2'}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="unitCost">
+              <th mat-header-cell *matHeaderCellDef>Unit Cost</th>
+              <td mat-cell *matCellDef="let x">{{x.unitCost|number:'1.2-2'}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="subTotal">
+              <th mat-header-cell *matHeaderCellDef>Subtotal</th>
+              <td mat-cell *matCellDef="let x">{{x.subTotal|number:'1.2-2'}}</td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="detailColumns"></tr>
+            <tr mat-row *matRowDef="let row;columns:detailColumns"></tr>
+
+          </table>
+        </div>
+      </mat-card-content>
+    </ng-container>
+    </mat-card>
+</div>

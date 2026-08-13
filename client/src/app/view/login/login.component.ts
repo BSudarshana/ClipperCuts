@@ -44,9 +44,19 @@ export class LoginComponent implements OnInit{
       .then((response: any) => {
         // console.log("PPPPP-"+response);
         // console.log(response.headers);
-        let token = response.headers.get('Authorization');
-        //console.log("AAAA-"+token);
-        localStorage.setItem('Authorization', token);
+        const authorizationHeader = response.headers.get('Authorization');
+
+        if (!authorizationHeader) {
+          throw new Error('Authorization token was not returned by the server.');
+        }
+
+        // Store only the JWT. JwtInterceptor is responsible for adding the
+        // single "Bearer " prefix to outgoing requests.
+        const rawToken = authorizationHeader
+          .replace(/^Bearer\s+/i, '')
+          .trim();
+
+        localStorage.setItem('Authorization', rawToken);
         this.router.navigateByUrl("main/home");
         this.ut.getAuth(username);
 

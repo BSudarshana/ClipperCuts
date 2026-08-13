@@ -1,17 +1,73 @@
-import { Employee } from "./employee";
-import { Grnstatus } from "./grntatus";
-import {Location} from "./location";
-import {Grnitem} from "./grnitem";
+export interface GrnLookup {
+  id: number;
+  name: string;
+}
 
+export interface GrnPoItem {
+  poItemId:number;
+  itemId:number;
+  itemnumber:string;
+  itemName:string;
+  unitType:string;
+  orderedQuantity:number;
+  previouslyReceivedQuantity:number;
+  remainingQuantity:number;
+  unitCost:number;
+}
 
-export class Purchaseorder {
-  id?: number;
-  grnNumber?: string;
-  date!: string;
-  totalAmount!: number;
-  description!: string;
-  grnstatus!: Grnstatus;
-  employee!: Employee;
-  grnitems: Grnitem[] = [];
-  location!: Location;
+export interface GrnPurchaseOrder {
+  id:number;
+  poNumber:string;
+  date:string;
+  status:string;
+  supplierId:number;
+  supplierName:string;
+  items:GrnPoItem[];
+}
+
+export interface GrnReceiptLine extends GrnPoItem {
+  receivedQuantity:number;
+  subTotal:number;
+}
+
+export interface GrnCreateRequest {
+  purchaseOrderId:number;
+  locationId:number;
+  description:string;
+  items:{
+    poItemId:number;
+    receivedQuantity:number
+  }[];
+}
+
+export interface GrnItemResponse {
+  id:number; itemId:number;
+  itemnumber:string;
+  itemName:string;
+  quantity:number;
+  unitCost:number;
+  subTotal:number;
+}
+
+export interface GoodReceivedNote {
+  id:number;
+  grnNumber:string;
+  date:string;
+  totalAmount:number;
+  description:string;
+  status:string;
+  purchaseOrderId:number;
+  poNumber:string;
+  supplierName:string;
+  locationId:number;
+  locationName:string;
+  receivedByUsername:string;
+  employeeName:string;
+  items:GrnItemResponse[];
+}
+
+export interface GrnCreateResponse {
+  id:string;
+  grnNumber:string;
+  message:string;
 }

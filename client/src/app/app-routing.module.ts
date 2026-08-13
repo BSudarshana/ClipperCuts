@@ -19,6 +19,7 @@ import {CustomerfeedbackComponent} from "./view/modules/customerfeedback/custome
 import {ProductComponent} from "./view/modules/product/product.component";
 import {InventoryComponent} from "./view/modules/inventory/inventory.component";
 import {StocktransferComponent} from "./view/modules/stocktransfer/stocktransfer.component";
+import {GoodreceivednoteComponent} from "./view/modules/goodreceivednote/goodreceivednote.component";
 
 import { CountByDesignationComponent } from './report/view/count-by-designation/count-by-designation.component';
 import { CountByAppointmentStatusComponent } from './report/view/count-by-appointment-status/count-by-appointment-status.component';
@@ -56,6 +57,7 @@ const routes: Routes = [
       {path: "product", component: ProductComponent},
       {path: "Inventory", component: InventoryComponent},
       {path: "stocktransfer", component: StocktransferComponent},
+      {path: "goodreceivednote", component: GoodreceivednoteComponent},
 
       {path:"reports/countbydesignation", component: CountByDesignationComponent},
       {path:"reports/countbyappointmentstatus", component: CountByAppointmentStatusComponent},

@@ -1,0 +1,133 @@
+.grn-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.grn-page mat-card {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+mat-card-content {
+  padding-top: 16px;
+}
+
+.grn-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.description {
+  grid-column: 1 / -1;
+}
+
+.po-summary {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin: 8px 0 16px;
+}
+
+.po-summary div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px;
+  background: #f7f7f7;
+  border-radius: 4px;
+}
+
+.po-summary span {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.table-container {
+  overflow-x: auto;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 4px;
+}
+
+.full-width-table {
+  width: 100%;
+}
+
+.qty {
+  width: 110px;
+  margin-top: 10px;
+}
+
+.empty-state {
+  padding: 28px;
+  text-align: center;
+  color: rgba(0, 0, 0, 0.55);
+}
+
+.total {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 20px;
+  padding: 18px;
+  font-size: 18px;
+}
+
+.total strong {
+  font-size: 22px;
+}
+
+.spacer {
+  flex: 1;
+}
+
+mat-card-actions {
+  padding: 8px 16px 16px;
+  gap: 8px;
+}
+
+
+.grn-page button.mat-button-base,
+.grn-page button.mat-mdc-button-base,
+.grn-page button[mat-raised-button],
+.grn-page button[mat-stroked-button]
+ {
+  color: #141414;
+  background-color: #C9CD03 !important;
+}
+
+.grn-page button[mat-icon-button]{
+  color: #141414 !important;
+  background-color: transparent !important;
+}
+
+.grn-page button:disabled {
+  color: #141414 !important;
+  background-color: #C9CD03 !important;
+  opacity: 0.5;
+}
+
+@media (max-width: 900px) {
+  .grn-form,
+  .po-summary {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .grn-page {
+    padding: 8px;
+  }
+
+  .grn-form,
+  .po-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .description {
+    grid-column: auto;
+  }
+}

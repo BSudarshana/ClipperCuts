@@ -5,14 +5,16 @@ import { Observable } from 'rxjs';
 @Injectable()
 export class JwtInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    // Retrieve the JWT token from the Local Storage
-    const jwtToken = localStorage.getItem('Authorization');
+    const storedToken = localStorage.getItem('Authorization');
 
-    // Add the JWT token to the request headers
-    if (jwtToken) {
+    if (storedToken) {
+      // Login responses may include the "Bearer " prefix. Always normalize
+      // the stored value before constructing the request header.
+      const rawToken = storedToken.replace(/^Bearer\s+/i, '').trim();
+
       request = request.clone({
         setHeaders: {
-          Authorization: `Bearer ${jwtToken}`
+          Authorization: `Bearer ${rawToken}`
         }
       });
     }
