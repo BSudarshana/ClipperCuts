@@ -1,204 +1,111 @@
 <div class="payment-page no-print">
-  <mat-card class="payment-form-card">
-    <mat-card-header>
-      <mat-card-title>Receive Invoice Payment</mat-card-title>
-    </mat-card-header>
+  <mat-card><mat-card-header><mat-card-title>Receive Invoice
+    Payment</mat-card-title></mat-card-header><mat-card-content>
+    <form [formGroup]="form" class="payment-form">
+      <mat-form-field appearance="outline"><mat-label>Payable Invoice</mat-label><mat-select
+        formControlName="invoice"><mat-option [value]="null">Not Selected</mat-option><mat-option
+        *ngFor="let i of payableInvoices" [value]="i">{{i.invoicenumber}} - {{i.customerName}} - Balance Rs.
+        {{i.balance|number:'1.2-2'}}</mat-option></mat-select><mat-error>Select a payable
+        invoice</mat-error></mat-form-field>
 
-    <mat-card-content>
-      <form [formGroup]="form">
-        <mat-form-field appearance="outline">
-          <mat-label>Unpaid Invoice</mat-label>
-          <mat-select formControlName="invoice">
-            <mat-option [value]="null">Not Selected</mat-option>
-            <mat-option *ngFor="let invoice of unpaidInvoices" [value]="invoice">
-              {{invoice.invoicenumber}} - {{invoice.appointment.customer.fullname}}
-              - Rs. {{invoice.finalAmount | number:'1.2-2'}}
-            </mat-option>
-          </mat-select>
-          <mat-error>Select an unpaid invoice</mat-error>
-        </mat-form-field>
-
-        <div class="invoice-summary" *ngIf="form.controls['invoice'].value as invoice">
-          <div><span>Invoice:</span><strong>{{invoice.invoicenumber}}</strong></div>
-          <div><span>Customer:</span><strong>{{invoice.appointment.customer.fullname}}</strong></div>
-          <div><span>Mobile:</span><strong>{{invoice.appointment.customer.mobile}}</strong></div>
-          <div><span>Invoice Date:</span><strong>{{invoice.invoicedate | date:'yyyy-MM-dd HH:mm'}}</strong></div>
-          <div><span>Total:</span><strong>Rs. {{invoice.totalamount | number:'1.2-2'}}</strong></div>
-          <div><span>Discount:</span><strong>Rs. {{invoice.discount | number:'1.2-2'}}</strong></div>
-          <div><span>Tax:</span><strong>Rs. {{invoice.tax | number:'1.2-2'}}</strong></div>
+      <section class="summary" *ngIf="form.get('invoice')?.value as i">
+        <div>
+          <span>Type</span>
+          <strong>{{i.invoicetype}}</strong>
         </div>
 
-        <mat-form-field appearance="outline">
-          <mat-label>Amount</mat-label>
-          <input matInput type="number" formControlName="amount">
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label>Payment Method</mat-label>
-          <mat-select formControlName="paymentmethod">
-            <mat-option [value]="null">Not Selected</mat-option>
-            <mat-option *ngFor="let method of paymentMethods" [value]="method">
-              {{method.name}}
-            </mat-option>
-          </mat-select>
-          <mat-error>Select a payment method</mat-error>
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label>Remarks</mat-label>
-          <textarea matInput rows="3" maxlength="255" formControlName="remarks"></textarea>
-          <mat-hint align="end">
-            {{form.controls['remarks'].value?.length || 0}} / 255
-          </mat-hint>
-        </mat-form-field>
-
-        <div class="button-panel">
-          <button mat-raised-button color="primary" type="button" (click)="add()">
-            Receive Payment
-          </button>
-          <button mat-raised-button type="button" (click)="clear()">Clear</button>
-          <button mat-raised-button type="button"
-                  [disabled]="!selectedPayment"
-                  (click)="printReceipt()">
-            Print Selected Receipt
-          </button>
+        <div>
+          <span>Customer</span><strong>{{i.customerName}}</strong>
         </div>
-      </form>
-    </mat-card-content>
+
+        <div>
+          <span>Invoice Total</span><strong>Rs. {{i.finalAmount|number:'1.2-2'}}</strong>
+        </div>
+
+        <div>
+          <span>Already Paid</span><strong>Rs. {{i.paidAmount|number:'1.2-2'}}</strong>
+        </div>
+
+        <div>
+          <span>Remaining</span><strong>Rs. {{i.balance|number:'1.2-2'}}</strong>
+        </div>
+
+      </section>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Payment Amount</mat-label>
+        <input matInput type="number" min="0.01" [max]="form.get('invoice')?.value?.balance" formControlName="amount">
+        <mat-error>Enter an amount up to the remaining balance</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Payment Method</mat-label>
+        <mat-select formControlName="paymentmethod"><mat-option [value]="null">Not Selected</mat-option>
+          <mat-option *ngFor="let m of paymentMethods" [value]="m">{{m.name}}</mat-option></mat-select><mat-error>Select a
+        payment method</mat-error></mat-form-field>
+      <mat-form-field appearance="outline"><mat-label>Remarks</mat-label><textarea matInput rows="3" maxlength="255"
+                                                                                   formControlName="remarks"></textarea></mat-form-field>
+      <div class="buttons"><button mat-raised-button type="button" class="primary-action" [disabled]="saving"
+                                   (click)="submit()">Receive Payment</button><button mat-raised-button type="button"
+                                                                                      (click)="clear()">Clear</button><button mat-raised-button type="button" [disabled]="!selectedPayment"
+                                                                                                                              (click)="print()">Print Selected Receipt</button></div>
+    </form>
+
+  </mat-card-content>
   </mat-card>
 
-  <section class="payment-list">
-    <mat-card>
-      <mat-card-header>
-        <mat-card-title>Payment Search</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <form [formGroup]="searchForm" class="search-form">
-          <mat-form-field appearance="outline">
-            <mat-label>Receipt Number</mat-label>
-            <input matInput formControlName="receiptnumber">
-          </mat-form-field>
-          <button mat-raised-button color="primary" type="button" (click)="search()">Search</button>
-          <button mat-raised-button type="button" (click)="clearSearch()">Clear Search</button>
-        </form>
-      </mat-card-content>
-    </mat-card>
-
-    <mat-card>
-      <mat-card-header>
-        <mat-card-title>Payment List</mat-card-title>
-        <mat-progress-spinner *ngIf="loading" diameter="28" mode="indeterminate"></mat-progress-spinner>
-      </mat-card-header>
-      <mat-card-content>
-        <mat-table [dataSource]="dataSource">
-          <ng-container matColumnDef="receiptnumber">
-            <mat-header-cell *matHeaderCellDef>Receipt No.</mat-header-cell>
-            <mat-cell *matCellDef="let payment">{{payment.receiptnumber}}</mat-cell>
-          </ng-container>
-
-          <ng-container matColumnDef="paymentDate">
-            <mat-header-cell *matHeaderCellDef>Date</mat-header-cell>
-            <mat-cell *matCellDef="let payment">
-              {{payment.paymentDate | date:'yyyy-MM-dd HH:mm'}}
-            </mat-cell>
-          </ng-container>
-
-          <ng-container matColumnDef="invoicenumber">
-            <mat-header-cell *matHeaderCellDef>Invoice No.</mat-header-cell>
-            <mat-cell *matCellDef="let payment">{{payment.invoice.invoicenumber}}</mat-cell>
-          </ng-container>
-
-          <ng-container matColumnDef="customer">
-            <mat-header-cell *matHeaderCellDef>Customer</mat-header-cell>
-            <mat-cell *matCellDef="let payment">
-              {{payment.invoice.appointment.customer.fullname}}
-            </mat-cell>
-          </ng-container>
-
-          <ng-container matColumnDef="amount">
-            <mat-header-cell *matHeaderCellDef>Amount</mat-header-cell>
-            <mat-cell *matCellDef="let payment">
-              {{payment.amount | number:'1.2-2'}}
-            </mat-cell>
-          </ng-container>
-
-          <ng-container matColumnDef="paymentmethod">
-            <mat-header-cell *matHeaderCellDef>Method</mat-header-cell>
-            <mat-cell *matCellDef="let payment">{{payment.paymentmethod.name}}</mat-cell>
-          </ng-container>
-
-          <ng-container matColumnDef="actions">
-            <mat-header-cell *matHeaderCellDef>Action</mat-header-cell>
-            <mat-cell *matCellDef="let payment">
-              <button mat-button type="button"
-                      (click)="$event.stopPropagation(); printReceipt(payment)">
-                Print
-              </button>
-            </mat-cell>
-          </ng-container>
-
-          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-          <mat-row *matRowDef="let row; columns: displayedColumns"
-                   (click)="selectPayment(row)"
-                   [class.selected-row]="row.id === selectedPayment?.id"></mat-row>
-        </mat-table>
-        <mat-paginator [pageSize]="5" [pageSizeOptions]="[5, 10, 20]"></mat-paginator>
-      </mat-card-content>
-    </mat-card>
-  </section>
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Payment History</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form [formGroup]="searchForm" class="search"><mat-form-field appearance="outline"><mat-label>Receipt
+        Number</mat-label><input matInput formControlName="receiptnumber"></mat-form-field><button mat-raised-button
+                                                                                                   type="button" class="primary-action" (click)="search()">Search</button><button mat-raised-button type="button"
+                                                                                                                                                                                  (click)="clearSearch()">Clear</button></form>
+      <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+      <mat-table [dataSource]="dataSource">
+        <ng-container matColumnDef="receiptnumber"><mat-header-cell *matHeaderCellDef>Receipt</mat-header-cell><mat-cell
+          *matCellDef="let p">{{p.receiptnumber}}</mat-cell></ng-container>
+        <ng-container matColumnDef="paymentDate"><mat-header-cell *matHeaderCellDef>Date</mat-header-cell><mat-cell
+          *matCellDef="let p">{{p.paymentDate|date:'yyyy-MM-dd HH:mm'}}</mat-cell></ng-container>
+        <ng-container matColumnDef="invoicenumber"><mat-header-cell *matHeaderCellDef>Invoice</mat-header-cell><mat-cell
+          *matCellDef="let p">{{p.invoicenumber}}</mat-cell></ng-container>
+        <ng-container matColumnDef="customer"><mat-header-cell *matHeaderCellDef>Customer</mat-header-cell><mat-cell
+          *matCellDef="let p">{{p.customerName}}</mat-cell></ng-container>
+        <ng-container matColumnDef="amount"><mat-header-cell *matHeaderCellDef>Paid</mat-header-cell><mat-cell
+          *matCellDef="let p">{{p.amount|number:'1.2-2'}}</mat-cell></ng-container>
+        <ng-container matColumnDef="paymentmethod"><mat-header-cell *matHeaderCellDef>Method</mat-header-cell><mat-cell
+          *matCellDef="let p">{{p.paymentmethodName}}</mat-cell></ng-container>
+        <ng-container matColumnDef="balance"><mat-header-cell *matHeaderCellDef>Balance</mat-header-cell><mat-cell
+          *matCellDef="let p">{{p.balance|number:'1.2-2'}}</mat-cell></ng-container>
+        <ng-container matColumnDef="actions"><mat-header-cell *matHeaderCellDef>Action</mat-header-cell><mat-cell
+          *matCellDef="let p"><button mat-button type="button"
+                                      (click)="$event.stopPropagation();print(p)">Print</button></mat-cell></ng-container>
+        <mat-header-row *matHeaderRowDef="columns"></mat-header-row><mat-row *matRowDef="let row;columns:columns"
+                                                                             (click)="select(row)" [class.selected]="row.id===selectedPayment?.id"></mat-row>
+      </mat-table><mat-paginator [pageSize]="5" [pageSizeOptions]="[5,10,20]"></mat-paginator>
+    </mat-card-content></mat-card>
 </div>
 
-<section class="receipt print-only" *ngIf="selectedPayment as payment">
-  <header class="receipt-header">
+<section class="receipt print-only" *ngIf="selectedPayment as p">
+  <header>
     <h1>CLIPPER CUTS</h1>
     <p>Salon Management System</p>
     <h2>PAYMENT RECEIPT</h2>
   </header>
 
-  <div class="receipt-meta">
-    <div><span>Receipt No.</span><strong>{{payment.receiptnumber}}</strong></div>
-    <div><span>Payment Date</span><strong>{{payment.paymentDate | date:'yyyy-MM-dd HH:mm'}}</strong></div>
-    <div><span>Invoice No.</span><strong>{{payment.invoice.invoicenumber}}</strong></div>
-    <div><span>Invoice Date</span><strong>{{payment.invoice.invoicedate | date:'yyyy-MM-dd HH:mm'}}</strong></div>
-  </div>
+  <div class="receipt-grid"><span>Receipt No.</span><strong>{{p.receiptnumber}}</strong><span>Payment
+      Date</span><strong>{{p.paymentDate|date:'yyyy-MM-dd HH:mm'}}</strong><span>Invoice
+      No.</span><strong>{{p.invoicenumber}}</strong><span>Invoice
+      Type</span><strong>{{p.invoiceType}}</strong><span>Customer</span><strong>{{p.customerName}}</strong><span>Invoice
+      Amount</span><strong>Rs. {{p.invoiceAmount|number:'1.2-2'}}</strong><span>This Payment</span><strong>Rs.
+    {{p.amount|number:'1.2-2'}}</strong><span>Total Paid</span><strong>Rs.
+    {{p.paidAmount|number:'1.2-2'}}</strong><span>Balance</span><strong>Rs.
+    {{p.balance|number:'1.2-2'}}</strong><span>Method</span><strong>{{p.paymentmethodName}}</strong><span>Received
+      By</span><strong>{{p.receivedByUsername||'-'}}</strong></div>
+  <p *ngIf="p.remarks"><strong>Remarks:</strong> {{p.remarks}}</p>
 
-  <div class="customer-block">
-    <h3>Customer</h3>
-    <p>{{payment.invoice.appointment.customer.fullname}}</p>
-    <p>{{payment.invoice.appointment.customer.mobile}}</p>
-  </div>
+  <footer>Thank you for choosing Clipper Cuts.</footer>
 
-  <table class="receipt-services">
-    <thead>
-    <tr>
-      <th>Service</th>
-      <th>Beautician</th>
-      <th class="amount">Amount (Rs.)</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr *ngFor="let line of payment.invoice.appointment.appointmentservices">
-      <td>{{line.service.name}}</td>
-      <td>{{line.employee?.callingname || '-'}}</td>
-      <td class="amount">{{line.agreedPrice | number:'1.2-2'}}</td>
-    </tr>
-    </tbody>
-  </table>
-
-  <div class="receipt-totals">
-    <div><span>Subtotal</span><strong>{{payment.invoice.totalamount | number:'1.2-2'}}</strong></div>
-    <div><span>Discount</span><strong>{{payment.invoice.discount | number:'1.2-2'}}</strong></div>
-<!--    <div><span>Tax</span><strong>{{payment.invoice.tax | number:'1.2-2'}}</strong></div>-->
-    <div class="grand-total"><span>Paid Amount</span><strong>Rs. {{payment.amount | number:'1.2-2'}}</strong></div>
-    <div><span>Payment Method</span><strong>{{payment.paymentmethod.name}}</strong></div>
-  </div>
-
-  <p class="remarks" *ngIf="payment.remarks">
-    <strong>Remarks:</strong> {{payment.remarks}}
-  </p>
-
-  <footer>
-    <p>Thank you for choosing Clipper Cuts.</p>
-    <p>This computer-generated receipt does not require a signature.</p>
-  </footer>
 </section>

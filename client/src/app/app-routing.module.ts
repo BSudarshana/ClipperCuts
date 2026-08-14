@@ -20,6 +20,7 @@ import {ProductComponent} from "./view/modules/product/product.component";
 import {InventoryComponent} from "./view/modules/inventory/inventory.component";
 import {StocktransferComponent} from "./view/modules/stocktransfer/stocktransfer.component";
 import {GoodreceivednoteComponent} from "./view/modules/goodreceivednote/goodreceivednote.component";
+import {ProductsaleinvoiceComponent} from "./view/modules/productsaleinvoice/productsaleinvoice.component";
 
 import { CountByDesignationComponent } from './report/view/count-by-designation/count-by-designation.component';
 import { CountByAppointmentStatusComponent } from './report/view/count-by-appointment-status/count-by-appointment-status.component';
@@ -31,6 +32,7 @@ import { CountByServiceCategoryComponent } from './report/view/count-by-service-
 import { RevenueByMonthComponent } from './report/view/revenue-by-month/revenue-by-month.component';
 import { RevenueByPaymentMethodComponent } from './report/view/revenue-by-payment-method/revenue-by-payment-method.component';
 import { TotalByPoSupplierComponent } from './report/view/total-by-po-supplier/total-by-po-supplier.component';
+
 
 const routes: Routes = [
   {path: "login", component: LoginComponent},
@@ -58,6 +60,7 @@ const routes: Routes = [
       {path: "Inventory", component: InventoryComponent},
       {path: "stocktransfer", component: StocktransferComponent},
       {path: "goodreceivednote", component: GoodreceivednoteComponent},
+      {path: "productsaleinvoice", component: ProductsaleinvoiceComponent},
 
       {path:"reports/countbydesignation", component: CountByDesignationComponent},
       {path:"reports/countbyappointmentstatus", component: CountByAppointmentStatusComponent},

@@ -1,161 +1,119 @@
 package com.clippercuts.controller;
 
-import com.clippercuts.dao.InvoiceDao;
-import com.clippercuts.dao.PaymentDao;
-import com.clippercuts.dao.PaymentStatusDao;
-import com.clippercuts.dao.PaymentmethodDao;
-import com.clippercuts.dto.PaymentCreateRequest;
-import com.clippercuts.entity.Invoice;
-import com.clippercuts.entity.Payment;
-import com.clippercuts.entity.Paymentmethod;
-import com.clippercuts.entity.Paymentstatus;
-import org.springframework.http.HttpStatus;
+import com.clippercuts.dao.*;
+import com.clippercuts.dto.*;
+import com.clippercuts.entity.*;
+import org.springframework.http.*;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-
 import javax.validation.Valid;
-import java.math.BigDecimal;
+import java.math.*;
+import java.security.Principal;
 import java.sql.Timestamp;
-import java.time.Instant;
-import java.time.Year;
-import java.util.HashMap;
-import java.util.List;
+import java.time.*;
+import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @CrossOrigin
 @RestController
 @RequestMapping("/payments")
 public class PaymentController {
-
     private final PaymentDao paymentDao;
     private final InvoiceDao invoiceDao;
-    private final PaymentmethodDao paymentmethodDao;
-    private final PaymentStatusDao paymentStatusDao;
+    private final PaymentmethodDao methodDao;
+    private final PaymentStatusDao statusDao;
+    private final UserDao userDao;
 
-    public PaymentController(PaymentDao paymentDao,
-                             InvoiceDao invoiceDao,
-                             PaymentmethodDao paymentmethodDao,
-                             PaymentStatusDao paymentStatusDao) {
-        this.paymentDao = paymentDao;
-        this.invoiceDao = invoiceDao;
-        this.paymentmethodDao = paymentmethodDao;
-        this.paymentStatusDao = paymentStatusDao;
+    public PaymentController(PaymentDao p, InvoiceDao i, PaymentmethodDao m, PaymentStatusDao s, UserDao u) {
+        paymentDao = p;
+        invoiceDao = i;
+        methodDao = m;
+        statusDao = s;
+        userDao = u;
     }
 
-    @GetMapping(produces = "application/json")
-    public List<Payment> get(@RequestParam HashMap<String, String> params) {
-        Stream<Payment> stream = paymentDao.findAll().stream();
-        String receiptNumber = params.get("receiptnumber");
-
-        if (receiptNumber != null && !receiptNumber.trim().isEmpty()) {
-            String search = receiptNumber.trim().toLowerCase();
-            stream = stream.filter(payment ->
-                    payment.getReceiptnumber() != null &&
-                            payment.getReceiptnumber().toLowerCase().contains(search));
-        }
-        return stream.collect(Collectors.toList());
+    @GetMapping
+    public List<PaymentResponse> all(@RequestParam Map<String, String> q) {
+        String n = q.get("receiptnumber");
+        return paymentDao.findAll().stream()
+                .filter(p -> n == null || n.trim().isEmpty()
+                        || p.getReceiptnumber().toLowerCase().contains(n.trim().toLowerCase()))
+                .map(p -> new PaymentResponse(p, totalPaid(p.getInvoice().getId()))).collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")
-    public Payment getById(@PathVariable Integer id) {
-        return paymentDao.findDetailedById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Payment does not exist"));
+    public PaymentResponse one(@PathVariable Integer id) {
+        Payment p = paymentDao.findDetailedById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Payment does not exist"));
+        return new PaymentResponse(p, totalPaid(p.getInvoice().getId()));
     }
 
-    @GetMapping("/unpaid-invoices")
-    public List<Invoice> getUnpaidInvoices() {
-        return invoiceDao.findByPaymentstatus_NameIgnoreCase("Unpaid")
-                .stream()
-                .filter(invoice -> !paymentDao.existsByInvoice_Id(invoice.getId()))
-                .collect(Collectors.toList());
+    @GetMapping("/payable-invoices")
+    public List<PayableInvoiceResponse> payable() {
+        return invoiceDao.findByPaymentstatus_NameIn(Arrays.asList("Unpaid", "Partially Paid")).stream()
+                .map(i -> new PayableInvoiceResponse(i, totalPaid(i.getId())))
+                .filter(i -> i.getBalance().compareTo(BigDecimal.ZERO) > 0).collect(Collectors.toList());
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
-    public HashMap<String, String> add(@Valid @RequestBody PaymentCreateRequest request) {
-        Invoice invoice = invoiceDao.findDetailedById(request.getInvoiceId())
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Invoice does not exist"));
-
-        if (invoice.getPaymentstatus() == null ||
-                !"Unpaid".equalsIgnoreCase(invoice.getPaymentstatus().getName())) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT, "Only Unpaid invoices can be paid");
-        }
-
-        if (paymentDao.existsByInvoice_Id(invoice.getId())) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT, "This invoice already has a payment");
-        }
-
-        BigDecimal amount = request.getAmount().setScale(2);
-        BigDecimal invoiceAmount = invoice.getFinalAmount().setScale(2);
-        if (amount.compareTo(invoiceAmount) != 0) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Payment amount must equal the invoice final amount");
-        }
-
-        Paymentmethod method = paymentmethodDao.findById(request.getPaymentmethodId())
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Payment method does not exist"));
-
-        Paymentstatus paid = paymentStatusDao.findByNameIgnoreCase("Paid");
-        if (paid == null) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT, "Payment status 'Paid' is not configured");
-        }
-
-        Payment payment = new Payment();
-        payment.setReceiptnumber(nextReceiptNumber());
-        payment.setPaymentDate(Timestamp.from(Instant.now()));
-        payment.setAmount(invoiceAmount);
-        payment.setRemarks(cleanRemarks(request.getRemarks()));
-        payment.setInvoice(invoice);
-        payment.setPaymentmethod(method);
-        paymentDao.save(payment);
-
-        invoice.setPaymentstatus(paid);
+    public Map<String, String> add(@Valid @RequestBody PaymentCreateRequest r, Principal principal) {
+        if (principal == null)
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authentication required");
+        User user = userDao.findByUsername(principal.getName());
+        if (user == null)
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Logged-in user not found");
+        Invoice invoice = invoiceDao.findForPaymentUpdate(r.getInvoiceId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Invoice does not exist"));
+        BigDecimal paid = totalPaid(invoice.getId());
+        BigDecimal balance = invoice.getFinalAmount().subtract(paid);
+        BigDecimal amount = r.getAmount().setScale(2, RoundingMode.HALF_UP);
+        if (balance.compareTo(BigDecimal.ZERO) <= 0)
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Invoice is already fully paid");
+        if (amount.compareTo(balance) > 0)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Payment cannot exceed remaining balance " + balance);
+        Paymentmethod method = methodDao.findById(r.getPaymentmethodId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Payment method does not exist"));
+        Payment p = new Payment();
+        p.setReceiptnumber(nextReceipt());
+        p.setPaymentDate(Timestamp.from(Instant.now()));
+        p.setAmount(amount);
+        p.setRemarks(clean(r.getRemarks()));
+        p.setInvoice(invoice);
+        p.setPaymentmethod(method);
+        p.setReceivedByUser(user);
+        paymentDao.save(p);
+        BigDecimal newPaid = paid.add(amount);
+        String statusName = newPaid.compareTo(invoice.getFinalAmount()) >= 0 ? "Paid" : "Partially Paid";
+        Paymentstatus status = statusDao.findByNameIgnoreCase(statusName);
+        if (status == null)
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "Payment status '" + statusName + "' is not configured");
+        invoice.setPaymentstatus(status);
         invoiceDao.save(invoice);
-
-        HashMap<String, String> response = new HashMap<>();
-        response.put("id", String.valueOf(payment.getId()));
-        response.put("url", "/payments/" + payment.getId());
-        response.put("errors", "");
-        return response;
+        Map<String, String> x = new HashMap<>();
+        x.put("id", String.valueOf(p.getId()));
+        x.put("receiptnumber", p.getReceiptnumber());
+        x.put("message", "Payment recorded successfully");
+        return x;
     }
 
-    private String nextReceiptNumber() {
-        int year = Year.now().getValue();
-        String lastNumber = paymentDao.getLastReceiptByYear(year);
-        int sequence = 1;
-
-        if (lastNumber != null) {
-            String[] parts = lastNumber.split("-");
-            if (parts.length == 3) {
-                try {
-                    sequence = Integer.parseInt(parts[2]) + 1;
-                } catch (NumberFormatException ignored) {
-                    sequence = 1;
-                }
-            }
-        }
-        return String.format("REC-%d-%06d", year, sequence);
+    private BigDecimal totalPaid(Integer id) {
+        BigDecimal x = paymentDao.totalPaid(id);
+        return x == null ? BigDecimal.ZERO : x;
     }
 
-    private String cleanRemarks(String remarks) {
-        if (remarks == null) {
-            return null;
-        }
-        String cleaned = remarks.trim();
-        return cleaned.isEmpty() ? null : cleaned;
+    private String nextReceipt() {
+        int y = Year.now().getValue();
+        String last = paymentDao.getLastReceiptByYear(y);
+        int n = last == null ? 1 : Integer.parseInt(last.split("-")[2]) + 1;
+        return String.format("REC-%d-%06d", y, n);
+    }
+
+    private String clean(String s) {
+        return s == null || s.trim().isEmpty() ? null : s.trim();
     }
 }
-
-
-
-

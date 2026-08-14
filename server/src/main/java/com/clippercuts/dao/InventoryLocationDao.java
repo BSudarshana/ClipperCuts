@@ -8,6 +8,14 @@ import java.util.List;
 
 public interface InventoryLocationDao extends JpaRepository<Location, Integer> {
     @Override
-    @EntityGraph(attributePaths = {"locationtype"})
+    @EntityGraph(
+            attributePaths = {"locationtype"}
+    )
     List<Location> findAll();
+
+    @EntityGraph(
+            attributePaths = {"locationtype"}
+    )
+    List<Location> findByLocationtype_NameIgnoreCaseOrderByNameAsc(String locationTypeName);
+
 }

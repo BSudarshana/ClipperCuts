@@ -1,90 +1,58 @@
 package com.clippercuts.entity;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.Objects;
-
-@Entity
-@Table(name = "invoice_item", schema = "clippercuts", catalog = "")
+@Entity @Table(name="invoice_item",schema="clippercuts")
 public class InvoiceItem {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    @Column(name = "id")
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Integer id;
-    @Basic
-    @Column(name = "quantity")
+
+    @Column(nullable=false,precision=10,scale=2)
     private BigDecimal quantity;
-    @Basic
-    @Column(name = "price")
+
+    @Column(nullable=false,precision=10,scale=2)
     private BigDecimal price;
-    @ManyToOne
-    @JoinColumn(name = "invoice_id", referencedColumnName = "id", nullable = false)
+
+    @Column(nullable=false,precision=10,scale=2)
+    private BigDecimal discount=BigDecimal.ZERO;
+
+    @Column(nullable=false,precision=10,scale=2)
+    private BigDecimal subtotal;
+
+    @JsonIgnore @ManyToOne(optional=false) @JoinColumn(name="invoice_id")
     private Invoice invoice;
-    @ManyToOne
-    @JoinColumn(name = "item_id", referencedColumnName = "id", nullable = false)
+
+    @ManyToOne(optional=false) @JoinColumn(name="item_id")
     private Item item;
-    @ManyToOne
-    @JoinColumn(name = "location_id", referencedColumnName = "id", nullable = false)
+
+    @ManyToOne(optional=false) @JoinColumn(name="location_id")
     private Location location;
 
-    public Integer getId() {
-        return id;
-    }
+    public Integer getId(){return id;}
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+    public void setId(Integer v){id=v;}
 
-    public BigDecimal getQuantity() {
-        return quantity;
-    }
+    public BigDecimal getQuantity(){return quantity;}
 
-    public void setQuantity(BigDecimal quantity) {
-        this.quantity = quantity;
-    }
+    public void setQuantity(BigDecimal v){quantity=v;}
 
-    public BigDecimal getPrice() {
-        return price;
-    }
+    public BigDecimal getPrice(){return price;}
 
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
+    public void setPrice(BigDecimal v){price=v;} public BigDecimal getDiscount(){return discount;}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        InvoiceItem that = (InvoiceItem) o;
-        return Objects.equals(id, that.id) && Objects.equals(quantity, that.quantity) && Objects.equals(price, that.price);
-    }
+    public void setDiscount(BigDecimal v){discount=v;} public BigDecimal getSubtotal(){return subtotal;}
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, quantity, price);
-    }
+    public void setSubtotal(BigDecimal v){subtotal=v;} public Invoice getInvoice(){return invoice;}
 
-    public Invoice getInvoice() {
-        return invoice;
-    }
+    public void setInvoice(Invoice v){invoice=v;}
 
-    public void setInvoice(Invoice invoice) {
-        this.invoice = invoice;
-    }
+    public Item getItem(){return item;}
 
-    public Item getItem() {
-        return item;
-    }
+    public void setItem(Item v){item=v;}
 
-    public void setItem(Item item) {
-        this.item = item;
-    }
+    public Location getLocation(){return location;}
 
-    public Location getLocation() {
-        return location;
-    }
+    public void setLocation(Location v){location=v;}
 
-    public void setLocation(Location location) {
-        this.location = location;
-    }
 }

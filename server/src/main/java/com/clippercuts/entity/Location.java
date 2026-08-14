@@ -26,6 +26,7 @@ public class Location {
     @JsonIgnore
     @OneToMany(mappedBy = "location")
     private Collection<ItemstockLocation> itemstockLocations;
+
     @ManyToOne
     @JoinColumn(name = "locationtype_id", referencedColumnName = "id", nullable = false)
     private Locationtype locationtype;
