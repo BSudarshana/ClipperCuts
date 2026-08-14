@@ -1,0 +1,92 @@
+<mat-grid-list [cols]="12" rowHeight="4rem">
+  <mat-grid-tile [colspan]="4" [rowspan]="12">
+    <mat-card>
+      <mat-card-header><mat-card-title>Expense Payment Detail</mat-card-title></mat-card-header>
+      <mat-card-content id="expenseform">
+        <form [formGroup]="form">
+          <mat-form-field appearance="outline">
+            <mat-label>Expense Number</mat-label>
+            <input matInput formControlName="expenseNumber" class="readonly-field">
+            <mat-hint>Generated when saved</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Payment Date</mat-label>
+            <input matInput [matDatepicker]="paymentDatePicker" formControlName="paymentDate">
+            <mat-datepicker-toggle matSuffix [for]="paymentDatePicker"></mat-datepicker-toggle>
+            <mat-datepicker #paymentDatePicker></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Expense Category</mat-label>
+            <mat-select formControlName="expensecategory">
+              <mat-option [value]="null">Not Selected</mat-option>
+              <mat-option *ngFor="let category of categories" [value]="category">{{category.name}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Amount (Rs.)</mat-label>
+            <input matInput type="number" min="0.01" step="0.01" formControlName="amount">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Payment Method</mat-label>
+            <mat-select formControlName="paymentmethod">
+              <mat-option [value]="null">Not Selected</mat-option>
+              <mat-option *ngFor="let method of paymentmethods" [value]="method">{{method.name}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Description</mat-label>
+            <textarea matInput rows="3" maxlength="255" formControlName="description"></textarea>
+            <mat-hint align="end">{{form.controls['description'].value?.length || 0}} / 255</mat-hint>
+          </mat-form-field>
+
+          <div id="butpanel">
+            <button mat-raised-button type="button" (click)="add()" [disabled]="!(enaadd && hasInsertAuthority)">Add</button>
+            <button mat-raised-button type="button" (click)="clear()">Clear</button>
+            <button mat-raised-button type="button" (click)="update()" [disabled]="!(enaupd && hasUpdateAuthority)">Update</button>
+            <button mat-raised-button type="button" (click)="delete()" [disabled]="!(enadel && hasDeleteAuthority)">Delete</button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </mat-grid-tile>
+
+  <mat-grid-tile [colspan]="8" [rowspan]="4">
+    <mat-card id="expensesearch">
+      <mat-card-header><mat-card-title>Expense Search</mat-card-title></mat-card-header>
+      <mat-card-content>
+        <form [formGroup]="ssearch" class="search-form">
+          <mat-form-field appearance="outline"><mat-label>Expense Number</mat-label><input matInput formControlName="number"></mat-form-field>
+          <mat-form-field appearance="outline"><mat-label>Category</mat-label><mat-select formControlName="category"><mat-option [value]="null">All Categories</mat-option><mat-option *ngFor="let category of categories" [value]="category">{{category.name}}</mat-option></mat-select></mat-form-field>
+          <mat-form-field appearance="outline"><mat-label>From Date</mat-label><input matInput [matDatepicker]="fromPicker" formControlName="from"><mat-datepicker-toggle matSuffix [for]="fromPicker"></mat-datepicker-toggle><mat-datepicker #fromPicker></mat-datepicker></mat-form-field>
+          <mat-form-field appearance="outline"><mat-label>To Date</mat-label><input matInput [matDatepicker]="toPicker" formControlName="to"><mat-datepicker-toggle matSuffix [for]="toPicker"></mat-datepicker-toggle><mat-datepicker #toPicker></mat-datepicker></mat-form-field>
+          <div class="search-actions"><button mat-raised-button type="button" (click)="search()"><mat-icon>search</mat-icon> Search</button><button mat-raised-button type="button" (click)="clearSearch()"><mat-icon>reorder</mat-icon> Clear Search</button></div>
+        </form>
+        <div class="expense-total"><span>Displayed Expense Total</span><strong>Rs. {{filteredTotal | number:'1.2-2'}}</strong></div>
+      </mat-card-content>
+    </mat-card>
+  </mat-grid-tile>
+
+  <mat-grid-tile [colspan]="8" [rowspan]="8">
+    <mat-card>
+      <mat-card-header><mat-card-title>Expense Payment Table</mat-card-title><div id="loading"><img [src]="imageurl"></div></mat-card-header>
+      <mat-card-content>
+        <mat-table [dataSource]="data">
+          <ng-container matColumnDef="expenseNumber"><mat-header-cell *matHeaderCellDef>Expense No.</mat-header-cell><mat-cell *matCellDef="let row">{{row.expenseNumber}}</mat-cell></ng-container>
+          <ng-container matColumnDef="paymentDate"><mat-header-cell *matHeaderCellDef>Date</mat-header-cell><mat-cell *matCellDef="let row">{{row.paymentDate | date:'yyyy-MM-dd'}}</mat-cell></ng-container>
+          <ng-container matColumnDef="category"><mat-header-cell *matHeaderCellDef>Category</mat-header-cell><mat-cell *matCellDef="let row">{{row.expensecategory?.name}}</mat-cell></ng-container>
+          <ng-container matColumnDef="paymentmethod"><mat-header-cell *matHeaderCellDef>Method</mat-header-cell><mat-cell *matCellDef="let row">{{row.paymentmethod?.name}}</mat-cell></ng-container>
+          <ng-container matColumnDef="amount"><mat-header-cell *matHeaderCellDef>Amount (Rs.)</mat-header-cell><mat-cell *matCellDef="let row">{{row.amount | number:'1.2-2'}}</mat-cell></ng-container>
+          <ng-container matColumnDef="paidByUsername"><mat-header-cell *matHeaderCellDef>Paid By</mat-header-cell><mat-cell *matCellDef="let row">{{row.paidByUsername}}</mat-cell></ng-container>
+          <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: columns" (click)="fillForm(row)" [ngClass]="{'selected-row': row === selectedrow}"></mat-row>
+        </mat-table>
+        <mat-paginator [pageSize]="5" [pageSizeOptions]="[3,5,10,20]"></mat-paginator>
+      </mat-card-content>
+    </mat-card>
+  </mat-grid-tile>
+</mat-grid-list>

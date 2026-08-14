@@ -57,6 +57,15 @@
   background: #f0f2c7;
 }
 
+.selected:hover {
+  background: #bfc191;
+}
+
+.mat-mdc-table .mat-mdc-row:hover, .mat-mdc-table .mat-mdc-footer-row:hover {
+  background: #f0f2c7;
+}
+
+
 .print-only {
   display: none;
 }

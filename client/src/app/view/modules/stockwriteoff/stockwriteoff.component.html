@@ -1,0 +1,349 @@
+<div class="stock-writeoff-page">
+  <mat-card class="write-off-card">
+    <mat-card-header>
+      <mat-card-title>Stock Write-Off</mat-card-title>
+      <mat-card-subtitle>
+        Remove physically counted used, finished, damaged, expired or missing stock
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-progress-bar *ngIf="loadingLocations || saving" mode="indeterminate"> </mat-progress-bar>
+
+    <mat-card-content>
+      <form [formGroup]="writeOffForm" class="write-off-form">
+        <mat-form-field appearance="outline">
+          <mat-label>Inventory Location</mat-label>
+          <mat-select formControlName="locationId" (selectionChange)="onLocationChange()">
+            <mat-option *ngFor="let location of locations" [value]="location.id">
+              {{ location.name }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="writeOffForm.get('locationId')?.hasError('required')">
+            Inventory location is required.
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Write-Off Reason</mat-label>
+          <mat-select formControlName="reason">
+            <mat-option *ngFor="let reason of reasons" [value]="reason">
+              {{ reason }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="writeOffForm.get('reason')?.hasError('required')">
+            Write-off reason is required.
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="note-field">
+          <mat-label>Note</mat-label>
+          <textarea matInput rows="2" maxlength="255" formControlName="note"> </textarea>
+          <mat-hint align="end">
+            {{ writeOffForm.get('note')?.value?.length || 0 }} / 255
+          </mat-hint>
+        </mat-form-field>
+      </form>
+
+      <mat-divider></mat-divider>
+
+      <section class="items-section">
+        <h3>Add Products</h3>
+
+        <p *ngIf="!writeOffForm.get('locationId')?.value" class="section-help">
+          Select an inventory location to load its available products.
+        </p>
+
+        <mat-progress-bar *ngIf="loadingItems" mode="indeterminate"> </mat-progress-bar>
+
+        <form [formGroup]="itemForm" class="item-form">
+          <mat-form-field appearance="outline" class="product-field">
+            <mat-label>Product</mat-label>
+            <mat-select
+              formControlName="item"
+              [disabled]="!availableItems.length"
+              (selectionChange)="onItemChange()"
+            >
+              <mat-option *ngFor="let item of availableItems" [value]="item">
+                {{ item.itemnumber }} - {{ item.name }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="itemForm.get('item')?.hasError('required')">
+              Product is required.
+            </mat-error>
+          </mat-form-field>
+
+          <div class="available-box">
+            <span>Available Quantity</span>
+            <strong>
+              {{ selectedAvailableItem?.availableQuantity || 0 | number: '1.0-2' }}
+            </strong>
+            <small>{{ selectedAvailableItem?.unitType || '' }}</small>
+          </div>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Write-Off Quantity</mat-label>
+            <input matInput type="number" min="0.01" step="0.01" formControlName="quantity" />
+            <mat-error *ngIf="itemForm.get('quantity')?.hasError('required')">
+              Quantity is required.
+            </mat-error>
+            <mat-error *ngIf="itemForm.get('quantity')?.hasError('min')">
+              Quantity must be greater than zero.
+            </mat-error>
+            <mat-error *ngIf="itemForm.get('quantity')?.hasError('exceedsAvailable')">
+              Quantity exceeds available stock.
+            </mat-error>
+          </mat-form-field>
+
+          <button
+            mat-raised-button
+            type="button"
+            class="primary-action"
+            [disabled]="loadingItems"
+            (click)="addItem()"
+          >
+            <mat-icon>add</mat-icon>
+            Add Product
+          </button>
+        </form>
+
+        <div class="table-container">
+          <table mat-table [dataSource]="writeOffItems" class="full-width-table">
+            <ng-container matColumnDef="itemnumber">
+              <th mat-header-cell *matHeaderCellDef>Item No.</th>
+              <td mat-cell *matCellDef="let item">{{ item.itemnumber }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef>Product</th>
+              <td mat-cell *matCellDef="let item">{{ item.name }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="availableQuantity">
+              <th mat-header-cell *matHeaderCellDef>Available</th>
+              <td mat-cell *matCellDef="let item">
+                {{ item.availableQuantity | number: '1.0-2' }}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="quantity">
+              <th mat-header-cell *matHeaderCellDef>Write-Off Qty.</th>
+              <td mat-cell *matCellDef="let item">
+                {{ item.quantity | number: '1.0-2' }}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="unitType">
+              <th mat-header-cell *matHeaderCellDef>Unit</th>
+              <td mat-cell *matCellDef="let item">{{ item.unitType }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>Action</th>
+              <td mat-cell *matCellDef="let item">
+                <button
+                  mat-icon-button
+                  type="button"
+                  aria-label="Remove product"
+                  (click)="removeItem(item.itemId)"
+                >
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="itemColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: itemColumns"></tr>
+          </table>
+
+          <p *ngIf="writeOffItems.length === 0" class="empty-message">
+            No products have been added.
+          </p>
+        </div>
+
+        <div class="write-off-total">
+          <span>Total Write-Off Quantity</span>
+          <strong>{{ totalWriteOffQuantity | number: '1.0-2' }}</strong>
+        </div>
+      </section>
+    </mat-card-content>
+
+    <mat-card-actions align="end">
+      <button mat-raised-button type="button" (click)="clearWriteOff()">Clear</button>
+
+      <button
+        mat-raised-button
+        type="button"
+        class="primary-action"
+        [disabled]="saving || !writeOffItems.length || !hasInsertAuthority"
+        (click)="submitWriteOff()"
+      >
+        <mat-icon>remove_circle_outline</mat-icon>
+        Complete Write-Off
+      </button>
+    </mat-card-actions>
+  </mat-card>
+
+  <mat-card class="history-card">
+    <mat-card-header>
+      <mat-card-title>Stock Write-Off Search</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="searchForm" class="search-form">
+        <mat-form-field appearance="outline">
+          <mat-label>Number, Location, Reason or User</mat-label>
+          <input matInput formControlName="searchText" />
+        </mat-form-field>
+
+        <button mat-raised-button type="button" class="primary-action" (click)="search()">
+          <mat-icon>search</mat-icon>
+          Search
+        </button>
+
+        <button mat-raised-button type="button" (click)="clearSearch()">
+          <mat-icon>reorder</mat-icon>
+          Clear Search
+        </button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="history-card">
+    <mat-card-header>
+      <mat-card-title>Stock Write-Off History</mat-card-title>
+    </mat-card-header>
+
+    <mat-progress-bar *ngIf="loadingHistory" mode="indeterminate"></mat-progress-bar>
+
+    <mat-card-content>
+      <div class="table-container">
+        <mat-table [dataSource]="historyData">
+          <ng-container matColumnDef="writeoffnumber">
+            <mat-header-cell *matHeaderCellDef>Write-Off No.</mat-header-cell>
+            <mat-cell *matCellDef="let writeOff">
+              {{ writeOff.writeoffnumber }}
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="writeoffdate">
+            <mat-header-cell *matHeaderCellDef>Date</mat-header-cell>
+            <mat-cell *matCellDef="let writeOff">
+              {{ writeOff.writeoffdate | date: 'yyyy-MM-dd HH:mm' }}
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="locationName">
+            <mat-header-cell *matHeaderCellDef>Location</mat-header-cell>
+            <mat-cell *matCellDef="let writeOff">
+              {{ writeOff.locationName }}
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="reason">
+            <mat-header-cell *matHeaderCellDef>Reason</mat-header-cell>
+            <mat-cell *matCellDef="let writeOff">{{ writeOff.reason }}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="totalQuantity">
+            <mat-header-cell *matHeaderCellDef>Total Qty.</mat-header-cell>
+            <mat-cell *matCellDef="let writeOff">
+              {{ writeOff.totalQuantity | number: '1.0-2' }}
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="createdByUsername">
+            <mat-header-cell *matHeaderCellDef>Created By</mat-header-cell>
+            <mat-cell *matCellDef="let writeOff">
+              {{ writeOff.createdByUsername }}
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <mat-header-cell *matHeaderCellDef>Action</mat-header-cell>
+            <mat-cell *matCellDef="let writeOff">
+              <button
+                mat-button
+                type="button"
+                (click)="$event.stopPropagation(); viewWriteOff(writeOff.id)"
+              >
+                View
+              </button>
+            </mat-cell>
+          </ng-container>
+
+          <mat-header-row *matHeaderRowDef="historyColumns"></mat-header-row>
+          <mat-row
+            *matRowDef="let row; columns: historyColumns"
+            (click)="viewWriteOff(row.id)"
+            [class.selected-row]="row.id === selectedHistoryRow?.id"
+          >
+          </mat-row>
+        </mat-table>
+      </div>
+
+      <mat-paginator [pageSize]="5" [pageSizeOptions]="[5, 10, 20]"> </mat-paginator>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card *ngIf="selectedWriteOff" class="detail-card">
+    <mat-card-header>
+      <mat-card-title> Write-Off Details - {{ selectedWriteOff.writeoffnumber }} </mat-card-title>
+    </mat-card-header>
+
+    <mat-progress-bar *ngIf="loadingDetail" mode="indeterminate"></mat-progress-bar>
+
+    <mat-card-content>
+      <div class="detail-summary">
+        <div>
+          <span>Date</span>
+          <strong>{{ selectedWriteOff.writeoffdate | date: 'yyyy-MM-dd HH:mm' }}</strong>
+        </div>
+        <div>
+          <span>Location</span>
+          <strong>{{ selectedWriteOff.locationName }}</strong>
+        </div>
+        <div>
+          <span>Reason</span>
+          <strong>{{ selectedWriteOff.reason }}</strong>
+        </div>
+        <div>
+          <span>Created By</span>
+          <strong>{{ selectedWriteOff.createdByUsername }}</strong>
+        </div>
+      </div>
+
+      <p *ngIf="selectedWriteOff.note"><strong>Note:</strong> {{ selectedWriteOff.note }}</p>
+
+      <table mat-table [dataSource]="selectedWriteOff.items" class="full-width-table">
+        <ng-container matColumnDef="itemnumber">
+          <th mat-header-cell *matHeaderCellDef>Item No.</th>
+          <td mat-cell *matCellDef="let item">{{ item.itemnumber }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="itemName">
+          <th mat-header-cell *matHeaderCellDef>Product</th>
+          <td mat-cell *matCellDef="let item">{{ item.itemName }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="quantity">
+          <th mat-header-cell *matHeaderCellDef>Quantity</th>
+          <td mat-cell *matCellDef="let item">
+            {{ item.quantity | number: '1.0-2' }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="unitType">
+          <th mat-header-cell *matHeaderCellDef>Unit</th>
+          <td mat-cell *matCellDef="let item">{{ item.unitType }}</td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="detailColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: detailColumns"></tr>
+      </table>
+    </mat-card-content>
+
+    <mat-card-actions align="end">
+      <button mat-raised-button type="button" (click)="closeDetail()">Close</button>
+    </mat-card-actions>
+  </mat-card>
+</div>

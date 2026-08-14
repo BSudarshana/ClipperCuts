@@ -28,24 +28,49 @@ export class AuthorizationManager {
   ];
 
   // Sales menu items
-  Sales = [
+  sales = [
+    { name: 'Product Invoices', isVisible: false, routerLink: 'productsaleinvoice' },
+    { name: 'Service Invoice', isVisible: false, routerLink: 'invoice' },
+    { name: 'Receipt', isVisible: false, routerLink: 'payment' },
+    { name: 'Payment Voucher', isVisible: false, routerLink: 'expense' },
+  ];
+
+  expenses = [
+    { name: 'Payment Voucher', isVisible: false, routerLink: 'expense' }
+  ];
+
+
+  operatins = [
     { name: 'Appointment', isVisible: false, routerLink: 'appointment' },
+    { name: 'Services', isVisible: false, routerLink: 'service' },
     { name: 'Customer', isVisible: false, routerLink: 'customer' },
-    { name: 'Promotion', isVisible: false, routerLink: 'promotion' },
-    { name: 'Invoice', isVisible: false, routerLink: 'invoice' }
+    { name: 'Customer Feedback', isVisible: false, routerLink: 'customerfeedback' },
+    { name: 'Promotions', isVisible: false, routerLink: 'promotion' }
+  ];
+
+  Inventory = [
+    { name: 'Products', isVisible: false, routerLink: 'product' },
+    { name: 'Inventory', isVisible: false, routerLink: 'inventory' },
+    { name: 'Purchase Orders', isVisible: false, routerLink: 'purchaseorder' },
+    { name: 'GRN', isVisible: false, routerLink: 'goodreceivednote' },
+    { name: 'Stock Transfers', isVisible: false, routerLink: 'stocktransfer' },
+    { name: 'Stock Write-Offs', isVisible: false, routerLink: 'stockwriteoff' },
+    { name: 'Supplier', isVisible: true, routerLink: 'supplier' }
   ];
 
   // Purchase menu items
-  Purchase = [
-    { name: 'Supplier', isVisible: true, routerLink: 'supplier' }
-  ];
+  // Purchase = [
+  //   { name: 'Supplier', isVisible: true, routerLink: 'supplier' }
+  // ];
 
   // Returns the list of all main menus with their corresponding items
   getNavListItem() {
     return [
       { Menu: 'Admin', MenuItems: this.Admin },
-      { Menu: 'Sales', MenuItems: this.Sales },
-      { Menu: 'Purchase', MenuItems: this.Purchase }
+      { Menu: 'Sales', MenuItems: this.sales },
+      { Menu: 'Operatins', MenuItems: this.operatins },
+      { Menu: 'expenses', MenuItems: this.expenses },
+      { Menu: 'Inventory', MenuItems: this.Inventory }
     ];
   }
 

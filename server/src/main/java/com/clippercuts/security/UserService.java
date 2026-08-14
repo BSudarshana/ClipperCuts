@@ -101,10 +101,10 @@ public class UserService implements UserDetailsService {
             authorities.add(new SimpleGrantedAuthority("purchaseorder-update"));
             authorities.add(new SimpleGrantedAuthority("purchaseorder-insert"));
 
-            authorities.add(new SimpleGrantedAuthority("discount-select"));
-            authorities.add(new SimpleGrantedAuthority("discount-delete"));
-            authorities.add(new SimpleGrantedAuthority("discount-update"));
-            authorities.add(new SimpleGrantedAuthority("discount-insert"));
+//            authorities.add(new SimpleGrantedAuthority("discount-select"));
+//            authorities.add(new SimpleGrantedAuthority("discount-delete"));
+//            authorities.add(new SimpleGrantedAuthority("discount-update"));
+//            authorities.add(new SimpleGrantedAuthority("discount-insert"));
 
             authorities.add(new SimpleGrantedAuthority("appointment-select"));
             authorities.add(new SimpleGrantedAuthority("appointment-delete"));

@@ -66,6 +66,8 @@ import { StocktransferComponent } from './view/modules/stocktransfer/stocktransf
 import {MatProgressBarModule} from "@angular/material/progress-bar";
 import { GoodreceivednoteComponent } from './view/modules/goodreceivednote/goodreceivednote.component';
 import { ProductsaleinvoiceComponent } from './view/modules/productsaleinvoice/productsaleinvoice.component';
+import { StockwriteoffComponent } from './view/modules/stockwriteoff/stockwriteoff.component';
+import { ExpenseComponent } from './view/modules/expense/expense.component';
 
 
 @NgModule({
@@ -103,7 +105,9 @@ import { ProductsaleinvoiceComponent } from './view/modules/productsaleinvoice/p
     InventoryComponent,
     StocktransferComponent,
     GoodreceivednoteComponent,
-    ProductsaleinvoiceComponent
+    ProductsaleinvoiceComponent,
+    StockwriteoffComponent,
+    ExpenseComponent
   ],
   imports: [
     MatDatepickerModule,

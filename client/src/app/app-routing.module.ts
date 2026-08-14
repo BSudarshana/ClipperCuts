@@ -1,26 +1,28 @@
-import {NgModule} from '@angular/core';
-import {RouterModule, Routes} from '@angular/router';
-import {LoginComponent} from "./view/login/login.component";
-import {MainwindowComponent} from "./view/mainwindow/mainwindow.component";
-import {EmployeeComponent} from "./view/modules/employee/employee.component";
-import {HomeComponent} from "./view/home/home.component";
-import {UserComponent} from "./view/modules/user/user.component";
-import {PrivilageComponent} from "./view/modules/privilage/privilage.component";
-import {OperationComponent} from "./view/modules/operation/operation.component";
-import {CustomerComponent} from "./view/modules/customer/customer.component";
-import {PurchaseorderComponent} from "./view/modules/purchaseorder/purchaseorder.component";
-import {SupplierComponent} from "./view/modules/supplier/supplier.component";
-import {ServiceComponent} from "./view/modules/service/service.component";
-import {InvoiceComponent} from "./view/modules/invoice/invoice.component";
-import {AppointmentComponent} from "./view/modules/appointment/appointment.component";
-import {PromotionComponent} from "./view/modules/promotion/promotion.component";
-import {PaymentComponent} from "./view/modules/payment/payment.component";
-import {CustomerfeedbackComponent} from "./view/modules/customerfeedback/customerfeedback.component";
-import {ProductComponent} from "./view/modules/product/product.component";
-import {InventoryComponent} from "./view/modules/inventory/inventory.component";
-import {StocktransferComponent} from "./view/modules/stocktransfer/stocktransfer.component";
-import {GoodreceivednoteComponent} from "./view/modules/goodreceivednote/goodreceivednote.component";
-import {ProductsaleinvoiceComponent} from "./view/modules/productsaleinvoice/productsaleinvoice.component";
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { LoginComponent } from './view/login/login.component';
+import { MainwindowComponent } from './view/mainwindow/mainwindow.component';
+import { EmployeeComponent } from './view/modules/employee/employee.component';
+import { HomeComponent } from './view/home/home.component';
+import { UserComponent } from './view/modules/user/user.component';
+import { PrivilageComponent } from './view/modules/privilage/privilage.component';
+import { OperationComponent } from './view/modules/operation/operation.component';
+import { CustomerComponent } from './view/modules/customer/customer.component';
+import { PurchaseorderComponent } from './view/modules/purchaseorder/purchaseorder.component';
+import { SupplierComponent } from './view/modules/supplier/supplier.component';
+import { ServiceComponent } from './view/modules/service/service.component';
+import { InvoiceComponent } from './view/modules/invoice/invoice.component';
+import { AppointmentComponent } from './view/modules/appointment/appointment.component';
+import { PromotionComponent } from './view/modules/promotion/promotion.component';
+import { PaymentComponent } from './view/modules/payment/payment.component';
+import { CustomerfeedbackComponent } from './view/modules/customerfeedback/customerfeedback.component';
+import { ProductComponent } from './view/modules/product/product.component';
+import { InventoryComponent } from './view/modules/inventory/inventory.component';
+import { StocktransferComponent } from './view/modules/stocktransfer/stocktransfer.component';
+import { GoodreceivednoteComponent } from './view/modules/goodreceivednote/goodreceivednote.component';
+import { ProductsaleinvoiceComponent } from './view/modules/productsaleinvoice/productsaleinvoice.component';
+import { StockwriteoffComponent } from './view/modules/stockwriteoff/stockwriteoff.component';
+import {ExpenseComponent} from "./view/modules/expense/expense.component";
 
 import { CountByDesignationComponent } from './report/view/count-by-designation/count-by-designation.component';
 import { CountByAppointmentStatusComponent } from './report/view/count-by-appointment-status/count-by-appointment-status.component';
@@ -35,49 +37,51 @@ import { TotalByPoSupplierComponent } from './report/view/total-by-po-supplier/t
 
 
 const routes: Routes = [
-  {path: "login", component: LoginComponent},
-  {path: "", redirectTo: 'login', pathMatch: 'full'},
+  { path: 'login', component: LoginComponent },
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
   {
-    path: "main",
+    path: 'main',
     component: MainwindowComponent,
     children: [
-      {path: "home", component: HomeComponent},
-      {path: "employee", component: EmployeeComponent},
-      {path: "operation", component: OperationComponent},
-      {path: "user", component: UserComponent},
-      {path: "privilege", component: PrivilageComponent},
-      {path: "customer", component: CustomerComponent},
-      {path: "supplier", component: SupplierComponent},
-      {path: "service", component: ServiceComponent},
-      {path: "promotion", component: PromotionComponent},
-      {path: "appointment", component: AppointmentComponent},
-      {path: "invoice", component: InvoiceComponent},
-      {path: "payment", component: PaymentComponent},
-      {path: "payment", component: PaymentComponent},
-      {path: "purchaseorder", component: PurchaseorderComponent},
-      {path: "customerfeedback", component: CustomerfeedbackComponent},
-      {path: "product", component: ProductComponent},
-      {path: "Inventory", component: InventoryComponent},
-      {path: "stocktransfer", component: StocktransferComponent},
-      {path: "goodreceivednote", component: GoodreceivednoteComponent},
-      {path: "productsaleinvoice", component: ProductsaleinvoiceComponent},
+      { path: 'home', component: HomeComponent },
+      { path: 'employee', component: EmployeeComponent },
+      { path: 'operation', component: OperationComponent },
+      { path: 'user', component: UserComponent },
+      { path: 'privilege', component: PrivilageComponent },
+      { path: 'customer', component: CustomerComponent },
+      { path: 'supplier', component: SupplierComponent },
+      { path: 'service', component: ServiceComponent },
+      { path: 'promotion', component: PromotionComponent },
+      { path: 'appointment', component: AppointmentComponent },
+      { path: 'invoice', component: InvoiceComponent },
+      { path: 'payment', component: PaymentComponent },
+      { path: 'payment', component: PaymentComponent },
+      { path: 'purchaseorder', component: PurchaseorderComponent },
+      { path: 'customerfeedback', component: CustomerfeedbackComponent },
+      { path: 'product', component: ProductComponent },
+      { path: 'Inventory', component: InventoryComponent },
+      { path: 'stocktransfer', component: StocktransferComponent },
+      { path: 'goodreceivednote', component: GoodreceivednoteComponent },
+      { path: 'productsaleinvoice', component: ProductsaleinvoiceComponent },
+      { path: 'stockwriteoff', component: StockwriteoffComponent },
+      { path: 'expense', component: ExpenseComponent },
 
-      {path:"reports/countbydesignation", component: CountByDesignationComponent},
-      {path:"reports/countbyappointmentstatus", component: CountByAppointmentStatusComponent},
-      {path:"reports/countbycustomertype", component: CountByCustomerTypeComponent},
-      {path:"reports/countbyempstatus", component: CountByEmpStatusComponent},
-      {path:"reports/countbygender", component: CountByGenderComponent},
-      {path:"reports/countbyitemcategory", component: CountByItemCategoryComponent},
-      {path:"reports/countbyservicecategory", component: CountByServiceCategoryComponent},
-      {path:"reports/revenuebymonth", component: RevenueByMonthComponent},
-      {path:"reports/revenuebypaymentmethod", component: RevenueByPaymentMethodComponent},
-      {path:"reports/totalbyposupplier", component: TotalByPoSupplierComponent},
+      { path: 'reports/countbydesignation', component: CountByDesignationComponent },
+      { path: 'reports/countbyappointmentstatus', component: CountByAppointmentStatusComponent },
+      { path: 'reports/countbycustomertype', component: CountByCustomerTypeComponent },
+      { path: 'reports/countbyempstatus', component: CountByEmpStatusComponent },
+      { path: 'reports/countbygender', component: CountByGenderComponent },
+      { path: 'reports/countbyitemcategory', component: CountByItemCategoryComponent },
+      { path: 'reports/countbyservicecategory', component: CountByServiceCategoryComponent },
+      { path: 'reports/revenuebymonth', component: RevenueByMonthComponent },
+      { path: 'reports/revenuebypaymentmethod', component: RevenueByPaymentMethodComponent },
+      { path: 'reports/totalbyposupplier', component: TotalByPoSupplierComponent }
     ]
-  }];
+  }
+];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
-export class AppRoutingModule {
-}
+export class AppRoutingModule {}
